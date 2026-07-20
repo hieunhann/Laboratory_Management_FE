@@ -1,0 +1,645 @@
+/* =================== CONTAINER =================== */
+.payment-container {
+  padding: 32px 0 80px;
+  background: linear-gradient(
+    180deg,
+    #f6fbff 0%,
+    rgba(246, 251, 255, 0.7) 100%
+  );
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* =================== TITLE =================== */
+.payment-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+}
+
+.payment-sub {
+  text-align: center;
+  color: #6b7280;
+  margin-top: 6px;
+  margin-bottom: 26px;
+}
+
+/* =================== GRID LAYOUT =================== */
+.payment-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 28px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* =================== CARD BASE =================== */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  box-sizing: border-box;
+}
+
+.card h3 {
+  margin-bottom: 16px;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* =================== LEFT SIDE =================== */
+.payment-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Personal info ---------- */
+.form-grid label {
+  display: block;
+  margin-bottom: 14px;
+  color: #0f172a;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-grid label span {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.form-grid input {
+  display: flex;
+  width: 96%;
+  margin-top: 6px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-grid input:focus {
+  border-color: #2563eb;
+}
+.info-card-1 {
+  display: flex;
+  gap: 20px;
+}
+.info-card-1 label {
+  flex: 1; /* chia đều: 1 và 1 */
+  min-width: 0; /* bắt buộc để input % không gây overflow trong flex */
+}
+
+/* nếu muốn tỉ lệ khác (ví dụ: email lớn hơn phone) */
+.info-card-1 label:first-child {
+  flex: 1;
+}
+
+/* input luôn chiếm đầy label */
+.info-card-1 label input {
+  width: 91%;
+}
+/* ---------- Payment Method ---------- */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.method-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #0f172a;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+}
+.method-item span {
+  font-weight: 700;
+}
+
+.method-item input {
+  accent-color: #2563eb;
+}
+
+/* ---------- Card input fields ---------- */
+.card-inputs {
+  margin-top: 16px;
+}
+
+.card-inputs label {
+  display: block;
+  margin-bottom: 12px;
+  color: #0f172a;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.card-inputs input {
+  width: 96%;
+  margin-top: 4px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.card-inputs input:focus {
+  border-color: #2563eb;
+}
+
+.small-row {
+  display: flex;
+  gap: 20px;
+}
+
+.small-row label {
+  flex: 1;
+}
+.small-row label:first-child {
+  flex: 1;
+}
+.small-row label input {
+  width: 92%;
+}
+
+/* ---------- Back Button ---------- */
+.btn-back {
+  margin-top: 6px;
+  background: transparent;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #0f172a;
+  font-weight: 600;
+  width: fit-content;
+  transition: background 0.2s;
+}
+
+.btn-back:hover {
+  background: #f1f5f9;
+}
+
+/* =================== RIGHT SIDE (SUMMARY) =================== */
+.payment-right {
+  position: sticky;
+  top: 40px;
+}
+
+.summary-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #0f172a;
+  font-size: 14px;
+}
+.summary-line span {
+  color: #4a5565;
+}
+.summary-line strong {
+  font-weight: 700;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.price-total {
+  color: #2563eb;
+}
+
+/* ---------- Confirm Button ---------- */
+.btn-confirm {
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #0f0f0f;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-confirm:hover {
+  opacity: 0.9;
+}
+
+/* ---------- Secure Note ---------- */
+.secure-note {
+  color: black;
+  font-size: 13px;
+  margin-top: 12px;
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* =================== MODAL / POPUP WARNING =================== */
+/* overlay backdrop */
+.modal-overlay {
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* must be above all UI */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* modal dialog */
+.modal-dialog {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 30px 22px;
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.35);
+  box-sizing: border-box;
+  z-index: 1010;
+  position: relative;
+}
+
+/* modal header */
+.modal-dialog .modal-title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 20px;
+  margin-bottom: 8px;
+  margin: 0 auto 18px auto; /* căn giữa tiêu đề */
+  justify-content: center;
+  text-align: center;
+}
+
+/* modal body text */
+.modal-dialog .modal-body-alert {
+  color: #374151;
+  font-size: 15.5px;
+  line-height: 2;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* bullet list inside modal */
+.modal-dialog .modal-body-alert ul {
+  margin: 8px 0 0 16px;
+  padding: 0 0 0 18px; /* giảm padding cho danh sách */
+  list-style: disc inside;
+}
+
+/* modal actions */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center; /* căn giữa nút hành động */
+  margin-top: 8px;
+}
+
+/* cancel / secondary */
+.btn-modal-cancel {
+  background: transparent;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* primary confirm */
+.btn-modal-confirm {
+  background: #0f172a;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* =================== SUCCESS PAGE (STEP 5) =================== */
+/* container to center the success content like screenshot */
+.success-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 120px);
+  align-items: flex-start;
+  background: linear-gradient(
+    180deg,
+    #f6fbff 0%,
+    rgba(246, 251, 255, 0.7) 100%
+  );
+}
+
+/* card wrapper for success detail */
+.success-card {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+  box-sizing: border-box;
+}
+
+/* top icon / heading */
+.success-card .success-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+.success-card .success-header h2 {
+  margin: 8px 0 4px;
+  font-size: 22px;
+  color: #0f172a;
+  font-weight: 700;
+}
+.success-card .success-header p {
+  color: #6b7280;
+  margin: 0;
+}
+
+/* main content layout */
+.success-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+/* image / illustration at top (hình 1) */
+.success-image {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.success-image img {
+  max-width: 520px; /* controls the displayed size */
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* summary and customer info boxes */
+.success-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* important notice block */
+.success-note {
+  background: #eef2ff;
+  padding: 14px;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 13px;
+}
+
+/* action row (buttons) */
+.success-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+/* button primary on success */
+.btn-success-primary {
+  background: #0f172a;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* ensure modal appears above sticky right summary if both present */
+.payment-right,
+.card {
+  z-index: 5; /* keep UI under modal */
+}
+
+/* defensive: if any invisible overlays exist earlier, let modal still be clickable */
+.modal-overlay,
+.modal-dialog {
+  pointer-events: auto;
+}
+
+/* =================== RESPONSIVE =================== */
+/* Tablet */
+@media (max-width: 1024px) {
+  .payment-layout {
+    gap: 24px;
+  }
+
+  .payment-title {
+    font-size: 26px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .payment-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .payment-right {
+    position: relative;
+    top: 0;
+  }
+
+  .payment-title {
+    font-size: 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-card-1 {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .info-card-1 label input {
+    width: 96%;
+  }
+
+  .small-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .small-row label input {
+    width: 96%;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-container {
+    padding: 24px 16px 60px;
+  }
+
+  .payment-title {
+    font-size: 22px;
+  }
+
+  .payment-sub {
+    font-size: 14px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .card h3 {
+    font-size: 15px;
+  }
+
+  .form-grid label {
+    font-size: 13px;
+  }
+
+  .form-grid input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .method-item {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .summary-card h3 {
+    font-size: 15px;
+  }
+
+  .summary-line {
+    font-size: 13px;
+  }
+
+  .summary-total {
+    font-size: 15px;
+  }
+
+  .btn-confirm {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .secure-note {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-container {
+    padding: 20px 12px 50px;
+  }
+
+  .payment-title {
+    font-size: 20px;
+  }
+
+  .payment-sub {
+    font-size: 13px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .card h3 {
+    font-size: 14px;
+  }
+
+  .form-grid label {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .form-grid input {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .method-item {
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .btn-confirm {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .secure-note {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 520px) {
+  .modal-dialog {
+    padding: 16px;
+    margin: 20px;
+  }
+
+  .modal-dialog .modal-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .modal-dialog .modal-body-alert {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-modal-cancel,
+  .btn-modal-confirm {
+    width: 100%;
+    padding: 10px;
+  }
+}

@@ -1,0 +1,392 @@
+/* === Trang tổng thể === */
+.sb-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding: 40px 16px;
+}
+
+.sb-inner {
+  max-width: 640px;
+  width: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: solid 2px #2563eb;
+  padding: 32px;
+}
+
+/* === Phần đầu thông báo thành công === */
+.sb-top {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.sb-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sb-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 8px;
+}
+
+.sb-desc {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* === Nội dung chính === */
+.sb-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* === Hóa đơn / thông tin đặt lịch === */
+.sb-receipt {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.sb-receipt-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #777;
+  padding-bottom: 10px;
+}
+
+.sb-code {
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.sb-code-val {
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 25px;
+}
+
+.sb-total {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: black;
+}
+
+/* === Danh sách chi tiết === */
+.sb-receipt-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sb-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sb-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sb-text {
+  flex: 1;
+}
+
+.sb-label {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+
+.sb-value {
+  font-weight: 500;
+  color: #111827;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.sb-value-1 {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+
+/* === Thông tin khách hàng === */
+.sb-customer {
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.sb-cust-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+}
+
+.sb-cust-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.c-l {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.c-v {
+  font-weight: 500;
+  color: #111827;
+}
+
+/* === Ghi chú === */
+.sb-note {
+  background-color: #eff6ff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #1e3a8a;
+  color: #1e3a8a;
+}
+
+.sb-note-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.sb-note ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sb-note li {
+  position: relative;
+  padding-left: 16px;
+  color: #155dfc;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.sb-note li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+/* === Nút hành động === */
+.sb-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn.outline {
+  border: 1px solid #2563eb;
+  background: transparent;
+  color: #2563eb;
+}
+
+.btn.outline:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn.primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+}
+
+.btn.primary:hover {
+  background: #1e4ed8;
+}
+
+/* === Liên hệ hỗ trợ === */
+.sb-help {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.sb-help strong {
+  color: #2563eb;
+}
+
+/* === Responsive === */
+/* Tablet */
+@media (max-width: 1024px) {
+  .sb-page {
+    padding: 32px 16px;
+  }
+
+  .sb-inner {
+    padding: 28px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sb-page {
+    padding: 24px 12px;
+  }
+
+  .sb-inner {
+    padding: 24px;
+  }
+
+  .sb-title {
+    font-size: 1.5rem;
+  }
+
+  .sb-desc {
+    font-size: 0.9rem;
+  }
+
+  .sb-receipt,
+  .sb-customer,
+  .sb-note {
+    padding: 18px;
+  }
+
+  .sb-code-val {
+    font-size: 20px;
+  }
+
+  .sb-total {
+    font-size: 1.1rem;
+  }
+
+  .sb-cust-title {
+    font-size: 1.1rem;
+  }
+
+  .sb-note-title {
+    font-size: 1rem;
+  }
+
+  .sb-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sb-page {
+    padding: 20px 8px;
+  }
+
+  .sb-inner {
+    padding: 20px;
+    border-width: 1px;
+  }
+
+  .sb-top {
+    margin-bottom: 24px;
+  }
+
+  .sb-title {
+    font-size: 1.25rem;
+  }
+
+  .sb-desc {
+    font-size: 0.85rem;
+  }
+
+  .sb-content {
+    gap: 18px;
+  }
+
+  .sb-receipt,
+  .sb-customer,
+  .sb-note {
+    padding: 16px;
+  }
+
+  .sb-receipt-top {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .sb-code-val {
+    font-size: 18px;
+  }
+
+  .sb-total {
+    font-size: 1rem;
+  }
+
+  .sb-label,
+  .sb-value-1 {
+    font-size: 0.8rem;
+  }
+
+  .sb-value {
+    font-size: 0.9rem;
+  }
+
+  .sb-cust-title {
+    font-size: 1rem;
+  }
+
+  .c-l,
+  .c-v {
+    font-size: 0.85rem;
+  }
+
+  .sb-note-title {
+    font-size: 0.95rem;
+  }
+
+  .sb-note li {
+    font-size: 0.85rem;
+  }
+
+  .sb-actions {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+
+  .sb-help {
+    font-size: 0.85rem;
+  }
+}

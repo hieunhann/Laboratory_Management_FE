@@ -1,0 +1,19 @@
+.lab-staff-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.lab-staff-main {
+  flex: 1;
+  margin-left: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lab-staff-content {
+  flex: 1;
+  margin-top: 72px;
+  padding: 32px;
+  overflow-y: auto;
+}

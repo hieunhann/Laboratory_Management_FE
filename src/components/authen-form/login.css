@@ -1,0 +1,912 @@
+/* Back to home link in card header */
+.auth-login-card .ant-card-extra .auth-login-back-home {
+    color: #e0f2fe;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    transition: all 0.2s ease;
+}
+
+.auth-login-card .ant-card-extra .auth-login-back-home:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+/* ================ ANIMATIONS & KEYFRAMES ================ */
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* ================ MAIN CONTAINER ================ */
+.auth-login-container {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+    position: relative;     font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+}
+
+.auth-login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* ================ LEFT SIDE - WELCOME SECTION ================ */
+.auth-login-welcome {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+    color: white;
+    position: relative;
+    z-index: 2;
+    animation: slideInFromLeft 0.8s ease-out;
+}
+
+.auth-login-welcome-content {
+    max-width: 500px;
+    text-align: center;
+}
+
+.auth-login-welcome-logo {
+    width: 90px;
+    height: 90px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    animation: float 4s ease-in-out infinite;
+}
+
+.auth-login-welcome-logo svg {
+    width: 45px;
+    height: 45px;
+    fill: white;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.auth-login-welcome-title {
+    font-size: 48px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: white;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: fadeSlideIn 0.8s ease-out 0.2s both;
+    margin-top: 20px;
+}
+
+.auth-login-welcome-subtitle {
+    font-size: 20px;
+    font-weight: 300; 
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+    margin-bottom: 40px;
+    opacity: 0.95;
+    line-height: 1.5;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    animation: fadeSlideIn 0.8s ease-out 0.4s both;
+}
+
+.auth-login-welcome-features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 40px;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-welcome-feature {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+    animation: fadeSlideIn 0.8s ease-out calc(0.6s + var(--delay, 0s)) both;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-welcome-feature:nth-child(1) { --delay: 0s; }
+.auth-login-welcome-feature:nth-child(2) { --delay: 0.1s; }
+.auth-login-welcome-feature:nth-child(3) { --delay: 0.2s; }
+.auth-login-welcome-feature:nth-child(4) { --delay: 0.3s; }
+
+.auth-login-welcome-feature:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.auth-login-welcome-feature-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.auth-login-welcome-feature-text {
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+/* ================ RIGHT SIDE - FORM SECTION ================ */
+.auth-login-form-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+    padding: 48px 40px;
+    position: relative;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    animation: slideInFromRight 0.8s ease-out;
+}
+
+.auth-login-form-wrapper {
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ================ CARD STYLES ================ */
+.auth-login-card {
+    width: 100%;
+    background: white;
+    border: none;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 0;
+    animation: fadeSlideIn 0.8s ease-out 0.3s both;
+    overflow: hidden;
+}
+
+.auth-login-card .ant-card-head {
+    border: none;
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-login-card .ant-card-head::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.auth-login-card:hover .ant-card-head::before {
+    transform: translateX(100%);
+}
+
+.auth-login-card .ant-card-head-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+    color: white;
+    text-align: center;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+    height: auto;
+}
+
+/* remove underline bar since we now have gradient header */
+
+/* remove decorative circle from old style */
+
+/* Hover effect cho title */
+.auth-login-card .ant-card-head-title:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+.auth-login-card .ant-card-head-title:hover::after {
+    width: 100px;
+    transition: all 0.3s ease;
+}
+
+.auth-login-card .ant-card-body {
+    padding: 40px;
+}
+
+/* ================ FORM STYLES ================ */
+.auth-login-form {
+    width: 100%;
+}
+
+.auth-login-form-item {
+    margin-bottom: 24px;
+}
+
+.auth-login-form-item label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-input {
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-input:hover {
+    border-color: #d1d5db;
+    background: white;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-input:focus {
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-form-item-remember {
+    margin-bottom: 32px;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-haha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-checkbox {
+    color: #6b7280;
+    font-weight: 500;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-forgot-link {
+    text-align: right;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+                                    }
+
+.auth-login-forgot-link-a {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-forgot-link-a:hover {
+    color: #2563eb;
+    background: rgba(59, 130, 246, 0.05);
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+/* ================ BUTTONS ================ */
+.auth-login-button {
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    height: 52px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.4);
+    color: white;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-button:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(59, 130, 246, 0.5);
+    color: white;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-button:focus {
+    box-shadow: 
+        0 0 0 4px rgba(59, 130, 246, 0.2),
+        0 8px 20px rgba(59, 130, 246, 0.4);
+    color: white;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-button:active {
+    transform: translateY(0);
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-google-btn {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center;
+  margin-top: 8px;
+  text-align: center;
+  font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-google-btn > div {
+  width: 100% !important;
+  font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-google-btn iframe {
+  width: 100% !important;
+  min-height: 40px;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.08);
+  border: none;
+  font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-button,
+.auth-login-google-btn iframe {
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  height: 40px;
+  background: linear-gradient(90deg, #1890ff 60%, #40a9ff 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.08);
+  transition: background 0.3s;
+  font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-button:hover,
+.auth-login-google-btn iframe:hover {
+  background: linear-gradient(90deg, #096dd9 60%, #1890ff 100%);
+  color: #fff;
+  font-family: 'Geist', 'Inter', Arial, sans-serif;
+        }
+
+/* ================ REGISTER LINK ================ */
+.auth-login-register-link {
+    text-align: center;
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 500;
+    margin-top: 32px;
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-register-link-a {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 4px;
+    transition: color 0.3s ease;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+.auth-login-register-link-a:hover {
+    color: #2563eb;
+    background: rgba(59, 130, 246, 0.05);
+    font-family: 'Geist', 'Inter', Arial, sans-serif;
+}
+
+/* ================ ERROR MESSAGE ================ */
+.auth-login-error {
+    color: #dc2626;
+    background: #fef2f2;
+    padding: 16px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #fecaca;
+}
+
+/* ================ RESPONSIVE DESIGN ================ */
+
+/* ================ TABLET ================ */
+@media screen and (max-width: 1200px) {
+    .auth-login-welcome {
+        padding: 40px 30px;
+    }
+    
+    .auth-login-form-section {
+        padding: 40px 30px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-title {
+        font-size: 42px;
+    }
+    
+    .auth-login-welcome-subtitle {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .auth-login-welcome {
+        padding: 30px 20px;
+    }
+    
+    .auth-login-form-section {
+        padding: 30px 20px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-title {
+        font-size: 38px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-head-title {
+        font-size: 28px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+}
+
+/* ================ TABLET RESPONSIVE ================ */
+@media screen and (max-width: 900px) {
+    .auth-login-container {
+        flex-direction: column;
+    }
+    
+    .auth-login-welcome {
+        flex: none;
+        padding: 40px 30px 30px;
+        min-height: auto;
+    }
+    
+    .auth-login-form-section {
+        flex: 1;
+        padding: 30px 30px 40px;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 20px 20px 0 0;
+        margin-top: -20px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .auth-login-welcome-title {
+        font-size: 32px;
+    }
+    
+    .auth-login-welcome-subtitle {
+        font-size: 17px;
+    }
+    
+    .auth-login-card .ant-card-body {
+        padding: 32px;
+    }
+}
+
+/* ================ MOBILE RESPONSIVE ================ */
+@media screen and (max-width: 768px) {
+    .auth-login-container {
+        flex-direction: column;
+        min-height: 100vh;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome {
+        flex: none;
+        padding: 30px 20px 20px;
+        min-height: auto;
+        animation: fadeSlideIn 0.6s ease-out;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-title {
+        font-size: 28px;
+        margin-bottom: 12px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-subtitle {
+        font-size: 15px;
+        margin-bottom: 16px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-features {
+        display: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-form-section {
+        flex: 1;
+        padding: 25px 20px 35px;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 20px 20px 0 0;
+        margin-top: -20px;
+        position: relative;
+        z-index: 2;
+        animation: slideInFromRight 0.6s ease-out 0.2s both;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-form-wrapper {
+        max-width: 100%;
+    }
+    
+    .auth-login-card {
+        border-radius: 16px;
+    }
+    
+    .auth-login-card .ant-card-head-title {
+        font-size: 24px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-head {
+        padding: 20px 24px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-body {
+        padding: 24px;
+    }
+    
+    .auth-login-form-item {
+        margin-bottom: 18px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-form-item-remember {
+        margin-bottom: 20px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-haha {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-forgot-link {
+        text-align: left;
+        width: 100%;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-input {
+        padding: 12px 14px;
+        font-size: 16px;
+        border-radius: 10px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-button {
+        height: 48px;
+        font-size: 16px;
+        border-radius: 10px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-register-link {
+        margin-top: 20px;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-extra {
+        display: none;
+    }
+}
+
+/* ================ SMALL MOBILE ================ */
+@media screen and (max-width: 480px) {
+    .auth-login-welcome {
+        padding: 25px 16px 16px;
+        min-height: auto;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-subtitle {
+        font-size: 14px;
+        margin-bottom: 12px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-form-section {
+        padding: 20px 16px 30px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card {
+        border-radius: 12px;
+    }
+    
+    .auth-login-card .ant-card-head {
+        padding: 16px 20px;
+    }
+    
+    .auth-login-card .ant-card-head-title {
+        font-size: 22px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-body {
+        padding: 20px;
+    }
+    
+    .auth-login-input {
+        padding: 11px 12px;
+        font-size: 16px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-button {
+        height: 46px;
+        font-size: 15px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-form-item {
+        margin-bottom: 16px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-form-item-remember {
+        margin-bottom: 18px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-register-link {
+        font-size: 13px;
+        padding: 12px;
+        margin-top: 18px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-haha {
+        gap: 8px;
+    }
+}
+
+/* ================ LANDSCAPE MOBILE ================ */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .auth-login-container {
+        flex-direction: row;
+    }
+    
+    .auth-login-welcome {
+        flex: 0.4;
+        padding: 20px 15px;
+        min-height: 100vh;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-title {
+        font-size: 22px;
+        margin-bottom: 10px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-welcome-subtitle {
+        font-size: 12px;
+        margin-bottom: 15px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-welcome-features {
+        display: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-form-section {
+        flex: 0.6;
+        padding: 20px 15px;
+        margin-top: 0;
+        border-radius: 0;
+        box-shadow: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-card .ant-card-head {
+        padding-bottom: 15px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-card .ant-card-head-title {
+        font-size: 18px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-form-item {
+        margin-bottom: 10px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-form-item-remember {
+        margin-bottom: 12px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-button {
+        height: 40px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+}
+
+/* ================ HIGH CONTRAST ================ */
+@media (prefers-contrast: high) {
+    .auth-login-input {
+        border-width: 3px;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-button {
+        background: #1e40af;
+        color: #fff;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-head-title {
+        background: #1e40af;
+        -webkit-background-clip: unset;
+        -webkit-text-fill-color: #1e40af;
+        background-clip: unset;
+        color: #1e40af;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-head-title::after {
+        background: #1e40af;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+}
+
+/* ================ REDUCED MOTION ================ */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-button:hover {
+        transform: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome-feature:hover {
+        transform: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-head-title:hover {
+        transform: none;
+        transition: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-card .ant-card-head-title:hover::after {
+        width: 80px;
+        transition: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+}
+
+/* ================ PRINT STYLES ================ */
+@media print {
+    .auth-login-container {
+        background: white;
+        color: black;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-welcome {
+        display: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+    
+    .auth-login-form-section {
+        flex: 1;
+        box-shadow: none;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+            }
+    
+    .auth-login-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        font-family: 'Geist', 'Inter', Arial, sans-serif;
+    }
+}

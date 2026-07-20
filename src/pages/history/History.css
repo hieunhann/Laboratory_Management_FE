@@ -1,0 +1,159 @@
+.history-container {
+  min-height: 100vh;
+  background: #f8fafc;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.history-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.history-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.history-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+  font-family: "Geist", "Inter", Arial, sans-serif;
+}
+
+.history-subtitle {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 400;
+  font-family: "Geist", "Inter", Arial, sans-serif;
+}
+
+.history-placeholder {
+  background: #fff;
+  border-radius: 16px;
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.placeholder-icon {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.placeholder-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+  font-family: "Geist", "Inter", Arial, sans-serif;
+}
+
+.placeholder-description {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+  font-family: "Geist", "Inter", Arial, sans-serif;
+}
+
+.placeholder-features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  font-family: "Geist", "Inter", Arial, sans-serif;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .history-content {
+    padding: 28px 20px;
+  }
+
+  .history-title {
+    font-size: 2.25rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .history-content {
+    padding: 20px 16px;
+  }
+
+  .history-header {
+    margin-bottom: 32px;
+  }
+
+  .history-title {
+    font-size: 1.75rem;
+  }
+
+  .history-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .history-placeholder {
+    padding: 32px 24px;
+    max-width: 100%;
+  }
+
+  .placeholder-title {
+    font-size: 1.5rem;
+  }
+
+  .placeholder-description {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-content {
+    padding: 16px 12px;
+  }
+
+  .history-header {
+    margin-bottom: 24px;
+  }
+
+  .history-title {
+    font-size: 1.5rem;
+  }
+
+  .history-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .history-placeholder {
+    padding: 24px 20px;
+  }
+
+  .placeholder-title {
+    font-size: 1.25rem;
+  }
+
+  .placeholder-description {
+    font-size: 0.9rem;
+  }
+
+  .feature-item {
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,367 @@
+/* ==========================
+   HemaLink - Date & Time Selection
+   Giao diện giống 100% bản thiết kế trong ảnh
+   ========================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+.dt-selection {
+  font-family: "Inter", sans-serif;
+  background-color: #f6fbff;
+  padding: 40px 0 80px;
+  min-height: 100vh;
+}
+
+/* ------------------- Tiêu đề ------------------- */
+.dt-selection h2 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.dt-sub {
+  display: flex;
+  margin-left: 120px;
+  font-size: 20px;
+  margin-bottom: 28px;
+  font-weight: 700;
+}
+.dt-title {
+  padding-left: 6px;
+  position: relative;
+  bottom: 2px;
+}
+
+/* ------------------- Thẻ địa điểm ------------------- */
+.dt-location-card {
+  background-color: #f0f7ff;
+  border: 1px solid rgba(59, 130, 246, 0.12);
+  padding: 30px 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(14, 30, 50, 0.04);
+  max-width: 960px;
+  margin: 0 auto 28px;
+  color: #0f172a;
+}
+
+.dt-location-card div:first-child {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.dt-location-sub {
+  color: #6b7280;
+  font-size: 13.5px;
+  margin-top: 4px;
+}
+
+/* ------------------- Grid ngày ------------------- */
+.dt-day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 14px;
+  max-width: 960px;
+  margin: 0 auto 24px;
+}
+
+.dt-day {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 10px;
+  padding: 25px 10px;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #0f172a;
+  box-shadow: 0 2px 4px rgba(14, 30, 50, 0.02);
+  transition: all 0.15s ease;
+  cursor: pointer;
+  text-align: center;
+}
+
+.dt-day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(14, 30, 50, 0.06);
+  background-color: #f0f7ff;
+}
+
+.dt-day.selected {
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.12);
+}
+
+/* ------------------- Slot giờ ------------------- */
+.dt-slots {
+  max-width: 960px;
+  margin: 20px auto 0;
+}
+
+.dt-slots h4 {
+  font-size: 15px;
+  color: #0f172a;
+  margin: 24px 0 10px;
+  font-weight: 600;
+}
+
+.dt-slot-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 14px;
+  max-width: 960px;
+  margin: 0 auto 24px;
+}
+
+.dt-slot {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background-color: #ffffff;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  min-width: 64px;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(14, 30, 50, 0.02);
+}
+
+.dt-slot.selected {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 10px 24px rgba(11, 11, 11, 0.12);
+}
+
+.dt-slot:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: transparent;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* ------------------- Nút hành động ------------------- */
+.dt-actions {
+  max-width: 960px;
+  margin: 32px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dt-back {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dt-back:hover {
+  background-color: #f3f4f6;
+}
+
+.dt-continue {
+  background: #9ca3af;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: not-allowed;
+  min-width: 140px;
+  transition: all 0.15s ease;
+}
+
+.dt-continue.enabled {
+  background: #2563eb;
+  cursor: pointer;
+}
+
+.dt-continue.enabled:hover {
+  background: #1d4ed8;
+}
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .dt-selection {
+    padding: 32px 20px 60px;
+  }
+
+  .dt-sub {
+    margin-left: 20px;
+    font-size: 18px;
+  }
+
+  .dt-day-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .dt-slot-row {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .dt-location-card {
+    padding: 24px 18px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+  .dt-selection {
+    padding: 24px 16px 60px;
+  }
+
+  .dt-sub {
+    margin-left: 16px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .dt-title {
+    font-size: 15px;
+  }
+
+  .dt-day-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .dt-day {
+    padding: 18px 8px;
+    font-size: 12px;
+  }
+
+  .dt-slot-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .dt-slot {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .dt-location-card {
+    padding: 20px 16px;
+    margin: 0 16px 24px;
+  }
+
+  .dt-slots {
+    margin: 20px 16px 0;
+  }
+
+  .dt-slots h4 {
+    font-size: 14px;
+  }
+
+  .dt-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+    align-items: stretch;
+    padding: 0 16px;
+  }
+
+  .dt-back,
+  .dt-continue {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .dt-selection {
+    padding: 20px 12px 60px;
+  }
+
+  .dt-sub {
+    margin-left: 12px;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .dt-day-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .dt-day {
+    padding: 16px 6px;
+    font-size: 11px;
+  }
+
+  .dt-slot-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .dt-slot {
+    padding: 10px 12px;
+    font-size: 12px;
+    min-width: auto;
+  }
+
+  .dt-location-card {
+    padding: 16px 12px;
+    margin: 0 12px 20px;
+    font-size: 13px;
+  }
+
+  .dt-location-sub {
+    font-size: 12px;
+  }
+
+  .dt-slots {
+    margin: 16px 12px 0;
+  }
+
+  .dt-actions {
+    padding: 0 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dt-selection {
+    padding: 16px 8px 50px;
+  }
+
+  .dt-sub {
+    margin-left: 8px;
+    font-size: 14px;
+  }
+
+  .dt-day-grid {
+    gap: 6px;
+  }
+
+  .dt-day {
+    padding: 14px 4px;
+    font-size: 10px;
+  }
+
+  .dt-slot-row {
+    gap: 6px;
+  }
+
+  .dt-slot {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .dt-location-card {
+    padding: 14px 10px;
+    margin: 0 8px 16px;
+  }
+
+  .dt-actions {
+    padding: 0 8px;
+  }
+}

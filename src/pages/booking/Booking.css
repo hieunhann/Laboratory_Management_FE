@@ -1,0 +1,151 @@
+.booking-container {
+  min-height: 100vh;
+  background: #f8fafc;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.booking-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  overflow: visible;
+  position: relative;
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+}
+
+.continue-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, transform 0.2s;
+  font-family: "Geist", "Inter", Arial, sans-serif;
+}
+
+.continue-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.continue-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* New: package mode toggle buttons (two buttons like ảnh) */
+.package-mode-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+  align-items: center;
+}
+
+/* filled black primary */
+.btn-primary-1 {
+  background: #fff;
+  color: #0b0b0b;
+  border: 0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 160px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* outline white secondary */
+.btn-secondary {
+  background: #fff;
+  color: #111827;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+/* active states: active button (either primary or secondary) => black bg, white text */
+.btn-primary-1.active,
+.btn-secondary.active {
+  background: #0b0b0b;
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 6px rgba(11, 11, 11, 0.12);
+}
+
+/* Hover states for buttons - không đổi màu xanh */
+.btn-primary-1:hover:not(.active),
+.btn-secondary:hover:not(.active) {
+  background: #f9fafb;
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive: full width on small screens */
+@media (max-width: 480px) {
+  .package-mode-toggle {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .btn-primary-1,
+  .btn-secondary {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* New: attempt to hide search elements inside PackageSelection (covers common classnames) */
+.booking-content .package-search,
+.booking-content .search-bar,
+.booking-content .package-selection .search,
+.booking-content .search-input,
+.booking-content input[type="search"],
+.booking-content .search {
+  display: none !important;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .booking-content {
+    padding: 32px 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .booking-content {
+    padding: 20px 16px;
+  }
+
+  .booking-actions {
+    margin-top: 24px;
+  }
+
+  .continue-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-content {
+    padding: 16px 12px;
+  }
+}

@@ -1,0 +1,93 @@
+.lab-sidebar {
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.lab-sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.lab-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lab-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: #2563eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.lab-logo-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.lab-logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.lab-sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+.lab-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  margin: 4px 12px;
+  border-radius: 8px;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.lab-sidebar-item:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.lab-sidebar-item.active {
+  background: #2563eb;
+  color: white;
+}
+
+.lab-sidebar-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lab-sidebar-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.lab-sidebar-label {
+  flex: 1;
+}

@@ -1,0 +1,264 @@
+.package-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Grid 3 columns like ảnh */
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Card */
+.package-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 300px;
+}
+
+/* Selected card: blue outline + shadow, slightly elevated */
+.package-card.selected {
+  border: 2px solid #3b82f6; /* blue */
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.12);
+  transform: translateY(-6px);
+}
+
+/* Popular badge */
+.popular-badge {
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  background: #3b82f6;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* Header */
+.package-title {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+.package-description {
+  margin: 6px 0 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Price and duration row */
+.package-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+.price-amount {
+  color: #3b82f6;
+  font-weight: 800;
+  font-size: 22px;
+}
+.package-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Includes list */
+.includes-title {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #111827;
+}
+.includes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.includes-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #374151;
+  font-size: 13px;
+}
+
+/* Toggle button */
+.toggle-more-btn {
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  color: #3b82f6;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+.toggle-more-btn:hover {
+  background: #f9fafb;
+  border-color: #3b82f6;
+}
+
+/* Summary bar below */
+.selection-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  padding: 18px 22px;
+  border: 2px solid rgba(59, 130, 246, 0.16);
+  background: #fff;
+  gap: 12px;
+}
+
+/* Left side: title and sub */
+.summary-left .summary-title {
+  font-weight: 700;
+  color: #0f172a;
+}
+.summary-left .summary-sub {
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+/* Right side: price and continue button */
+.summary-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.summary-price {
+  font-weight: 800;
+  font-size: 20px;
+  color: #3b82f6;
+}
+
+/* Black rounded continue button like ảnh */
+.summary-continue {
+  background: #0b0b0b;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 180px;
+}
+.summary-continue:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .packages-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .package-card {
+    padding: 18px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .package-selection {
+    gap: 20px;
+  }
+
+  .packages-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .package-card {
+    padding: 16px;
+    min-height: auto;
+  }
+
+  .package-title {
+    font-size: 16px;
+  }
+
+  .package-description {
+    font-size: 13px;
+  }
+
+  .price-amount {
+    font-size: 20px;
+  }
+
+  .selection-summary {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .summary-right {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .summary-price {
+    font-size: 18px;
+  }
+
+  .summary-continue {
+    width: 100%;
+    min-width: auto;
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .package-card {
+    padding: 14px;
+  }
+
+  .package-title {
+    font-size: 15px;
+  }
+
+  .price-amount {
+    font-size: 18px;
+  }
+
+  .includes-item {
+    font-size: 12px;
+  }
+
+  .selection-summary {
+    padding: 14px;
+  }
+
+  .summary-title {
+    font-size: 14px;
+  }
+
+  .summary-sub {
+    font-size: 13px;
+  }
+}
