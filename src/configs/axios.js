@@ -1,13 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: "https://hemalink-gateway-5ils.onrender.com/",
 });
 
 // Create a separate axios instance for public API calls (without auth headers)
 // This instance will never have Authorization headers set
 export const publicApi = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: "https://hemalink-gateway-5ils.onrender.com/",
 });
 
 // Ensure publicApi never gets Authorization headers
