@@ -114,7 +114,9 @@ export const useLoginWithPassword = () => {
           role === "LabUser" ||
           role === "Receptionist" ||
           role === "LabBlogger" ||
-          role === "Technician"
+          role === "Technician" ||
+          role === "Staff" ||
+          role === "Consultant"
         ) {
           toast.success("Đăng nhập thành công!");
           navigate("/dashboard");
@@ -375,7 +377,11 @@ export const getUserById = async (userId) => {
 
     return userData;
   } catch (error) {
-    console.error(`Error getting user ${userId}:`, error);
+    if (error.response && error.response.status === 404) {
+      console.warn(`User ${userId} not found (might be deleted).`);
+    } else {
+      console.error(`Error getting user ${userId}:`, error);
+    }
     return null;
   }
 };
