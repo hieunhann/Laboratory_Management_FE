@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Form } from "antd";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -14,12 +14,55 @@ import {
   // formatDateTime,
 } from "../utils/formatDate";
 
+const extractErrorMessage = (error, defaultMsg) => {
+  console.error("API Error Details:", error);
+  if (error.response?.data) {
+    const data = error.response.data;
+    if (typeof data === "string") return data;
+    if (Array.isArray(data)) return data.join(" | ");
+    if (data.message) return data.message;
+    if (data.Message) return data.Message;
+    if (data.error) return data.error;
+    if (data.detail) return data.detail;
+    if (data.errors) {
+      const validationErrors = data.errors;
+      const messages = [];
+      for (const key in validationErrors) {
+        if (Array.isArray(validationErrors[key])) {
+          messages.push(...validationErrors[key]);
+        } else if (typeof validationErrors[key] === "string") {
+          messages.push(validationErrors[key]);
+        }
+      }
+      if (messages.length > 0) return messages.join(" | ");
+    }
+    try {
+      const stringified = JSON.stringify(data);
+      if (stringified && stringified !== "{}") {
+        return stringified;
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+  return error.message || defaultMsg;
+};
+
 export const useCreatePatient = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.openModal) {
+      setIsModalOpen(true);
+      // Xóa state để tránh việc tự động mở lại modal khi reload trang
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate, location.pathname]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => {
@@ -54,11 +97,7 @@ export const useCreatePatient = () => {
         navigate("/profile");
       }
     } catch (error) {
-      console.error("Error creating profile:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Có lỗi xảy ra khi tạo hồ sơ. Vui lòng thử lại!"
-      );
+      toast.error(extractErrorMessage(error, "Có lỗi xảy ra khi tạo hồ sơ. Vui lòng thử lại!"));
     } finally {
       setIsSubmitting(false);
     }
@@ -186,7 +225,7 @@ export const useUpdateProfile = (
         setShowModal(false);
         toast.success("Cập nhật thông tin thành công!");
       } catch (error) {
-        toast.error(error.response?.data?.message || "Cập nhật thất bại!");
+        toast.error(extractErrorMessage(error, "Cập nhật thất bại!"));
       }
     }
   };
@@ -272,10 +311,7 @@ export const useAddMedicalRecords = (
         }
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Có lỗi xảy ra khi thêm hồ sơ. Vui lòng thử lại!"
-      );
+      toast.error(extractErrorMessage(error, "Có lỗi xảy ra khi thêm hồ sơ. Vui lòng thử lại!"));
     } finally {
       setIsCreating(false);
     }

@@ -34,15 +34,12 @@ const rolePermissions = {
   LabBlogger: ["dashboard", "blogs", "categories"],
   Technician: ["dashboard", "instruments"],
   LabUser: ["dashboard", "patients", "appointment-schedule"],
-  Staff: [
-    "dashboard",
-    "patients",
-    "appointment-schedule",
+  Staff: ["dashboard", "patients", "appointment-schedule"],
+  Consultant: [
     "instruments",
     "catalogs",
     "parameter",
   ],
-  Consultant: ["dashboard", "patients", "appointment-schedule"],
 };
 
 // Get current user role from token

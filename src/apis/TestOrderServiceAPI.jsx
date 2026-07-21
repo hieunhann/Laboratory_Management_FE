@@ -173,6 +173,7 @@ export const bookingService = {
     const response = await api.post(`testorder/api/Payment/vnpay-url`, {
       bookingId,
       amount,
+      returnUrl: window.location.origin + "/booking/successBooking",
     });
     return response;
   },

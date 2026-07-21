@@ -61,3 +61,8 @@ button:focus-visible {
 }
 
 /* Light theme enforced above; remove dark override */
+
+/* Fix Toastify z-index to show on top of overlays */
+.Toastify__toast-container {
+  z-index: 99999 !important;
+}

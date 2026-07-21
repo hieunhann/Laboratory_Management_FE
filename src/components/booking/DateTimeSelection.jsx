@@ -145,7 +145,7 @@ function DateTimeSelection({ onBack, onContinue }) {
                   <div
                     style={{
                       fontSize: "0.7rem",
-                      color: isFullyBooked ? "#ef4444" : "#6b7280",
+                      color: isFullyBooked ? "#ef4444" : selectedTime === t ? "#ffffff" : "#6b7280",
                       marginTop: "2px",
                       fontWeight: isFullyBooked ? "600" : "normal",
                       cursor: isFullyBooked ? "not-allowed" : "pointer",
@@ -180,7 +180,7 @@ function DateTimeSelection({ onBack, onContinue }) {
                   <div
                     style={{
                       fontSize: "0.7rem",
-                      color: isFullyBooked ? "#ef4444" : "#6b7280",
+                      color: isFullyBooked ? "#ef4444" : selectedTime === t ? "#ffffff" : "#6b7280",
                       marginTop: "2px",
                       fontWeight: isFullyBooked ? "600" : "normal",
                     }}
