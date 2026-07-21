@@ -28,7 +28,7 @@ const BlogAPI = {
       search,
       categoryId,
     } = params;
-    let url = `blog/api/BlogPost?page=${page}&pageSize=${pageSize}`;
+    let url = `blog/api/blog-posts?page=${page}&pageSize=${pageSize}`;
 
     if (status !== undefined && status !== null) {
       url += `&status=${status}`;
@@ -60,7 +60,7 @@ const BlogAPI = {
   getApprovedBlogsWithSearch: async (page = 1, pageSize = 100, search = "") => {
     try {
       const { page: p = 1, pageSize: ps = 100 } = { page, pageSize };
-      let url = `blog/api/BlogPost?page=${p}&pageSize=${ps}&status=1`;
+      let url = `blog/api/blog-posts?page=${p}&pageSize=${ps}&status=1`;
 
       if (search && search.trim() !== "") {
         url += `&search=${encodeURIComponent(search.trim())}`;
@@ -104,7 +104,7 @@ const BlogAPI = {
   getApprovedBlogs: async (page = 1, pageSize = 100, categoryId = null) => {
     try {
       const { page: p = 1, pageSize: ps = 100 } = { page, pageSize };
-      let url = `blog/api/BlogPost?page=${p}&pageSize=${ps}&status=1`;
+      let url = `blog/api/blog-posts?page=${p}&pageSize=${ps}&status=1`;
 
       // Ensure categoryId is properly formatted
       if (
@@ -162,12 +162,12 @@ const BlogAPI = {
     const token = localStorage.getItem("accessToken");
     if (token) {
       try {
-        const response = await api.get(`blog/api/BlogPost/${id}`);
+        const response = await api.get(`blog/api/blog-posts/${id}`);
         return response.data;
       } catch (authError) {
         // If 401, try without auth
         if (authError.response?.status === 401) {
-          const response = await publicApi.get(`blog/api/BlogPost/${id}`);
+          const response = await publicApi.get(`blog/api/blog-posts/${id}`);
           return response.data;
         }
         throw authError;
@@ -175,7 +175,7 @@ const BlogAPI = {
     }
 
     // Use publicApi for public requests (no auth required)
-    const response = await publicApi.get(`blog/api/BlogPost/${id}`);
+    const response = await publicApi.get(`blog/api/blog-posts/${id}`);
     return response.data;
   },
 
@@ -187,7 +187,7 @@ const BlogAPI = {
   createBlog: async (blogData) => {
     try {
       // Axios tự động xử lý FormData, không cần set Content-Type
-      const response = await api.post("blog/api/BlogPost", blogData);
+      const response = await api.post("blog/api/blog-posts", blogData);
       return response.data;
     } catch (error) {
       console.log("Error creating blog:", error);
@@ -204,7 +204,7 @@ const BlogAPI = {
   updateBlog: async (id, blogData) => {
     try {
       // Axios tự động xử lý FormData, không cần set Content-Type
-      const response = await api.put(`blog/api/BlogPost/${id}`, blogData);
+      const response = await api.put(`blog/api/blog-posts/${id}`, blogData);
       return response.data;
     } catch (error) {
       console.log(`Error updating blog ${id}:`, error);
@@ -219,7 +219,7 @@ const BlogAPI = {
    */
   deleteBlog: async (id) => {
     try {
-      const response = await api.delete(`blog/api/BlogPost/${id}`);
+      const response = await api.delete(`blog/api/blog-posts/${id}`);
       return response.data;
     } catch (error) {
       console.log(`Error deleting blog ${id}:`, error);
@@ -235,7 +235,7 @@ const BlogAPI = {
    */
   approveBlog: async (id, status = 1) => {
     try {
-      const response = await api.put(`blog/api/BlogPost/status/${id}`, {
+      const response = await api.put(`blog/api/blog-posts/status/${id}`, {
         status: status,
       });
       return response.data;
@@ -253,7 +253,7 @@ const BlogAPI = {
    */
   rejectBlog: async (id, status = 2) => {
     try {
-      const response = await api.put(`blog/api/BlogPost/status/${id}`, {
+      const response = await api.put(`blog/api/blog-posts/status/${id}`, {
         status: status,
       });
       return response.data;
@@ -273,13 +273,13 @@ const BlogAPI = {
       const token = localStorage.getItem("accessToken");
       if (token) {
         try {
-          const response = await api.get("blog/api/Category");
+          const response = await api.get("blog/api/categories");
           return response.data;
         } catch (authError) {
           // If 401, try without auth
           if (authError.response?.status === 401) {
             console.log("Auth failed, trying public access for categories");
-            const response = await publicApi.get("blog/api/Category");
+            const response = await publicApi.get("blog/api/categories");
             return response.data;
           }
           throw authError;
@@ -287,7 +287,7 @@ const BlogAPI = {
       }
 
       // Use publicApi for public requests (no auth required)
-      const response = await publicApi.get("blog/api/Category");
+      const response = await publicApi.get("blog/api/categories");
       return response.data;
     } catch (error) {
       // If still 401, return empty array instead of throwing
@@ -311,7 +311,7 @@ const BlogAPI = {
    */
   createCategory: async (categoryData) => {
     try {
-      const response = await api.post("blog/api/Category", categoryData);
+      const response = await api.post("blog/api/categories", categoryData);
       return response.data;
     } catch (error) {
       console.log("Error creating category:", error);
@@ -329,7 +329,7 @@ const BlogAPI = {
    */
   updateCategory: async (id, categoryData) => {
     try {
-      const response = await api.put(`blog/api/Category/${id}`, categoryData);
+      const response = await api.put(`blog/api/categories/${id}`, categoryData);
       return response.data;
     } catch (error) {
       console.log(`Error updating category ${id}:`, error);
@@ -352,7 +352,7 @@ const BlogAPI = {
       }
       
       console.log(`Deleting category with ID: ${categoryId}`);
-      const response = await api.delete(`blog/api/Category/${categoryId}`);
+      const response = await api.delete(`blog/api/categories/${categoryId}`);
       
       // Accept both 200 OK and 204 No Content as success
       if (response.status === 200 || response.status === 204) {
@@ -382,7 +382,7 @@ const BlogAPI = {
     try {
       // Try different possible endpoints
       // If backend has a specific endpoint for images
-      const response = await api.get(`blog/api/BlogPost/image/${imagePath}`, {
+      const response = await api.get(`blog/api/blog-posts/image/${imagePath}`, {
         responseType: "blob",
       });
       return response.data;
@@ -407,13 +407,13 @@ const BlogAPI = {
       if (token) setAuthToken(token);
       // Try with auth first, fallback to public if 401
       try {
-        const response = await api.get(`blog/api/Comment/post/${postId}`);
+        const response = await api.get(`blog/api/comments/post/${postId}`);
         return response.data;
       } catch (authError) {
         if (authError.response?.status === 401) {
           // Try public access for viewing comments
           const response = await publicApi.get(
-            `blog/api/Comment/post/${postId}`
+            `blog/api/comments/post/${postId}`
           );
           return response.data;
         }
@@ -441,7 +441,7 @@ const BlogAPI = {
     try {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const response = await api.get(`blog/api/Comment/${commentId}`);
+      const response = await api.get(`blog/api/comments/${commentId}`);
       return response.data;
     } catch (error) {
       console.log(`Error fetching comment ${commentId}:`, error);
@@ -480,7 +480,7 @@ const BlogAPI = {
         isUpdated: commentData.isUpdated || false,
       };
 
-      const response = await api.post("blog/api/Comment", commentPayload);
+      const response = await api.post("blog/api/comments", commentPayload);
       return response.data;
     } catch (error) {
       console.log("Error creating comment:", error);
@@ -503,7 +503,7 @@ const BlogAPI = {
       }
       setAuthToken(token);
       const response = await api.put(
-        `blog/api/Comment/${commentId}`,
+        `blog/api/comments/${commentId}`,
         commentData
       );
       return response.data;
@@ -525,7 +525,7 @@ const BlogAPI = {
         throw new Error("Authentication required to delete comment");
       }
       setAuthToken(token);
-      const response = await api.delete(`blog/api/Comment/${commentId}`);
+      const response = await api.delete(`blog/api/comments/${commentId}`);
       return response.data;
     } catch (error) {
       console.log(`Error deleting comment ${commentId}:`, error);
@@ -545,7 +545,7 @@ const BlogAPI = {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
       const { search, postId } = params;
-      let url = "blog/api/Comment/search";
+      let url = "blog/api/comments/search";
 
       const queryParams = [];
       if (search && search.trim() !== "") {

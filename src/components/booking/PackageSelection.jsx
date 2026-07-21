@@ -3,7 +3,7 @@ import "./PackageSelection.css";
 import api from "../../configs/axios";
 import { setAuthToken } from "../../utils/auth";
 
-const EndPoint = "testorder/api/CatalogBundle";
+const EndPoint = "testorder/api/catalog-bundles";
 
 function PackageSelection({
   selectedPackage,
@@ -24,7 +24,18 @@ function PackageSelection({
           if (token) setAuthToken(token);
           const response = await api.get(EndPoint);
           if (response.status >= 200 && response.status < 300) {
-            setPackages(response.data || []);
+            let pkgData = response?.data;
+            let finalPkgs = [];
+            if (Array.isArray(pkgData)) {
+              finalPkgs = pkgData;
+            } else if (Array.isArray(pkgData?.items)) {
+              finalPkgs = pkgData.items;
+            } else if (Array.isArray(pkgData?.data?.items)) {
+              finalPkgs = pkgData.data.items;
+            } else if (Array.isArray(pkgData?.data)) {
+              finalPkgs = pkgData.data;
+            }
+            setPackages(finalPkgs);
           }
         } catch (error) {
           console.log(error);

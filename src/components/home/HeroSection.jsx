@@ -43,7 +43,7 @@ export default function HeroSection() {
         <div className="hero-section-right">
           <div className="hero-img-bg">
             <img
-              src="https://st2.depositphotos.com/1194063/6742/i/950/depositphotos_67429539-stock-photo-scientist-looking-through-a-microscope.jpg"
+              src="https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=2000&auto=format&fit=crop"
               alt="Phòng xét nghiệm"
               className="hero-img"
             />

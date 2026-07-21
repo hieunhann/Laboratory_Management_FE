@@ -317,7 +317,7 @@ const InstrumentRun = () => {
       const fetchResults = async () => {
         try {
           const res = await api.get(
-            `/testorder/api/TestResult/booking/${bookingId}`
+            `/testorder/api/bookings/${bookingId}/results`
           );
           if (res.data && Array.isArray(res.data.catalogs)) {
             setResults(res.data.catalogs);

@@ -13,6 +13,7 @@ export default function TestResultDetail({
   const [realResult, setRealResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [aiReviews, setAiReviews] = useState([]);
 
   useEffect(() => {
     if (!bookingId) return;
@@ -20,18 +21,29 @@ export default function TestResultDetail({
     setError(null);
     const fetchAPI = async () => {
       try {
-        const response = await api.get(
-          `testorder/api/TestResult/booking/${bookingId}`
-        );
-        if (response.status >= 200 && response.status < 300) {
-          setRealResult(response.data);
-          console.log(response.data);
+        const [resultRes, aiRes] = await Promise.allSettled([
+          api.get(`testorder/api/bookings/${bookingId}/results`),
+          api.post(`testorder/api/bookings/${bookingId}/ai-reviews`)
+        ]);
+
+        if (resultRes.status === "fulfilled" && resultRes.value.status >= 200 && resultRes.value.status < 300) {
+          const data = resultRes.value.data?.data || resultRes.value.data;
+          setRealResult(data);
+          console.log("Real Result:", data);
         } else {
           setRealResult(null);
           setError("Không lấy được kết quả xét nghiệm thực tế.");
         }
+
+        const aiData = aiRes.status === "fulfilled" ? (aiRes.value.data?.data || aiRes.value.data) : null;
+        if (aiData && aiData.results) {
+          setAiReviews(aiData.results);
+        } else {
+          setAiReviews([]);
+        }
+
       } catch (err) {
-        setRealResult(err || null);
+        setRealResult(null);
         setError("Không lấy được kết quả xét nghiệm thực tế.");
       } finally {
         setLoading(false);
@@ -178,23 +190,67 @@ export default function TestResultDetail({
                       </tr>
                     </thead>
                     <tbody>
-                      {section.tests.map((testItem, testIndex) => (
-                        <tr key={testIndex}>
-                          <td className="test-name">{testItem.name}</td>
-                          <td className="test-value">{testItem.value}</td>
-                          <td className="test-unit">{testItem.unit}</td>
-                          <td className="test-reference">
-                            {testItem.referenceRange}
-                          </td>
-                          <td className="test-status">
-                            {testItem.isNormal === true ? (
-                              <Tag color="success">Bình thường</Tag>
-                            ) : (
-                              <Tag color="error">Bất thường</Tag>
+                      {section.tests.map((testItem, testIndex) => {
+                        const aiItem = aiReviews.find(
+                          (ai) => ai.parameter === testItem.name
+                        );
+                        const comment = aiItem?.comment;
+                        const statusStr = aiItem?.status;
+
+                        let isNormal = testItem.isNormal === true;
+                        if (statusStr) {
+                          isNormal = statusStr === "Normal";
+                        }
+
+                        return (
+                          <React.Fragment key={testIndex}>
+                            <tr>
+                              <td className="test-name">{testItem.name}</td>
+                              <td className="test-value">{testItem.value}</td>
+                              <td className="test-unit">{testItem.unit}</td>
+                              <td className="test-reference">
+                                {testItem.referenceRange}
+                              </td>
+                              <td className="test-status">
+                                {isNormal ? (
+                                  <Tag color="success">Bình thường</Tag>
+                                ) : (
+                                  <Tag color="error">Bất thường</Tag>
+                                )}
+                              </td>
+                            </tr>
+                            {comment && (
+                              <tr>
+                                <td colSpan="5" style={{ padding: "8px 16px", borderBottom: "1px solid #f0f0f0" }}>
+                                  <div
+                                    style={{
+                                      padding: "8px 12px",
+                                      backgroundColor: "#e6f7ff",
+                                      borderRadius: "6px",
+                                      border: "1px solid #91d5ff",
+                                      display: "flex",
+                                      gap: "8px",
+                                      alignItems: "flex-start"
+                                    }}
+                                  >
+                                    <span style={{ color: "#1890ff", marginTop: "2px" }}>✨</span>
+                                    <span
+                                      style={{
+                                        fontSize: "13px",
+                                        color: "#0050b3",
+                                        fontStyle: "italic",
+                                        lineHeight: "1.5"
+                                      }}
+                                    >
+                                      {comment}
+                                    </span>
+                                  </div>
+                                </td>
+                              </tr>
                             )}
-                          </td>
-                        </tr>
-                      ))}
+                          </React.Fragment>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

@@ -10,9 +10,9 @@ import TestOrderServiceAPI from "../../apis/TestOrderServiceAPI";
 import { setAuthToken } from "../../utils/auth";
 
 function BookingHistory() {
-  const endPoint = "testorder/api/Booking/patient";
-  const endPoint1 = "testorder/api/TestBundle";
-  const endPointCatalog = "testorder/api/TestCatalog";
+  const endPoint = "testorder/api/bookings/patient";
+  const endPoint1 = "testorder/api/test-bundles";
+  const endPointCatalog = "testorder/api/test-catalogs";
 
   const [expanded, setExpanded] = useState({});
   const navigate = useNavigate();
@@ -39,13 +39,13 @@ function BookingHistory() {
         if (token) setAuthToken(token);
 
         // Build API URL with filters
-        let apiUrl = `${endPoint}?patientId=${patientId}&pageNumber=${page}&pageSize=${pageSize}`;
+        let apiUrl = `testorder/api/patients/${patientId}/bookings?pageNumber=${page}&pageSize=${pageSize}`;
         if (filterStatus) {
           apiUrl += `&filterStatus=${filterStatus}`;
         }
 
         const response = await api.get(apiUrl);
-        const data = response.data.bookingResponses;
+        const data = response?.data?.bookingResponses || response?.data?.data?.bookingResponses || response?.data?.items || response?.data?.data?.items || response?.data?.data || response?.data;
         if (response.status >= 200 && response.status < 300) {
           let allItems = [];
           if (Array.isArray(data)) {
@@ -58,7 +58,7 @@ function BookingHistory() {
 
           setAllBookings(allItems);
           // Get total from API response
-          setTotal(response.data.totalRecords || allItems.length);
+          setTotal(response?.data?.totalRecords || response?.data?.data?.totalRecords || response?.data?.totalItems || response?.data?.data?.totalItems || allItems.length);
           setBookingHistory(allItems);
 
           // Build unique ids from all items
@@ -128,7 +128,7 @@ function BookingHistory() {
               bookingIds.map(async (id) => {
                 try {
                   const r = await api.get(
-                    `testorder/api/Payment/by-booking?bookingId=${id}`
+                    `testorder/api/bookings/${id}/payments`
                   );
                   if (r.status >= 200 && r.status < 300) {
                     console.log("data" + r);

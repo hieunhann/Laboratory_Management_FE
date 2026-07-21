@@ -8,8 +8,10 @@
 }
 .navbar {
   width: 100%;
-  background: #ffffff !important;
-  border-bottom: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,8 +22,8 @@
   z-index: 10000 !important;
   min-height: 72px;
   box-sizing: border-box;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .navbar.scrolled {
@@ -391,10 +393,12 @@
   /* đặt sát parent (ngay bên dưới) để tránh khoảng trống khi di chuột */
   top: calc(100% + 2px);
   right: 0;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   min-width: 200px;
   z-index: 10000;
   padding: 8px;

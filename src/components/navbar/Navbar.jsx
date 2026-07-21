@@ -34,7 +34,7 @@ function Navbar() {
       setAuthToken(token);
       const response = await api.get(`patient/v1/patients/me`);
 
-      if (response.data && response.data.succeeded === true) {
+      if (response.data) {
         navigate("/profile");
       } else {
         navigate("/create-profile");

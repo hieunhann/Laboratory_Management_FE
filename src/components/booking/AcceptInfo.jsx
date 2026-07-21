@@ -10,7 +10,7 @@ import { formatDate1 } from "../../utils/formatDate";
 import { setAuthToken } from "../../utils/auth";
 // import { toast } from "react-toastify";
 
-const endPoint = "testorder/api/Booking";
+const endPoint = "testorder/api/bookings";
 
 function AcceptInfo({
   selectedItems,
@@ -158,7 +158,8 @@ function AcceptInfo({
           "Đặt lịch thành công, vui lòng thanh toán sau khi đặt lịch"
         );
         // Lấy bookingId từ response (API có thể trả response.data.bookingId hoặc response.data)
-        const newBookingId = response.data?.bookingId || response.data || "";
+        const payloadData = response?.data?.data || response?.data;
+        const newBookingId = payloadData?.bookingId || payloadData?.instancesCode || payloadData || "";
         // Gọi onProceed và truyền bookingId ngay (không đợi state update)
         if (onProceed) onProceed(newBookingId);
       }
