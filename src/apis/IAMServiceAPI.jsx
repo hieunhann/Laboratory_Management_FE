@@ -1,10 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import api from "../configs/axios";
-import axios from "axios";
 
-const URL = "iam/api/Auth/";
+const URL = "iam/api/auth/";
 const URL_Google = "iam/v1/auth/";
-const URL_User = "iam/api/Users/";
+const URL_User = "iam/api/users/";
 const URL_RBAC = "iam/api/rbac/";
 
 // ==================== Auth APIs ====================
@@ -62,16 +61,8 @@ export const IAMServiceAPI = {
 
   // GET /api/statistics/users
   // Lấy thống kê người dùng và khách hàng
-  // Note: This API is on port 5001, not 8080
   GetUsersStatistics: async () => {
-    const iamApi = axios.create({
-      baseURL: "http://20.6.88.113:8080/",
-    });
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      iamApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    }
-    return await iamApi.get("iam/api/statistics/users");
+    return await api.get("iam/api/statistics/users");
   },
 };
 
@@ -95,7 +86,7 @@ export const getRoles = async (params = {}) => {
 // Tạo role mới
 export const createRole = async (data) => {
   if (!data) throw new Error("Role data is required");
-  const response = await api.post("iam/api/Roles", data);
+  const response = await api.post("iam/api/roles", data);
   return response;
 };
 
@@ -103,7 +94,7 @@ export const createRole = async (data) => {
 // Xóa role
 export const deleteRole = async (id) => {
   if (!id) throw new Error("Role ID is required");
-  const response = await api.delete(`iam/api/Roles/${id}`);
+  const response = await api.delete(`iam/api/roles/${id}`);
   return response;
 };
 

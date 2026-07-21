@@ -24,7 +24,11 @@ export default function BlogSection() {
 
       // Handle new format (object with blogs array) or old format (array)
       let latestBlogs = [];
-      if (result && result.blogs) {
+      if (result?.data?.data && Array.isArray(result.data.data)) {
+        latestBlogs = result.data.data;
+      } else if (result?.data?.items && Array.isArray(result.data.items)) {
+        latestBlogs = result.data.items;
+      } else if (result && result.blogs) {
         latestBlogs = result.blogs;
       } else if (Array.isArray(result)) {
         latestBlogs = result;

@@ -77,16 +77,16 @@ export const useCreatePatient = () => {
       setAuthToken(token);
 
       const data = {
-        FullName: values.fullName,
-        DateOfBirth: dayjs(values.dateOfBirth).format("YYYY-MM-DD"),
-        Gender: parseInt(values.gender, 10), // Convert string to number
-        BloodType: parseInt(values.bloodType, 10), // Convert string to number
-        Phone: values.phoneNumber,
-        Email: values.email,
-        Address: values.address,
-        CitizenId: values.identityCard,
-        InsuranceNumber: values.healthInsurance || "", // Handle empty string
-        CreatedChannel: "self",
+        fullName: values.fullName,
+        dateOfBirth: dayjs(values.dateOfBirth).format("YYYY-MM-DD"),
+        gender: parseInt(values.gender, 10), // Convert string to number
+        bloodType: parseInt(values.bloodType, 10), // Convert string to number
+        phone: values.phoneNumber,
+        email: values.email,
+        address: values.address,
+        citizenId: values.identityCard,
+        insuranceNumber: values.healthInsurance || "", // Handle empty string
+        createdChannel: "self",
       };
 
       const response = await PatientServiceAPI.CreateProfile(data);
@@ -122,13 +122,14 @@ export const useFetchProfile = () => {
       setAuthToken(token);
 
       const check = await PatientServiceAPI.Profile();
-      if (!check.data || check.data.succeeded === false || !check.data.data) {
+      if (!check?.data || check?.data?.succeeded === false || check?.data?.data?.succeeded === false) {
         navigate("/create-profile");
         return;
       }
 
-      const patient = check.data.data;
-      const patientId = patient.patientId;
+      // Handle nested standard API responses safely
+      const patient = check.data?.data?.data || check.data?.data || check.data;
+      const patientId = patient?.patientId || patient?.id;
 
       if (!patientId) {
         navigate("/create-profile");
@@ -136,8 +137,8 @@ export const useFetchProfile = () => {
       }
 
       const response = await PatientServiceAPI.GetProfileByPatientId(patientId);
-      const data = response.data;
-      if (response.status === 200 && response.data) {
+      const data = response?.data?.data || response?.data;
+      if (response.status === 200 && data) {
         setUserData(data);
 
         dispatch(
@@ -172,8 +173,19 @@ export const useMedicalRecord = () => {
       );
       if (response.status >= 200 && response.status < 300) {
         // Đúng cấu trúc response: lấy từ response.data.items và response.data.total
-        setMedicalRecords(response.data.items || [null]);
-        setTotalRecords(response.data.total || 0);
+        const respData = response.data;
+        let finalItems = [];
+        if (Array.isArray(respData)) {
+          finalItems = respData;
+        } else if (Array.isArray(respData?.items)) {
+          finalItems = respData.items;
+        } else if (Array.isArray(respData?.data?.items)) {
+          finalItems = respData.data.items;
+        } else if (Array.isArray(respData?.data)) {
+          finalItems = respData.data;
+        }
+        setMedicalRecords(finalItems);
+        setTotalRecords(respData?.total || respData?.data?.total || respData?.totalItems || respData?.data?.totalItems || finalItems.length || 0);
       }
     } catch (error) {
       toast.error(error);
@@ -200,15 +212,15 @@ export const useUpdateProfile = (
 
     if (Object.keys(newErrors).length === 0) {
       const data = {
-        FullName: formData.fullName,
-        DateOfBirth: formData.dateOfBirth,
-        Gender: formData.gender === "1" ? 1 : formData.gender === "0" ? 0 : 2,
-        BloodType: parseInt(formData.bloodType, 10),
-        Phone: formData.phoneNumber,
-        Email: formData.email,
-        Address: formData.address,
-        CitizenId: formData.identityCard,
-        InsuranceNumber: formData.healthInsurance || "",
+        fullName: formData.fullName,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender === "1" ? 1 : formData.gender === "0" ? 0 : 2,
+        bloodType: parseInt(formData.bloodType, 10),
+        phone: formData.phoneNumber,
+        email: formData.email,
+        address: formData.address,
+        citizenId: formData.identityCard,
+        insuranceNumber: formData.healthInsurance || "",
       };
 
       try {

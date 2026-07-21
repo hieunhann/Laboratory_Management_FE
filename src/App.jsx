@@ -159,7 +159,7 @@ function App() {
       element: (
         <>
           <AppContent />
-          <AdminDashboardPage />
+          <DashboardPage />
         </>
       ),
     },

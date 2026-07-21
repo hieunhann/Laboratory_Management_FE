@@ -32,11 +32,13 @@
 /* Filters card */
 .booking-filters {
   margin: 20px 0 24px 0;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   padding: 20px 24px;
   border-radius: 12px;
-  border: 1px solid #e8eef5;
-  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 24px rgba(16, 24, 40, 0.1);
 }
 .filters-title img {
   margin-right: 10px;
@@ -98,10 +100,12 @@
 /* booking card base */
 .booking-card {
   /* giữ overflow để badge vẫn ở trên cùng */
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.2s;
   overflow: visible;
 }
@@ -113,9 +117,11 @@
   flex-direction: column;
   gap: 10px;
   padding: 18px 20px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .booking-card-header .booking-code {
@@ -553,9 +559,11 @@
 .booking-history-empty {
   text-align: center;
   padding: 60px 20px;
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .booking-history-empty svg {

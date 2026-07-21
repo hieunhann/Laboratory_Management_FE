@@ -1,7 +1,7 @@
 // Utility functions for authentication
 import api from "../configs/axios";
 
-const URL = "iam/api/Auth/logout";
+const URL = "iam/api/auth/logout";
 export const setAuthToken = (token) => {
   // Lưu token vào localStorage (hỗ trợ cả key cũ và key chuẩn)
   localStorage.setItem("authToken", token);

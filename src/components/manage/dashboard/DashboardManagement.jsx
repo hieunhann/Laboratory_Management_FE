@@ -71,23 +71,23 @@ const DashboardManagement = () => {
         const [usersRes, catalogsRes, bookingsRes, blogsRes, instrumentsRes] =
           await Promise.all([
             IAMServiceAPI.GetUsersStatistics().catch((err) => {
-              console.warn("Failed to fetch users statistics:", err.message);
+              console.error("Failed to fetch users statistics:", err);
               return null;
             }),
             StatisticsAPI.getCatalogsStatistics().catch((err) => {
-              console.warn("Failed to fetch catalogs statistics:", err.message);
+              console.error("Failed to fetch catalogs statistics:", err);
               return null;
             }),
             StatisticsAPI.getBookingsStatistics().catch((err) => {
-              console.warn("Failed to fetch bookings statistics:", err.message);
+              console.error("Failed to fetch bookings statistics:", err);
               return null;
             }),
             StatisticsAPI.getBlogsStatistics().catch((err) => {
-              console.warn("Failed to fetch blogs statistics:", err.message);
+              console.error("Failed to fetch blogs statistics:", err);
               return null;
             }),
             StatisticsAPI.getInstrumentsStatistics().catch((err) => {
-              console.warn("Failed to fetch instruments statistics:", err.message);
+              console.error("Failed to fetch instruments statistics:", err);
               return null;
             }),
           ]);

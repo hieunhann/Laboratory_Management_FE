@@ -121,7 +121,7 @@ const BlogService = {
     }
     
     // Otherwise, assume it's just a filename and try common paths
-    return `${baseURL}/blog/api/BlogPost/Images/${trimmedPath}`;
+    return `${baseURL}/blog/api/blog-posts/Images/${trimmedPath}`;
   },
 
   /**
@@ -296,6 +296,8 @@ const BlogService = {
   extractBlogList: (apiResponse) => {
     if (!apiResponse) return [];
     if (Array.isArray(apiResponse)) return apiResponse;
+    if (apiResponse?.data?.data && Array.isArray(apiResponse.data.data)) return apiResponse.data.data;
+    if (apiResponse?.data?.data?.items && Array.isArray(apiResponse.data.data.items)) return apiResponse.data.data.items;
     if (Array.isArray(apiResponse.items)) return apiResponse.items;
     if (Array.isArray(apiResponse.data)) return apiResponse.data;
     if (apiResponse.data && Array.isArray(apiResponse.data.items)) {
@@ -312,6 +314,8 @@ const BlogService = {
   extractCategoryList: (apiResponse) => {
     if (!apiResponse) return [];
     if (Array.isArray(apiResponse)) return apiResponse;
+    if (apiResponse?.data?.data && Array.isArray(apiResponse.data.data)) return apiResponse.data.data;
+    if (apiResponse?.data?.data?.items && Array.isArray(apiResponse.data.data.items)) return apiResponse.data.data.items;
     if (Array.isArray(apiResponse.items)) return apiResponse.items;
     if (Array.isArray(apiResponse.data)) return apiResponse.data;
     if (apiResponse.data && Array.isArray(apiResponse.data.items)) {
