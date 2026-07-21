@@ -115,11 +115,13 @@ export const useLoginWithPassword = () => {
           role === "Receptionist" ||
           role === "LabBlogger" ||
           role === "Technician" ||
-          role === "Staff" ||
-          role === "Consultant"
+          role === "Staff"
         ) {
           toast.success("Đăng nhập thành công!");
           navigate("/dashboard");
+        } else if (role === "Consultant") {
+          toast.success("Đăng nhập thành công!");
+          navigate("/instruments");
         }
       }
     } catch (error) {
@@ -176,10 +178,14 @@ export const useLoginWithGoogle = () => {
           role === "LabUser" ||
           role === "Receptionist" ||
           role === "LabBlogger" ||
-          role === "Technician"
+          role === "Technician" ||
+          role === "Staff"
         ) {
           toast.success("Đăng nhập thành công!");
           navigate("/dashboard");
+        } else if (role === "Consultant") {
+          toast.success("Đăng nhập thành công!");
+          navigate("/instruments");
         }
       } else {
         toast.error("Không nhận được access token từ server");
