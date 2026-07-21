@@ -1,4 +1,3 @@
-import axios from "axios";
 import { setAuthToken } from "../utils/auth";
 import api from "../configs/axios";
 
@@ -7,39 +6,6 @@ const ensureAuth = () => {
   const token = localStorage.getItem("accessToken");
   if (token) setAuthToken(token);
 };
-
-// Create axios instances for different services
-const iamApi = axios.create({
-  baseURL: "http://localhost:5001/",
-});
-
-const testOrderApi = axios.create({
-  baseURL: "http://localhost:5003/",
-});
-
-const blogApi = axios.create({
-  baseURL: "http://localhost:5004/",
-});
-
-const instrumentApi = axios.create({
-  baseURL: "http://localhost:5008/",
-});
-
-// Add request interceptor to set auth token
-const setupAuthInterceptor = (axiosInstance) => {
-  axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
-};
-
-setupAuthInterceptor(iamApi);
-setupAuthInterceptor(testOrderApi);
-setupAuthInterceptor(blogApi);
-setupAuthInterceptor(instrumentApi);
 
 export const StatisticsAPI = {
   // Get user statistics (from IAMService - port 5001)

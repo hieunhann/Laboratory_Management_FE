@@ -106,7 +106,7 @@ function PatientSelection({ onSelectPatient, onBack }) {
                 </button>
               </div>
             ) : (
-              medicalRecords.map((patient) => (
+              medicalRecords.filter(p => p != null).map((patient) => (
                 <div
                   key={patient.patientId}
                   className={`patient-card ${

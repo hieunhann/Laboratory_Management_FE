@@ -40,19 +40,19 @@ export default function Payment({
 
   const handleModalCancel = () => setShowWarningModal(false);
   const amount = selectedItems?.total;
-  console.log(amount);
-  console.log(bookingId.instancesCode);
   const handleModalConfirm = async () => {
     setShowWarningModal(false);
 
-    if (!bookingId.instancesCode || !amount) {
-      console.error("Missing bookingId or amount to create VNPAY URL");
+    const extractedBookingId = typeof bookingId === 'object' ? (bookingId?.instancesCode || bookingId?.id || bookingId?.bookingId) : bookingId;
+
+    if (!extractedBookingId || !amount) {
+      console.error("Missing bookingId or amount to create VNPAY URL", { extractedBookingId, amount, bookingId });
       return;
     }
 
     try {
       const res = await bookingService.createVnPayUrl(
-        bookingId.instancesCode,
+        extractedBookingId,
         amount
       );
       // Lấy URL từ nhiều khả năng trả về

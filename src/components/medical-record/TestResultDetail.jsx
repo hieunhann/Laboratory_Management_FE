@@ -22,20 +22,22 @@ export default function TestResultDetail({
     const fetchAPI = async () => {
       try {
         const [resultRes, aiRes] = await Promise.allSettled([
-          api.get(`testorder/api/TestResult/booking/${bookingId}`),
-          api.post(`testorder/api/AiReview/booking/${bookingId}`)
+          api.get(`testorder/api/bookings/${bookingId}/results`),
+          api.post(`testorder/api/bookings/${bookingId}/ai-reviews`)
         ]);
 
         if (resultRes.status === "fulfilled" && resultRes.value.status >= 200 && resultRes.value.status < 300) {
-          setRealResult(resultRes.value.data);
-          console.log(resultRes.value.data);
+          const data = resultRes.value.data?.data || resultRes.value.data;
+          setRealResult(data);
+          console.log("Real Result:", data);
         } else {
           setRealResult(null);
           setError("Không lấy được kết quả xét nghiệm thực tế.");
         }
 
-        if (aiRes.status === "fulfilled" && aiRes.value.data?.results) {
-          setAiReviews(aiRes.value.data.results);
+        const aiData = aiRes.status === "fulfilled" ? (aiRes.value.data?.data || aiRes.value.data) : null;
+        if (aiData && aiData.results) {
+          setAiReviews(aiData.results);
         } else {
           setAiReviews([]);
         }

@@ -1,7 +1,7 @@
 import api from "../configs/axios";
 
 const URL = "patient/v1/patients";
-const URL_REPORT = "testorder/api/TestReport";
+const URL_REPORT = "testorder/api/test-reports";
 
 export const PatientServiceAPI = {
   CreateProfile: async (data) => {
@@ -11,7 +11,7 @@ export const PatientServiceAPI = {
     return await api.get(`${URL}/me`);
   },
   GetProfileByPatientId: async (patientId) => {
-    return await api.get(`${URL}/${patientId}`);
+    return await api.get(`${URL}/internal/${patientId}`);
   },
   GetMedicalRecords: async (page, pageSize) => {
     return await api.get(`${URL}/mine?page=${page}&pageSize=${pageSize}`);
@@ -38,7 +38,7 @@ export const PatientServiceAPI = {
     return await api.get(`${URL}/all?${queryParams.toString()}`);
   },
   GetPatientById: async (id) => {
-    return await api.get(`${URL}/${id}`);
+    return await api.get(`${URL}/internal/${id}`);
   },
   CreatePatient: async (data) => {
     return await api.post(URL, data);
@@ -50,7 +50,7 @@ export const PatientServiceAPI = {
     return await api.delete(`${URL}/${id}`);
   },
   TestReport: async (BookingId) => {
-    return await api.get(`${URL_REPORT}/DownloadReport/${BookingId}`, {
+    return await api.get(`testorder/api/bookings/${BookingId}/reports/file`, {
       responseType: "arraybuffer",
     });
   },

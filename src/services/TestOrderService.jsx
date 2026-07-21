@@ -31,6 +31,10 @@ export const extractItemsAndMeta = (response, fallbackQuery = {}) => {
 
   if (Array.isArray(data)) {
     items = data;
+  } else if (Array.isArray(data?.data?.items)) {
+    items = data.data.items;
+  } else if (Array.isArray(data?.data?.data)) {
+    items = data.data.data;
   } else if (Array.isArray(data?.data)) {
     items = data.data;
   } else if (Array.isArray(data?.items)) {
@@ -303,6 +307,8 @@ export const getAllCatalogs = async (params = {}) => {
 
   if (Array.isArray(data?.catalogDTOs)) {
     items = data.catalogDTOs;
+  } else if (Array.isArray(data?.data?.catalogDTOs)) {
+    items = data.data.catalogDTOs;
   } else if (Array.isArray(data)) {
     items = data;
   } else if (Array.isArray(data?.data)) {
@@ -312,15 +318,16 @@ export const getAllCatalogs = async (params = {}) => {
   }
 
   // Meta từ response mới
-  const meta = data?.meta || {
-    totalItems: data?.totalItems ?? items.length ?? 0,
-    page: data?.page ?? queryParams.page ?? 1,
-    pageSize: data?.pageSize ?? queryParams.pageSize ?? items.length ?? 0,
+  const meta = data?.meta || data?.data?.meta || {
+    totalItems: data?.totalItems ?? data?.data?.totalItems ?? items.length ?? 0,
+    page: data?.page ?? data?.data?.page ?? queryParams.page ?? 1,
+    pageSize: data?.pageSize ?? data?.data?.pageSize ?? queryParams.pageSize ?? items.length ?? 0,
     totalPages:
       data?.totalPages ??
+      data?.data?.totalPages ??
       Math.ceil(
-        (data?.totalItems ?? items.length) /
-          (data?.pageSize ?? queryParams.pageSize)
+        (data?.totalItems ?? data?.data?.totalItems ?? items.length) /
+          (data?.pageSize ?? data?.data?.pageSize ?? queryParams.pageSize)
       ),
   };
 

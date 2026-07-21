@@ -468,8 +468,8 @@ export default function ProfilePage() {
               <div className="medical-records-list">
                 <div className="medical-record-card">
                   <div className="medical-record-header">
-                    <h3 className="medical-record-title">
-                      Hồ sơ bệnh án #M123
+                    <h3 className="medical-record-title" title={userData.patientId}>
+                      Hồ sơ bệnh án #{userData.patientId?.slice(0, 8).toUpperCase()}
                     </h3>
                     <span className="medical-record-status">
                       {userData.status || "Đang hoạt động"}
@@ -509,8 +509,8 @@ export default function ProfilePage() {
                           <span className="medical-record-patient-label">
                             Mã BN:
                           </span>
-                          <span className="medical-record-patient-value">
-                            {userData.patientId}
+                          <span className="medical-record-patient-value" title={userData.patientId}>
+                            {userData.patientId?.slice(0, 8).toUpperCase()}
                           </span>
                         </div>
                         <div className="medical-record-patient-item">
@@ -571,8 +571,8 @@ export default function ProfilePage() {
                         key={record.patientId}
                       >
                         <div className="medical-record-header">
-                          <h3 className="medical-record-title">
-                            Hồ sơ bệnh án #{record.patientId}
+                          <h3 className="medical-record-title" title={record.patientId}>
+                            Hồ sơ bệnh án #{record.patientId?.slice(0, 8).toUpperCase()}
                           </h3>
                           <span className="medical-record-status">
                             {record.status || "Đang hoạt động"}
@@ -616,8 +616,8 @@ export default function ProfilePage() {
                                 <span className="medical-record-patient-label">
                                   Mã BN:
                                 </span>
-                                <span className="medical-record-patient-value">
-                                  {record.patientId}
+                                <span className="medical-record-patient-value" title={record.patientId}>
+                                  {record.patientId?.slice(0, 8).toUpperCase()}
                                 </span>
                               </div>
                               <div className="medical-record-patient-item">

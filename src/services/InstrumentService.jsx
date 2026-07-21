@@ -24,6 +24,12 @@ const normalizeListResponse = (payload) => {
   for (const key of candidateKeys) {
     const value = payload?.[key];
     if (Array.isArray(value)) return value;
+    // Check nested standard wrapper (e.g., payload.data.items)
+    if (value && typeof value === 'object') {
+       for (const subKey of candidateKeys) {
+          if (Array.isArray(value[subKey])) return value[subKey];
+       }
+    }
   }
 
   // Fall back to the first array value inside the object, if any

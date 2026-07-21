@@ -3,7 +3,7 @@ import "./PackageSelection.css";
 import api from "../../configs/axios";
 import { setAuthToken } from "../../utils/auth";
 
-const endPoint = "testorder/api/TestCatalog?page=1&pageSize=20";
+const endPoint = "testorder/api/test-catalogs?page=1&pageSize=20";
 
 function CatalogSelection({ setPackageMode, onContinue }) {
   const [selectedIds, setSelectedIds] = useState(new Set());
