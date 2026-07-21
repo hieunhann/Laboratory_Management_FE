@@ -136,6 +136,16 @@
   box-shadow: 0 10px 24px rgba(11, 11, 11, 0.12);
 }
 
+.dt-slot:hover:not(:disabled) {
+  background: #1d4ed8;
+  color: #ffffff !important;
+  border-color: transparent;
+}
+
+.dt-slot:hover:not(:disabled) * {
+  color: #ffffff !important;
+}
+
 .dt-slot:disabled {
   background: #f3f4f6;
   color: #9ca3af;

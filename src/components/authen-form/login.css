@@ -317,13 +317,11 @@
 
 .auth-login-input:hover {
     border-color: #d1d5db;
-    background: white;
     font-family: 'Geist', 'Inter', Arial, sans-serif;
 }
 
 .auth-login-input:focus {
     border-color: #3b82f6;
-    background: white;
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
     font-family: 'Geist', 'Inter', Arial, sans-serif;
 }
@@ -909,4 +907,34 @@
         border: 1px solid #ccc;
         font-family: 'Geist', 'Inter', Arial, sans-serif;
     }
+}
+/* Fix placeholder color */
+.auth-login-form .ant-input::placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+
+/* Fix autofill background issue */
+.auth-login-form .ant-input:-webkit-autofill,
+.auth-login-form .ant-input:-webkit-autofill:hover, 
+.auth-login-form .ant-input:-webkit-autofill:focus, 
+.auth-login-form .ant-input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+}
+
+/* Fix double border/background on password inputs */
+.auth-login-form .ant-input-password .ant-input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Change password eye icon color to black */
+.auth-login-form .ant-input-password-icon {
+  color: #000000 !important;
+}
+
+.auth-login-form .ant-input-password-icon:hover {
+  color: #333333 !important;
 }

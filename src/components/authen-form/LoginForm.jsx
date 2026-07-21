@@ -76,6 +76,7 @@ const LoginForm = ({ errorMessage }) => {
               onFinish={onFinish}
               layout="vertical"
               className="auth-login-form"
+              autoComplete="off"
             >
               <Form.Item
                 label="Tên đăng nhập"
@@ -84,14 +85,14 @@ const LoginForm = ({ errorMessage }) => {
                   { required: true, message: "Vui lòng nhập tên đăng nhập!" },
                 ]}
               >
-                <Input placeholder="Nhập tên đăng nhập" size="large" />
+                <Input placeholder="Nhập tên đăng nhập" size="large" autoComplete="off" />
               </Form.Item>
               <Form.Item
                 label="Mật khẩu"
                 name="password"
                 rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
               >
-                <Input.Password placeholder="Nhập mật khẩu" size="large" />
+                <Input.Password placeholder="Nhập mật khẩu" size="large" autoComplete="new-password" />
               </Form.Item>
               <Form.Item
                 name="remember"

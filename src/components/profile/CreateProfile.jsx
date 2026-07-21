@@ -5,6 +5,7 @@ import Footer from "../footer/Footer";
 import "./CreateProfile.css";
 import dayjs from "dayjs";
 import { useCreatePatient } from "../../services/PatientService";
+import { bloodTypeOptions } from "../../utils/bloodType";
 
 const { Option } = Select;
 
@@ -234,11 +235,15 @@ function CreateProfile() {
                       { required: true, message: "Vui lòng chọn nhóm máu" },
                     ]}
                   >
-                    <Select placeholder="Chọn nhóm máu">
-                      <Option value="0">A</Option>
-                      <Option value="1">B</Option>
-                      <Option value="2">AB</Option>
-                      <Option value="3">O</Option>
+                    <Select 
+                      placeholder="Chọn nhóm máu"
+                      listHeight={180}
+                    >
+                      {bloodTypeOptions.map((opt) => (
+                        <Option key={opt.value} value={String(opt.value)}>
+                          {opt.label}
+                        </Option>
+                      ))}
                     </Select>
                   </Form.Item>
                 </div>

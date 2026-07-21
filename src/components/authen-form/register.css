@@ -486,14 +486,12 @@
 .auth-register-form .ant-input-password:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-  background: white;
   transform: translateY(-1px);
 }
 
 .auth-register-form .ant-input:hover,
 .auth-register-form .ant-input-password:hover {
   border-color: #9ca3af;
-  background: white;
 }
 
 .auth-register-button {
@@ -960,5 +958,40 @@
 
   .auth-register-button {
     border: 2px solid #1e40af;
+  }
+}
+
+/* Fix placeholder color for dark theme */
+@media (prefers-color-scheme: dark) {
+  .auth-register-form .ant-input::placeholder {
+    color: #ffffff !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Fix autofill background issue */
+.auth-register-form .ant-input:-webkit-autofill,
+.auth-register-form .ant-input:-webkit-autofill:hover, 
+.auth-register-form .ant-input:-webkit-autofill:focus, 
+.auth-register-form .ant-input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+}
+
+/* Fix double border/background on password inputs */
+.auth-register-form .ant-input-password .ant-input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Change password eye icon color to white in dark theme */
+@media (prefers-color-scheme: dark) {
+  .auth-register-form .ant-input-password-icon {
+    color: #ffffff !important;
+  }
+
+  .auth-register-form .ant-input-password-icon:hover {
+    color: #e0e0e0 !important;
   }
 }
