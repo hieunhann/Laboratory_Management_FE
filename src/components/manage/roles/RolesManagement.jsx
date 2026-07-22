@@ -14,6 +14,7 @@ import {
   FiRotateCcw,
   FiCheckSquare,
   FiSquare,
+  FiKey,
 } from "react-icons/fi";
 import { Spin } from "antd";
 import { setAuthToken } from "../../../utils/auth";
@@ -25,6 +26,9 @@ import {
   patchRolePermissions,
   createRole,
   deleteRole,
+  createPermission,
+  updatePermission,
+  deletePermission,
 } from "../../../services/IAMService.jsx";
 import "./RolesManagement.css";
 
@@ -53,22 +57,42 @@ const RolesManagement = () => {
   const [collapsedModules, setCollapsedModules] = useState(new Set());
   const [permissionSearch, setPermissionSearch] = useState("");
 
-  // Create / Edit / Delete Modals
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [createFormData, setCreateFormData] = useState({
+  // Create / Delete Role Modals
+  const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
+  const [isCreatingRole, setIsCreatingRole] = useState(false);
+  const [createRoleFormData, setCreateRoleFormData] = useState({
     name: "",
     description: "",
     isDefault: false,
   });
-  const [createFormErrors, setCreateFormErrors] = useState({
+  const [createRoleFormErrors, setCreateRoleFormErrors] = useState({
     name: "",
     description: "",
   });
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteRoleModalOpen, setIsDeleteRoleModalOpen] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeletingRole, setIsDeletingRole] = useState(false);
+
+  // Permission CRUD Modals
+  const [isCreatePermModalOpen, setIsCreatePermModalOpen] = useState(false);
+  const [isCreatingPerm, setIsCreatingPerm] = useState(false);
+  const [createPermData, setCreatePermData] = useState({
+    name: "",
+    description: "",
+  });
+
+  const [isEditPermModalOpen, setIsEditPermModalOpen] = useState(false);
+  const [editingPerm, setEditingPerm] = useState(null);
+  const [isUpdatingPerm, setIsUpdatingPerm] = useState(false);
+  const [editPermData, setEditPermData] = useState({
+    name: "",
+    description: "",
+  });
+
+  const [isDeletePermModalOpen, setIsDeletePermModalOpen] = useState(false);
+  const [permToDelete, setPermToDelete] = useState(null);
+  const [isDeletingPerm, setIsDeletingPerm] = useState(false);
 
   // Initial Data Fetching
   useEffect(() => {
@@ -104,8 +128,8 @@ const RolesManagement = () => {
 
   const getPermissionId = (permission) =>
     permission?.key ??
-    permission?.id ??
     permission?.permissionId ??
+    permission?.id ??
     permission?.Id ??
     null;
 
@@ -115,11 +139,6 @@ const RolesManagement = () => {
     permission?.permissionName ??
     permission?.key ??
     "-";
-
-  const comparePermissionIds = (id1, id2) => {
-    if (!id1 || !id2) return false;
-    return String(id1) === String(id2);
-  };
 
   const fetchMatrixPermissions = async (rolesList, groupsList) => {
     if (!rolesList || rolesList.length === 0) return;
@@ -329,7 +348,6 @@ const RolesManagement = () => {
 
       if (updatedCount > 0) {
         toast.success(`Đã cập nhật quyền thành công cho ${updatedCount} vai trò!`);
-        // Refresh permissions map
         const newInitialMap = {};
         Object.entries(workingPermissionsMap).forEach(([roleId, set]) => {
           newInitialMap[roleId] = new Set(set);
@@ -340,11 +358,7 @@ const RolesManagement = () => {
       }
     } catch (error) {
       console.error("Error saving permission changes:", error);
-      const message =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        "Không thể cập nhật một số quyền. Vui lòng thử lại!";
-      toast.error(message);
+      toast.error("Không thể cập nhật một số quyền. Vui lòng thử lại!");
     } finally {
       setIsSavingAll(false);
     }
@@ -371,81 +385,142 @@ const RolesManagement = () => {
     setCollapsedModules(new Set());
   };
 
-  // Create Role Handlers
-  const handleOpenCreateModal = () => {
-    setCreateFormData({ name: "", description: "", isDefault: false });
-    setCreateFormErrors({ name: "", description: "" });
-    setIsCreateModalOpen(true);
+  // ================= PERMISSION CRUD HANDLERS =================
+  const handleOpenCreatePermModal = (defaultModule = "") => {
+    const initialName = defaultModule ? `${defaultModule}.` : "";
+    setCreatePermData({
+      name: initialName,
+      description: "",
+    });
+    setIsCreatePermModalOpen(true);
   };
 
-  const handleCloseCreateModal = () => {
-    setIsCreateModalOpen(false);
-  };
-
-  const handleCreateFormChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setCreateFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-    if (createFormErrors[name]) {
-      setCreateFormErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const validateCreateForm = () => {
-    const errors = { name: "", description: "" };
-    let isValid = true;
-
-    if (!createFormData.name.trim()) {
-      errors.name = "Tên vai trò là bắt buộc";
-      isValid = false;
-    } else if (createFormData.name.trim().length < 2) {
-      errors.name = "Tên vai trò phải có ít nhất 2 ký tự";
-      isValid = false;
-    }
-
-    if (!createFormData.description.trim()) {
-      errors.description = "Mô tả là bắt buộc";
-      isValid = false;
-    }
-
-    setCreateFormErrors(errors);
-    return isValid;
-  };
-
-  const handleCreateRoleSubmit = async () => {
-    if (!validateCreateForm()) {
-      toast.error("Vui lòng điền đầy đủ thông tin hợp lệ");
+  const handleCreatePermSubmit = async () => {
+    if (!createPermData.name.trim()) {
+      toast.error("Vui lòng nhập tên/mã quyền (Key)");
       return;
     }
 
-    setIsCreating(true);
+    setIsCreatingPerm(true);
+    try {
+      await createPermission({
+        name: createPermData.name.trim(),
+        description: createPermData.description.trim(),
+      });
+      toast.success(`Đã tạo quyền mới '${createPermData.name.trim()}' thành công!`);
+      setIsCreatePermModalOpen(false);
+      initData();
+    } catch (error) {
+      console.error("Error creating permission:", error);
+      toast.error(
+        error.response?.data?.message || "Không thể tạo quyền hạn mới"
+      );
+    } finally {
+      setIsCreatingPerm(false);
+    }
+  };
+
+  const handleOpenEditPermModal = (permission) => {
+    setEditingPerm(permission);
+    const permKey = getPermissionId(permission);
+    setEditPermData({
+      name: permKey || permission.name || "",
+      description: permission.description || "",
+    });
+    setIsEditPermModalOpen(true);
+  };
+
+  const handleEditPermSubmit = async () => {
+    if (!editingPerm) return;
+    const permId = editingPerm.permissionId || editingPerm.id;
+
+    if (!editPermData.name.trim()) {
+      toast.error("Vui lòng nhập tên/mã quyền");
+      return;
+    }
+
+    setIsUpdatingPerm(true);
+    try {
+      await updatePermission(permId, {
+        name: editPermData.name.trim(),
+        description: editPermData.description.trim(),
+      });
+      toast.success("Cập nhật thông tin quyền thành công!");
+      setIsEditPermModalOpen(false);
+      setEditingPerm(null);
+      initData();
+    } catch (error) {
+      console.error("Error updating permission:", error);
+      toast.error(
+        error.response?.data?.message || "Không thể cập nhật quyền"
+      );
+    } finally {
+      setIsUpdatingPerm(false);
+    }
+  };
+
+  const handleOpenDeletePermModal = (permission) => {
+    setPermToDelete(permission);
+    setIsDeletePermModalOpen(true);
+  };
+
+  const handleDeletePermSubmit = async () => {
+    if (!permToDelete) return;
+    const permId = permToDelete.permissionId || permToDelete.id;
+
+    setIsDeletingPerm(true);
+    try {
+      await deletePermission(permId);
+      toast.success("Đã xóa quyền khỏi hệ thống!");
+      setIsDeletePermModalOpen(false);
+      setPermToDelete(null);
+      initData();
+    } catch (error) {
+      console.error("Error deleting permission:", error);
+      toast.error(
+        error.response?.data?.message || "Không thể xóa quyền này"
+      );
+    } finally {
+      setIsDeletingPerm(false);
+    }
+  };
+
+  // ================= ROLE CRUD HANDLERS =================
+  const handleOpenCreateRoleModal = () => {
+    setCreateRoleFormData({ name: "", description: "", isDefault: false });
+    setCreateRoleFormErrors({ name: "", description: "" });
+    setIsCreateRoleModalOpen(true);
+  };
+
+  const handleCreateRoleSubmit = async () => {
+    if (!createRoleFormData.name.trim()) {
+      toast.error("Tên vai trò là bắt buộc");
+      return;
+    }
+
+    setIsCreatingRole(true);
     try {
       const payload = {
-        name: createFormData.name.trim(),
-        description: createFormData.description.trim(),
-        isDefault: createFormData.isDefault,
+        name: createRoleFormData.name.trim(),
+        description: createRoleFormData.description.trim(),
+        isDefault: createRoleFormData.isDefault,
       };
 
       await createRole(payload);
       toast.success("Tạo vai trò mới thành công!");
-      handleCloseCreateModal();
+      setIsCreateRoleModalOpen(false);
       initData();
     } catch (error) {
       console.error("Error creating role:", error);
-      toast.error(
-        error.response?.data?.message || "Không thể tạo vai trò mới"
-      );
+      toast.error(error.response?.data?.message || "Không thể tạo vai trò mới");
     } finally {
-      setIsCreating(false);
+      setIsCreatingRole(false);
     }
   };
 
-  // Delete Role Handlers
   const handleDeleteRoleClick = (role) => {
     setRoleToDelete(role);
-    setIsDeleteModalOpen(true);
+    setIsDeleteRoleModalOpen(true);
   };
 
   const handleConfirmDeleteRole = async () => {
@@ -453,20 +528,18 @@ const RolesManagement = () => {
     const roleId = getRoleId(roleToDelete);
     if (!roleId) return;
 
-    setIsDeleting(true);
+    setIsDeletingRole(true);
     try {
       await deleteRole(roleId);
       toast.success("Đã xóa vai trò thành công!");
-      setIsDeleteModalOpen(false);
+      setIsDeleteRoleModalOpen(false);
       setRoleToDelete(null);
       initData();
     } catch (error) {
       console.error("Error deleting role:", error);
-      toast.error(
-        error.response?.data?.message || "Không thể xóa vai trò này"
-      );
+      toast.error(error.response?.data?.message || "Không thể xóa vai trò này");
     } finally {
-      setIsDeleting(false);
+      setIsDeletingRole(false);
     }
   };
 
@@ -478,11 +551,18 @@ const RolesManagement = () => {
           <div className="matrix-header-left">
             <h1 className="matrix-title">Quản lý & Ma trận Phân quyền</h1>
             <p className="matrix-subtitle">
-              Cấp hoặc tước quyền hạn trực tiếp trên từng vai trò bằng Bảng Ma trận (Permission Matrix)
+              Cấp/tước quyền hạn trên từng vai trò và Quản lý danh mục Quyền hạn (Permission CRUD)
             </p>
           </div>
           <div className="matrix-header-actions">
-            <button className="btn-add-role" onClick={handleOpenCreateModal}>
+            <button
+              className="btn-add-perm-top"
+              onClick={() => handleOpenCreatePermModal("")}
+            >
+              <FiKey size={16} />
+              <span>Tạo quyền mới</span>
+            </button>
+            <button className="btn-add-role" onClick={handleOpenCreateRoleModal}>
               <FiPlus size={18} />
               <span>Tạo vai trò mới</span>
             </button>
@@ -596,21 +676,34 @@ const RolesManagement = () => {
                             {/* Module Header Row */}
                             <tr className="module-group-row">
                               <td className="module-header-cell sticky-col">
-                                <div
-                                  className="module-title-wrapper"
-                                  onClick={() => toggleModuleCollapse(moduleName)}
-                                >
-                                  {isCollapsed ? (
-                                    <FiChevronRight className="accordion-icon" />
-                                  ) : (
-                                    <FiChevronDown className="accordion-icon" />
-                                  )}
-                                  <span className="module-title">
-                                    {group.moduleLabel || moduleName}
-                                  </span>
-                                  <span className="module-badge-count">
-                                    {group.permissions.length} quyền
-                                  </span>
+                                <div className="module-header-inner">
+                                  <div
+                                    className="module-title-wrapper"
+                                    onClick={() => toggleModuleCollapse(moduleName)}
+                                  >
+                                    {isCollapsed ? (
+                                      <FiChevronRight className="accordion-icon" />
+                                    ) : (
+                                      <FiChevronDown className="accordion-icon" />
+                                    )}
+                                    <span className="module-title">
+                                      {group.moduleLabel || moduleName}
+                                    </span>
+                                    <span className="module-badge-count">
+                                      {group.permissions.length} quyền
+                                    </span>
+                                  </div>
+
+                                  <button
+                                    className="btn-add-perm-module"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleOpenCreatePermModal(moduleName);
+                                    }}
+                                    title={`Thêm quyền hạn mới vào Module ${moduleName}`}
+                                  >
+                                    <FiPlus size={12} /> Thêm quyền
+                                  </button>
                                 </div>
                               </td>
 
@@ -686,12 +779,35 @@ const RolesManagement = () => {
                                     key={permKey}
                                     className="permission-item-row"
                                   >
-                                    {/* Permission Description Column (Sticky Left) */}
+                                    {/* Permission Info Column (Sticky Left with Edit/Delete Controls) */}
                                     <td className="permission-info-cell sticky-col">
                                       <div className="perm-info-wrapper">
-                                        <span className="perm-label-text">
-                                          {permLabel}
-                                        </span>
+                                        <div className="perm-info-top">
+                                          <span className="perm-label-text">
+                                            {permLabel}
+                                          </span>
+                                          <div className="perm-row-actions">
+                                            <button
+                                              className="btn-perm-action edit"
+                                              onClick={() =>
+                                                handleOpenEditPermModal(permission)
+                                              }
+                                              title="Sửa quyền hạn này"
+                                            >
+                                              <FiEdit2 size={13} />
+                                            </button>
+                                            <button
+                                              className="btn-perm-action delete"
+                                              onClick={() =>
+                                                handleOpenDeletePermModal(permission)
+                                              }
+                                              title="Xóa quyền hạn khỏi hệ thống"
+                                            >
+                                              <FiTrash2 size={13} />
+                                            </button>
+                                          </div>
+                                        </div>
+
                                         {permission.description && (
                                           <span className="perm-desc-text">
                                             {permission.description}
@@ -700,10 +816,7 @@ const RolesManagement = () => {
                                         <span className="perm-key-code">
                                           {permKey}
                                         </span>
-                                      </div>
-                                    </td>
-
-                                    {/* Permission Checkbox Cells for Each Role */}
+                    {/* Permission Checkbox Cells for Each Role */}
                                     {roles.map((role) => {
                                       const roleId = getRoleId(role);
                                       const currentRoleSet =
@@ -717,30 +830,23 @@ const RolesManagement = () => {
                                           className={`matrix-checkbox-cell ${
                                             isChecked ? "cell-active" : ""
                                           }`}
-                                          onClick={() =>
+                                          onClick={(e) => {
+                                            e.preventDefault();
                                             togglePermissionForRole(
                                               roleId,
                                               permKey
-                                            )
-                                          }
+                                            );
+                                          }}
                                         >
-                                          <label className="matrix-checkbox-label">
-                                            <input
-                                              type="checkbox"
-                                              checked={isChecked}
-                                              onChange={() => {}} // handled by parent td onClick
-                                              className="matrix-hidden-input"
-                                            />
-                                            <div
-                                              className={`custom-matrix-checkbox ${
-                                                isChecked ? "checked" : ""
-                                              }`}
-                                            >
-                                              {isChecked && (
-                                                <FiCheck className="check-mark-icon" />
-                                              )}
-                                            </div>
-                                          </label>
+                                          <div
+                                            className={`custom-matrix-checkbox ${
+                                              isChecked ? "checked" : ""
+                                            }`}
+                                          >
+                                            {isChecked && (
+                                              <FiCheck className="check-mark-icon" />
+                                            )}
+                                          </div>
                                         </td>
                                       );
                                     })}
@@ -758,7 +864,7 @@ const RolesManagement = () => {
           )}
         </div>
 
-        {/* Floating Save Bar for Unsaved Matrix Changes */}
+        {/* Floating Save Bar */}
         {hasUnsavedChanges && (
           <div className="floating-save-bar">
             <div className="save-bar-content">
@@ -794,9 +900,222 @@ const RolesManagement = () => {
           </div>
         )}
 
+        {/* Create Permission Modal */}
+        {isCreatePermModalOpen && (
+          <div
+            className="modal-overlay"
+            onClick={() => setIsCreatePermModalOpen(false)}
+          >
+            <div
+              className="roles-modal create-perm-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <h2>Tạo quyền hạn mới</h2>
+                <button
+                  className="modal-close"
+                  onClick={() => setIsCreatePermModalOpen(false)}
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">
+                    Tên / Mã quyền (Permission Key) <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Ví dụ: BlogPost.Publish hoặc User.Manage"
+                    value={createPermData.name}
+                    onChange={(e) =>
+                      setCreatePermData({ ...createPermData, name: e.target.value })
+                    }
+                    disabled={isCreatingPerm}
+                  />
+                  <span className="form-hint">
+                    Nên dùng định dạng: <code>Module.HànhĐộng</code> (ví dụ: Patient.Create)
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Mô tả quyền hạn</label>
+                  <textarea
+                    className="form-textarea"
+                    placeholder="Nhập mô tả ý nghĩa của quyền này"
+                    value={createPermData.description}
+                    onChange={(e) =>
+                      setCreatePermData({
+                        ...createPermData,
+                        description: e.target.value,
+                      })
+                    }
+                    disabled={isCreatingPerm}
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  className="modal-button cancel"
+                  onClick={() => setIsCreatePermModalOpen(false)}
+                  disabled={isCreatingPerm}
+                >
+                  Hủy
+                </button>
+                <button
+                  className="modal-button primary"
+                  onClick={handleCreatePermSubmit}
+                  disabled={isCreatingPerm}
+                >
+                  {isCreatingPerm ? "Đang tạo..." : "Tạo quyền mới"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Permission Modal */}
+        {isEditPermModalOpen && editingPerm && (
+          <div
+            className="modal-overlay"
+            onClick={() => setIsEditPermModalOpen(false)}
+          >
+            <div
+              className="roles-modal edit-perm-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <h2>Chỉnh sửa quyền hạn</h2>
+                <button
+                  className="modal-close"
+                  onClick={() => setIsEditPermModalOpen(false)}
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">
+                    Tên / Mã quyền (Permission Key) <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editPermData.name}
+                    onChange={(e) =>
+                      setEditPermData({ ...editPermData, name: e.target.value })
+                    }
+                    disabled={isUpdatingPerm}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Mô tả quyền hạn</label>
+                  <textarea
+                    className="form-textarea"
+                    value={editPermData.description}
+                    onChange={(e) =>
+                      setEditPermData({
+                        ...editPermData,
+                        description: e.target.value,
+                      })
+                    }
+                    disabled={isUpdatingPerm}
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  className="modal-button cancel"
+                  onClick={() => setIsEditPermModalOpen(false)}
+                  disabled={isUpdatingPerm}
+                >
+                  Hủy
+                </button>
+                <button
+                  className="modal-button primary"
+                  onClick={handleEditPermSubmit}
+                  disabled={isUpdatingPerm}
+                >
+                  {isUpdatingPerm ? "Đang lưu..." : "Cập nhật quyền"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Permission Confirmation Modal */}
+        {isDeletePermModalOpen && permToDelete && (
+          <div
+            className="modal-overlay"
+            onClick={() => setIsDeletePermModalOpen(false)}
+          >
+            <div
+              className="roles-modal delete-confirm-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <h2>Xác nhận xóa quyền hạn</h2>
+                <button
+                  className="modal-close"
+                  onClick={() => setIsDeletePermModalOpen(false)}
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <p>
+                  Bạn có chắc chắn muốn xóa quyền{" "}
+                  <strong>
+                    {getPermissionId(permToDelete) || permToDelete.name}
+                  </strong>{" "}
+                  khỏi hệ thống không?
+                </p>
+                <p
+                  style={{
+                    color: "#ef4444",
+                    fontSize: "14px",
+                    marginTop: "8px",
+                  }}
+                >
+                  Lưu ý: Quyền này sẽ bị gỡ bỏ tự động khỏi toàn bộ các Vai trò đang sở hữu nó.
+                </p>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  className="modal-button cancel"
+                  onClick={() => setIsDeletePermModalOpen(false)}
+                  disabled={isDeletingPerm}
+                >
+                  Hủy
+                </button>
+                <button
+                  className="modal-button delete-button"
+                  onClick={handleDeletePermSubmit}
+                  disabled={isDeletingPerm}
+                >
+                  {isDeletingPerm ? "Đang xóa..." : "Xóa quyền hạn"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Create Role Modal */}
-        {isCreateModalOpen && (
-          <div className="modal-overlay" onClick={handleCloseCreateModal}>
+        {isCreateRoleModalOpen && (
+          <div
+            className="modal-overlay"
+            onClick={() => setIsCreateRoleModalOpen(false)}
+          >
             <div
               className="roles-modal create-role-modal"
               onClick={(e) => e.stopPropagation()}
@@ -805,7 +1124,7 @@ const RolesManagement = () => {
                 <h2>Tạo vai trò mới</h2>
                 <button
                   className="modal-close"
-                  onClick={handleCloseCreateModal}
+                  onClick={() => setIsCreateRoleModalOpen(false)}
                 >
                   <FiX size={20} />
                 </button>
@@ -818,81 +1137,63 @@ const RolesManagement = () => {
                   </label>
                   <input
                     type="text"
-                    name="name"
-                    className={`form-input ${
-                      createFormErrors.name ? "error" : ""
-                    }`}
+                    className="form-input"
                     placeholder="Nhập tên vai trò (vd: Technician, Doctor)"
-                    value={createFormData.name}
-                    onChange={handleCreateFormChange}
-                    disabled={isCreating}
+                    value={createRoleFormData.name}
+                    onChange={(e) =>
+                      setCreateRoleFormData({
+                        ...createRoleFormData,
+                        name: e.target.value,
+                      })
+                    }
+                    disabled={isCreatingRole}
                   />
-                  {createFormErrors.name && (
-                    <span className="form-error">{createFormErrors.name}</span>
-                  )}
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">
-                    Mô tả <span className="required">*</span>
-                  </label>
+                  <label className="form-label">Mô tả</label>
                   <textarea
-                    name="description"
-                    className={`form-textarea ${
-                      createFormErrors.description ? "error" : ""
-                    }`}
+                    className="form-textarea"
                     placeholder="Mô tả nhiệm vụ của vai trò"
-                    value={createFormData.description}
-                    onChange={handleCreateFormChange}
-                    disabled={isCreating}
+                    value={createRoleFormData.description}
+                    onChange={(e) =>
+                      setCreateRoleFormData({
+                        ...createRoleFormData,
+                        description: e.target.value,
+                      })
+                    }
+                    disabled={isCreatingRole}
                     rows={3}
                   />
-                  {createFormErrors.description && (
-                    <span className="form-error">
-                      {createFormErrors.description}
-                    </span>
-                  )}
-                </div>
-
-                <div className="form-group checkbox-form-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      name="isDefault"
-                      checked={createFormData.isDefault}
-                      onChange={handleCreateFormChange}
-                      disabled={isCreating}
-                      className="custom-checkbox"
-                    />
-                    <span className="checkbox-custom"></span>
-                    <span className="checkbox-text">Vai trò mặc định</span>
-                  </label>
                 </div>
               </div>
 
               <div className="modal-footer">
                 <button
                   className="modal-button cancel"
-                  onClick={handleCloseCreateModal}
-                  disabled={isCreating}
+                  onClick={() => setIsCreateRoleModalOpen(false)}
+                  disabled={isCreatingRole}
                 >
                   Hủy
                 </button>
                 <button
                   className="modal-button primary"
                   onClick={handleCreateRoleSubmit}
-                  disabled={isCreating}
+                  disabled={isCreatingRole}
                 >
-                  {isCreating ? "Đang tạo..." : "Tạo vai trò"}
+                  {isCreatingRole ? "Đang tạo..." : "Tạo vai trò"}
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Delete Confirmation Modal */}
-        {isDeleteModalOpen && roleToDelete && (
-          <div className="modal-overlay" onClick={() => setIsDeleteModalOpen(false)}>
+        {/* Delete Role Confirmation Modal */}
+        {isDeleteRoleModalOpen && roleToDelete && (
+          <div
+            className="modal-overlay"
+            onClick={() => setIsDeleteRoleModalOpen(false)}
+          >
             <div
               className="roles-modal delete-confirm-modal"
               onClick={(e) => e.stopPropagation()}
@@ -901,7 +1202,7 @@ const RolesManagement = () => {
                 <h2>Xác nhận xóa vai trò</h2>
                 <button
                   className="modal-close"
-                  onClick={() => setIsDeleteModalOpen(false)}
+                  onClick={() => setIsDeleteRoleModalOpen(false)}
                 >
                   <FiX size={20} />
                 </button>
@@ -915,31 +1216,22 @@ const RolesManagement = () => {
                   </strong>{" "}
                   không?
                 </p>
-                <p
-                  style={{
-                    color: "#ef4444",
-                    fontSize: "14px",
-                    marginTop: "8px",
-                  }}
-                >
-                  Lưu ý: Các người dùng hiện tại đang giữ vai trò này có thể mất quyền tương ứng.
-                </p>
               </div>
 
               <div className="modal-footer">
                 <button
                   className="modal-button cancel"
-                  onClick={() => setIsDeleteModalOpen(false)}
-                  disabled={isDeleting}
+                  onClick={() => setIsDeleteRoleModalOpen(false)}
+                  disabled={isDeletingRole}
                 >
                   Hủy
                 </button>
                 <button
                   className="modal-button delete-button"
                   onClick={handleConfirmDeleteRole}
-                  disabled={isDeleting}
+                  disabled={isDeletingRole}
                 >
-                  {isDeleting ? "Đang xóa..." : "Xóa vai trò"}
+                  {isDeletingRole ? "Đang xóa..." : "Xóa vai trò"}
                 </button>
               </div>
             </div>

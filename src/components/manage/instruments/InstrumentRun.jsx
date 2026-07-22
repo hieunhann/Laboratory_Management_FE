@@ -213,6 +213,9 @@ const InstrumentRun = () => {
               }
               setMessage(msg);
               setPhase("error");
+              if (bookingId) {
+                localStorage.removeItem(`instrument_run_${bookingId}`);
+              }
             }
           })();
           return 0;
@@ -621,6 +624,24 @@ const InstrumentRun = () => {
             </div>
             <div className="ir-complete-desc">
               {String(message || "Vui lòng thử lại hoặc liên hệ quản trị.")}
+            </div>
+            <div style={{ marginTop: "16px", textAlign: "center" }}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  if (bookingId) {
+                    localStorage.removeItem(`instrument_run_${bookingId}`);
+                  }
+                  hasStartedRef.current = false;
+                  setSelectedInstrument(null);
+                  setShowModal(true);
+                  setWaiting(false);
+                  setPhase("pending");
+                  setMessage("");
+                }}
+              >
+                Thử chọn máy và chạy lại
+              </Button>
             </div>
           </div>
         )}

@@ -152,5 +152,18 @@ export const patchRolePermissionsByModule = async (
   return response;
 };
 
+// ==================== Permission CRUD APIs ====================
+export const createPermissionAPI = async (data) => {
+  return await api.post(`${URL_RBAC}permissions`, data);
+};
+
+export const updatePermissionAPI = async (id, data) => {
+  return await api.put(`${URL_RBAC}permissions/${id}`, data);
+};
+
+export const deletePermissionAPI = async (id) => {
+  return await api.delete(`${URL_RBAC}permissions/${id}`);
+};
+
 // Default export để tương thích với code cũ
 export default IAMServiceAPI;
