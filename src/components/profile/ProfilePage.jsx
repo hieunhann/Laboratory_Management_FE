@@ -105,6 +105,20 @@ export default function ProfilePage() {
     setShowCreateModal,
   } = useAddMedicalRecords(page, pageSize, fetchMedicalRecords, createForm);
   // ===== RENDER MAIN UI =====
+  useEffect(() => {
+    if (showModal || showCreateModal) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
+    };
+  }, [showModal, showCreateModal]);
+
   return (
     <div className="profile-page">
       <Navbar />
@@ -681,7 +695,7 @@ export default function ProfilePage() {
 
       {/* ===== UPDATE MODAL ===== */}
       {showModal && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
+        <div className="profile-edit-modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-1">
               <h2 className="modal-title">Cập nhật thông tin bệnh nhân</h2>

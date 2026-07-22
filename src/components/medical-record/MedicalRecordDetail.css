@@ -6,6 +6,8 @@
   padding-bottom: 60px;
   padding-top: 0; /* Navbar is sticky, no padding needed */
   position: relative;
+  width: 100%;
+  overflow-x: clip;
 }
 
 .medical-record-detail::before {

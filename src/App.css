@@ -51,8 +51,15 @@ select {
   user-select: none;
 }
 
+html,
+body {
+  overflow-x: clip !important;
+  width: 100%;
+}
+
 #root {
-  width: 100vw;
+  width: 100%;
+  overflow-x: clip !important;
   min-height: 100vh;
   margin: 0;
   padding: 0;

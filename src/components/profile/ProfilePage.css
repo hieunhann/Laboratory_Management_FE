@@ -5,6 +5,8 @@
   font-family: "Inter", Arial, sans-serif;
   padding-top: 0; /* Navbar is sticky, no padding needed */
   position: relative;
+  width: 100%;
+  overflow-x: clip;
 }
 
 /* Header Actions */
@@ -691,7 +693,7 @@
 }
 
 /* Modal Styles */
-.modal-overlay {
+.profile-edit-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -701,8 +703,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1000000 !important;
   padding: 24px;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 .modal-content {
@@ -710,8 +714,7 @@
   border-radius: 16px;
   width: 100%;
   max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   border: 1px solid #e5e7eb;
 }
@@ -763,22 +766,22 @@
 }
 
 .modal-body-1 {
-  padding: 28px 24px;
+  padding: 20px 24px;
   background: white;
 }
 
 .form-row-1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 8px;
+  gap: 14px;
+  margin-bottom: 4px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 5px;
+  margin-bottom: 10px;
 }
 
 .form-group label {
@@ -795,10 +798,10 @@
 
 .form-group input,
 .form-group select {
-  padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 15px;
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
   transition: all 0.2s;
   font-family: "Inter", Arial, sans-serif;
   background: #ffffff;
@@ -807,7 +810,7 @@
 .form-group input:focus,
 .form-group select:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   outline: none;
 }
 

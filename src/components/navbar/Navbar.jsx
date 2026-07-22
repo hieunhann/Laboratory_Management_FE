@@ -17,14 +17,41 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [profileInfo, setProfileInfo] = useState(null);
+
   useEffect(() => {
     const userData = getUserData();
     setUser(userData);
-  }, []);
+
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("accessToken") || localStorage.getItem("authToken");
+        if (token) setAuthToken(token);
+        const response = await api.get(`patient/v1/patients/me`);
+        const patientData = response?.data?.data?.data || response?.data?.data || response?.data;
+        if (patientData) {
+          setProfileInfo({
+            fullName: patientData.fullName || patientData.name || userData?.fullname || userData?.fullName || "Người dùng",
+            email: patientData.email || userData?.email || "Chưa cập nhật email",
+          });
+        }
+      } catch (err) {
+        if (userData) {
+          setProfileInfo({
+            fullName: userData.fullname || userData.fullName || "Người dùng",
+            email: userData.email || "Chưa cập nhật email",
+          });
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await logoutUser();
     setUser(null);
+    setProfileInfo(null);
     navigate("/login");
   };
 
@@ -454,6 +481,12 @@ function Navbar() {
                 </button>
 
                 <div className="avatar-menu" role="menu">
+                  {profileInfo && (
+                    <div className="avatar-user-header">
+                      <div className="avatar-user-name">{profileInfo.fullName}</div>
+                      <div className="avatar-user-email">{profileInfo.email}</div>
+                    </div>
+                  )}
                   <button
                     className="avatar-menu-item"
                     onClick={handleProfileClick}
