@@ -257,22 +257,7 @@ function MedicalRecordDetail() {
       <Navbar />
       {/* Header */}
       <div className="medical-record-header-1">
-        <button
-          className="back-to-profile-btn"
-          onClick={() => navigate("/profile")}
-        >
-          <svg
-            className="back-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M19 12H5" />
-            <path d="M12 19l-7-7 7-7" />
-          </svg>
-          Quay lại thông tin cá nhân
-        </button>
+
         <h1 className="page-title-1">Kết quả xét nghiệm</h1>
       </div>
 

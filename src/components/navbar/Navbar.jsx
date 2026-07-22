@@ -30,26 +30,9 @@ function Navbar() {
 
 
 
-  const handleProfileClick = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      setAuthToken(token);
-      const response = await api.get(`patient/v1/patients/me`);
-      const d = response?.data;
-      const pid =
-        d?.data?.patientId || d?.data?.PatientId ||
-        d?.patientId || d?.PatientId ||
-        d?.data?.id || d?.id;
-
-      if (pid) {
-        navigate("/profile");
-      } else {
-        navigate("/create-profile");
-      }
-    } catch (error) {
-      console.error("Error checking patient profile:", error);
-      navigate("/create-profile");
-    }
+  const handleProfileClick = () => {
+    setMobileMenuOpen(false);
+    navigate("/profile");
   };
 
   const handleHistoryClick = (e) => {
