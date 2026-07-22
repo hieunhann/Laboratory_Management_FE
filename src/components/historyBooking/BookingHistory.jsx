@@ -102,7 +102,7 @@ function BookingHistory() {
 
           setAllBookings(allItems);
           // Get total from API response
-          setTotal(response?.data?.totalItem || response?.data?.data?.totalItem || response?.data?.totalRecords || response?.data?.data?.totalRecords || response?.data?.totalItems || response?.data?.data?.totalItems || allItems.length);
+          setTotal(response?.data?.totalRecords || response?.data?.data?.totalRecords || response?.data?.totalItems || response?.data?.data?.totalItems || allItems.length);
           setBookingHistory(allItems);
 
           // Build unique ids from all items
@@ -376,23 +376,7 @@ function BookingHistory() {
               <option value="6">Đã hủy</option>
             </select>
           </div>
-          <div className="filter-search-btn-wrap">
-            <button
-              id="btn-search-booking"
-              className="btn-filter-search"
-              onClick={() => {
-                setAppliedFromDate(pendingFromDate);
-                setAppliedToDate(pendingToDate);
-                setPage(1);
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              Tìm kiếm
-            </button>
-          </div>
+
         </div>
       </div>
 
