@@ -773,13 +773,18 @@ const BlogService = {
   getBlogById: async (id) => {
     try {
       // Public endpoint - don't require authentication
-      const apiBlog = await BlogAPI.getBlogById(id);
+      let apiBlog = await BlogAPI.getBlogById(id);
       
       if (!apiBlog) {
         throw new Error(`Blog with ID ${id} not found`);
       }
+
+      // Unwrap data if it is wrapped in an API response envelope
+      const actualBlogData = apiBlog.data && !Array.isArray(apiBlog.data) && typeof apiBlog.data === 'object' 
+        ? apiBlog.data 
+        : apiBlog;
       
-      const transformedBlog = BlogService.transformBlogFromAPI(apiBlog);
+      const transformedBlog = BlogService.transformBlogFromAPI(actualBlogData);
       
       // Try to enrich with author, but don't fail if it errors
       let enrichedBlog = transformedBlog;
