@@ -412,7 +412,7 @@ const VouchersManagement = () => {
                           </div>
                         </td>
                         <td>
-                          <span className={`type-badge ${isPercentage ? "percent" : "fixed"}`}>
+                          <span className={`type-badge ${isPercentage ? "type-percent" : "type-fixed"}`}>
                             {isPercentage ? "Phần trăm (%)" : "Cố định (₫)"}
                           </span>
                         </td>

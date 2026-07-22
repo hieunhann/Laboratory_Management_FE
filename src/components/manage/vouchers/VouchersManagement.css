@@ -300,8 +300,8 @@
   font-weight: 600;
 }
 
-.type-badge.percent { background: #fff8e6; color: #b45309; }
-.type-badge.fixed { background: #f3e8ff; color: #7e22ce; }
+.type-badge.type-percent { background: #fff8e6; color: #b45309; }
+.type-badge.type-fixed { background: #f3e8ff; color: #7e22ce; }
 
 .value-cell {
   font-weight: 700;
