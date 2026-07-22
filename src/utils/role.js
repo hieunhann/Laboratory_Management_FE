@@ -18,6 +18,7 @@ const rolePermissions = {
     "parameter",
     "reports",
     "appointment-schedule",
+    "vouchers",
   ],
   Manager: [
     "dashboard",
@@ -29,6 +30,7 @@ const rolePermissions = {
     "catalogs",
     "parameter",
     "appointment-schedule",
+    "vouchers",
   ],
   Receptionist: ["dashboard", "patients", "appointment-schedule"],
   LabBlogger: ["dashboard", "blogs", "categories"],
@@ -175,6 +177,12 @@ export const getMenuItems = () => {
       icon: "parameter",
       name: "Chỉ số xét nghiệm",
       permission: "parameter",
+    },
+    {
+      path: "/vouchers",
+      icon: "vouchers",
+      name: "Mã giảm giá",
+      permission: "vouchers",
     },
     {
       path: "/reports",

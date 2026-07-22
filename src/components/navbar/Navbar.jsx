@@ -17,32 +17,61 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [profileInfo, setProfileInfo] = useState(null);
+
   useEffect(() => {
     const userData = getUserData();
     setUser(userData);
-  }, []);
+
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("accessToken") || localStorage.getItem("authToken");
+        if (token) setAuthToken(token);
+        const response = await api.get(`patient/v1/patients/me`);
+        const patientData = response?.data?.data?.data || response?.data?.data || response?.data;
+        if (patientData) {
+          setProfileInfo({
+            fullName: patientData.fullName || patientData.name || userData?.fullname || userData?.fullName || "Người dùng",
+            email: patientData.email || userData?.email || "Chưa cập nhật email",
+          });
+        }
+      } catch (err) {
+        if (userData) {
+          setProfileInfo({
+            fullName: userData.fullname || userData.fullName || "Người dùng",
+            email: userData.email || "Chưa cập nhật email",
+          });
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await logoutUser();
     setUser(null);
+    setProfileInfo(null);
     navigate("/login");
   };
 
-  const handleProfileClick = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      setAuthToken(token);
-      const response = await api.get(`patient/v1/patients/me`);
 
-      if (response.data) {
-        navigate("/profile");
-      } else {
-        navigate("/create-profile");
-      }
-    } catch (error) {
-      console.error("Error checking patient profile:", error);
-      navigate("/create-profile");
-    }
+
+  const handleProfileClick = () => {
+    setMobileMenuOpen(false);
+    navigate("/profile");
+  };
+
+  const handleHistoryClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    navigate("/history");
+  };
+
+  const handleMedicalRecordClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    navigate("/medical-record");
   };
 
   const handleHistoryClick = async (e) => {
@@ -378,12 +407,23 @@ function Navbar() {
             <span className="navbar-menu-item-tooltip">Đặt Lịch</span>
           </Link>
           {user && (
+<<<<<<< HEAD
             <div className="navbar-menu-item-dropdown" tabIndex={0}>
               <button
                 className={`navbar-menu-item navbar-link ${
                   location.pathname === "/history" || location.pathname === "/medical-record" ? "active" : ""
                 }`}
                 style={{ background: "none", border: "none", padding: "8px 0" }}
+=======
+            <>
+              <Link
+                to="/history"
+                className={`navbar-menu-item navbar-link ${
+                  location.pathname === "/history" ? "active" : ""
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+                title="Lịch sử đặt lịch"
+>>>>>>> fix/test-customer-role
               >
                 <svg
                   className="navbar-menu-icon"
@@ -439,6 +479,27 @@ function Navbar() {
                 </button>
               </div>
             </div>
+            <Link
+              to="/my-vouchers"
+              className={`navbar-menu-item navbar-link ${
+                location.pathname === "/my-vouchers" ? "active" : ""
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+              title="Kho Voucher"
+            >
+              <svg
+                className="navbar-menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                <line x1="7" y1="7" x2="7.01" y2="7" />
+              </svg>
+              <span className="navbar-menu-text">Kho Voucher</span>
+              <span className="navbar-menu-item-tooltip">Kho Voucher</span>
+            </Link>
           )}
         </nav>
         <div
@@ -489,6 +550,12 @@ function Navbar() {
                 </button>
 
                 <div className="avatar-menu" role="menu">
+                  {profileInfo && (
+                    <div className="avatar-user-header">
+                      <div className="avatar-user-name">{profileInfo.fullName}</div>
+                      <div className="avatar-user-email">{profileInfo.email}</div>
+                    </div>
+                  )}
                   <button
                     className="avatar-menu-item"
                     onClick={handleProfileClick}

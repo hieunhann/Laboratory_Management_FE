@@ -6,6 +6,8 @@
   padding-bottom: 60px;
   padding-top: 0; /* Navbar is sticky, no padding needed */
   position: relative;
+  width: 100%;
+  overflow-x: clip;
 }
 
 .medical-record-detail::before {
@@ -243,6 +245,13 @@
   font-size: 14px;
   outline: none;
   transition: all 0.2s;
+  cursor: pointer;
+}
+
+.date-picker input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
 }
 
 .date-picker input:focus {

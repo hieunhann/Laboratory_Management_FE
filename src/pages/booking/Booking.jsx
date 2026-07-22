@@ -102,13 +102,15 @@ function Booking() {
   };
 
   // AcceptInfo tiếp tục (chỉ chuyển nội bộ sang Payment step)
-  const handleProceedPayment = (bookingIdFromAcceptInfo) => {
+  const handleProceedPayment = (bookingIdFromAcceptInfo, discountedTotal) => {
     // Lưu bookingId từ AcceptInfo sau khi booking thành công
     if (bookingIdFromAcceptInfo) {
       setBookingId(bookingIdFromAcceptInfo);
     }
+    if (typeof discountedTotal === "number" && !isNaN(discountedTotal)) {
+      setSelectedItems((prev) => (prev ? { ...prev, total: discountedTotal } : prev));
+    }
     setCurrentStep(5);
-    // Payment step will show and Payment should trigger the warning modal
   };
 
   // Payment hoàn tất -> chuyển sang Success

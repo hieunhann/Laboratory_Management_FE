@@ -16,14 +16,61 @@ function MedicalRecordDetail() {
   const navigate = useNavigate();
   const [expandedTests, setExpandedTests] = useState({});
   const [searchParams] = useSearchParams();
-  const patientId = searchParams.get("patientId");
+  const patientIdFromUrl = searchParams.get("patientId");
   const autoExpandBookingId = searchParams.get("bookingId");
+  const [patientId, setPatientId] = useState(patientIdFromUrl || null);
   const [patients, setPatient] = useState(null);
   const [appointmentHistory, setAppointmentHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [noProfile, setNoProfile] = useState(false);
   // Pagination state
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  // Date filtering state
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  // If patientId not in URL, fetch from patients/me
+  useEffect(() => {
+    if (patientIdFromUrl) {
+      setPatientId(patientIdFromUrl);
+      return;
+    }
+    const resolvePatientId = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (token) setAuthToken(token);
+        const res = await api.get("patient/v1/patients/me");
+        const patient = res?.data?.data?.data || res?.data?.data || res?.data;
+        const pid = patient?.patientId || patient?.id;
+        if (pid) {
+          setPatientId(pid);
+        } else {
+          setNoProfile(true);
+        }
+      } catch {
+        setNoProfile(true);
+      }
+    };
+    resolvePatientId();
+  }, [patientIdFromUrl]);
+
+  // Client-side filter based on appointment date
+  const filteredAppointments = appointmentHistory.filter((item) => {
+    const rawDate = item.booking?.slotInfo?.appointmentDate || item.booking?.appointmentDate;
+    if (!rawDate) return true;
+    
+    // Extract YYYY-MM-DD
+    const appDateStr = rawDate.split("T")[0];
+    
+    if (fromDate && appDateStr < fromDate) {
+      return false;
+    }
+    if (toDate && appDateStr > toDate) {
+      return false;
+    }
+    return true;
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -49,7 +96,7 @@ function MedicalRecordDetail() {
         const token = localStorage.getItem("accessToken");
         if (token) setAuthToken(token);
         const response = await api.get(
-          `testorder/api/patients/${patientId}/bookings?pageNumber=1&pageSize=1000&filterStatus=5`
+          `testorder/api/patients/${patientId}/bookings?pageNumber=1&pageSize=1000`
         );
         if (response.status >= 200 && response.status < 300) {
           // Hỗ trợ cả trường hợp trả về object có bookingResponses hoặc array
@@ -161,216 +208,61 @@ function MedicalRecordDetail() {
     }
   }, [autoExpandBookingId]);
 
+  if (noProfile) {
+    return (
+      <div className="medical-record-detail">
+        <Navbar />
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "80px 24px",
+          gap: "16px",
+          color: "#64748b"
+        }}>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <p style={{ fontSize: "16px", fontWeight: 500, color: "#475569" }}>
+            Bạn chưa có kết quả xét nghiệm nào
+          </p>
+          <p style={{ fontSize: "14px", color: "#94a3b8", textAlign: "center" }}>
+            Hãy đặt lịch xét nghiệm để xem kết quả tại đây.
+          </p>
+          <a
+            href="/booking"
+            style={{
+              marginTop: "8px",
+              padding: "10px 24px",
+              background: "#2563eb",
+              color: "#fff",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 500,
+              fontSize: "14px"
+            }}
+          >
+            Đặt lịch ngay
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="medical-record-detail">
       <Navbar />
       {/* Header */}
       <div className="medical-record-header-1">
-        <button
-          className="back-to-profile-btn"
-          onClick={() => navigate("/profile")}
-        >
-          <svg
-            className="back-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M19 12H5" />
-            <path d="M12 19l-7-7 7-7" />
-          </svg>
-          Quay lại thông tin cá nhân
-        </button>
-        <h1 className="page-title-1">Chi tiết hồ sơ bệnh án</h1>
+
+        <h1 className="page-title-1">Kết quả xét nghiệm</h1>
       </div>
 
-      {/* Patient Info Section */}
-      <div className="patient-info-section">
-        <h2 className="section-title">Thông tin bệnh nhân</h2>
-        <p className="section-subtitle">Thông tin chi tiết của bệnh nhân</p>
 
-        <div className="patient-info-grid">
-          {/* Cột 1 - 5 trường */}
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Họ và tên</span>
-              <span className="info-value">{patients?.fullName}</span>
-            </div>
-          </div>
-
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 6v6l4 2" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-value">{patients?.patientId}</span>
-            </div>
-          </div>
-
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Địa chỉ</span>
-              <span className="info-value">{patients?.address}</span>
-            </div>
-          </div>
-
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                <line x1="8" y1="21" x2="16" y2="21" />
-                <line x1="12" y1="17" x2="12" y2="21" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Số CMND/CCCD</span>
-              <span className="info-value">{patients?.citizenId}</span>
-            </div>
-          </div>
-
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Số bảo hiểm y tế</span>
-              <span className="info-value">
-                {patients?.insuranceNumber || patients?.healthInsurance || "—"}
-              </span>
-            </div>
-          </div>
-
-          {/* Cột 2 - 4 trường */}
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Ngày sinh</span>
-              <span className="info-value">
-                {patients?.dateOfBirth} ({calculateAge(patients?.dateOfBirth)}{" "}
-                Tuổi)
-              </span>
-            </div>
-          </div>
-
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Giới tính</span>
-              <span className="info-value">
-                {patients?.gender == 1 ? "Nam" : "Nữ"}
-              </span>
-            </div>
-          </div>
-
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Số điện thoại</span>
-              <span className="info-value">{patients?.phone}</span>
-            </div>
-          </div>
-
-          <div className="patient-info-item">
-            <div className="info-icon-wrapper">
-              <svg
-                className="info-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-            </div>
-            <div className="info-content">
-              <span className="info-label">Email</span>
-              <span className="info-value">{patients?.email}</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Appointment History Section */}
       <div className="appointment-history-section">
@@ -398,13 +290,34 @@ function MedicalRecordDetail() {
           <div className="filter-dates">
             <div className="date-picker">
               <label>Từ ngày</label>
-              <input type="text" placeholder="mm/dd/yyyy" />
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => {
+                  setFromDate(e.target.value);
+                  setPage(1); // Reset page on filter change
+                }}
+              />
             </div>
             <div className="date-picker">
               <label>Đến ngày</label>
-              <input type="text" placeholder="mm/dd/yyyy" />
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => {
+                  setToDate(e.target.value);
+                  setPage(1); // Reset page on filter change
+                }}
+              />
             </div>
-            <button className="filter-reset">
+            <button
+              className="filter-reset"
+              onClick={() => {
+                setFromDate("");
+                setToDate("");
+                setPage(1);
+              }}
+            >
               <span>Tất cả</span>
             </button>
           </div>
@@ -417,138 +330,203 @@ function MedicalRecordDetail() {
             </div>
           ) : (
             <>
-              {appointmentHistory
-                .slice((page - 1) * pageSize, page * pageSize)
-                .map((appointment) => (
-                  <div
-                    key={appointment.id}
-                    className="appointment-card-wrapper"
-                  >
-                    <div className="appointment-card">
-                      <div className="appointment-icon">
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                          <polyline points="14,2 14,8 20,8" />
-                          <line x1="16" y1="13" x2="8" y2="13" />
-                          <line x1="16" y1="17" x2="8" y2="17" />
-                          <polyline points="10,9 9,9 8,9" />
-                        </svg>
-                      </div>
-                      <div className="appointment-content">
-                        <h3 className="appointment-title">
-                          {appointment.title}
-                        </h3>
-                        <div className="appointment-info">
-                          <div className="appointment-date">
+              {filteredAppointments.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "40px", color: "#64748b" }}>
+                  Chưa có lịch sử xét nghiệm nào.
+                </div>
+              ) : (
+                filteredAppointments
+                  .slice((page - 1) * pageSize, page * pageSize)
+                  .map((appointment) => {
+                    const statusStr = String(appointment.status).toLowerCase();
+                    const isCompleted = statusStr === "completed" || statusStr === "5";
+                    const isCancelled = statusStr === "cancelled" || statusStr === "6";
+
+                    return (
+                      <div
+                        key={appointment.id}
+                        className="appointment-card-wrapper"
+                      >
+                        <div className="appointment-card">
+                          <div className="appointment-icon">
                             <svg
-                              className="date-icon"
                               viewBox="0 0 24 24"
                               fill="none"
                               stroke="currentColor"
                               strokeWidth="2"
                             >
-                              <rect
-                                x="3"
-                                y="4"
-                                width="18"
-                                height="18"
-                                rx="2"
-                                ry="2"
-                              />
-                              <line x1="16" y1="2" x2="16" y2="6" />
-                              <line x1="8" y1="2" x2="8" y2="6" />
-                              <line x1="3" y1="10" x2="21" y2="10" />
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                              <polyline points="14,2 14,8 20,8" />
+                              <line x1="16" y1="13" x2="8" y2="13" />
+                              <line x1="16" y1="17" x2="8" y2="17" />
+                              <polyline points="10,9 9,9 8,9" />
                             </svg>
-                            <span>Ngày xét nghiệm: {appointment.date}</span>
                           </div>
-                          <div className="appointment-location">
-                            <span>Khám tại: {appointment.location}</span>
+                          <div className="appointment-content">
+                            <h3 className="appointment-title">
+                              {appointment.title}
+                            </h3>
+                            <div className="appointment-info">
+                              <div className="appointment-date">
+                                <svg
+                                  className="date-icon"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                >
+                                  <rect
+                                    x="3"
+                                    y="4"
+                                    width="18"
+                                    height="18"
+                                    rx="2"
+                                    ry="2"
+                                  />
+                                  <line x1="16" y1="2" x2="16" y2="6" />
+                                  <line x1="8" y1="2" x2="8" y2="6" />
+                                  <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                                <span>Ngày xét nghiệm: {appointment.date}</span>
+                              </div>
+                              <div className="appointment-location">
+                                <span>Khám tại: {appointment.location}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="appointment-actions" style={{ display: "flex", flexDirection: "column", gap: "8px", justifyContent: "center", alignSelf: "stretch" }}>
+                            {isCompleted ? (
+                              <>
+                                <button
+                                  className={`view-detail-btn ${
+                                    expandedTests[appointment.id] ? "active" : ""
+                                  }`}
+                                  onClick={() => toggleTestDetail(appointment.id)}
+                                >
+                                  {expandedTests[appointment.id] ? "Ẩn" : "Xem"} chi
+                                  tiết kết quả
+                                  <svg
+                                    className={`chevron-icon ${
+                                      expandedTests[appointment.id] ? "expanded" : ""
+                                    }`}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                  >
+                                    <polyline points="6 9 12 15 18 9" />
+                                  </svg>
+                                </button>
+                                <button
+                                  className="download-report-btn"
+                                  style={{ width: "100%", marginTop: "8px" }}
+                                  onClick={async () => {
+                                    try {
+                                      const response =
+                                        await PatientServiceAPI.TestReport(
+                                          appointment.id
+                                        );
+
+                                      const blob = new Blob([response.data], {
+                                        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                      });
+
+                                      const url = window.URL.createObjectURL(blob);
+                                      const link = document.createElement("a");
+                                      link.href = url;
+                                      link.download = `KetQuaXetNghiem_${appointment.id}.docx`;
+                                      document.body.appendChild(link);
+                                      link.click();
+                                      document.body.removeChild(link);
+                                      window.URL.revokeObjectURL(url);
+                                    } catch (err) {
+                                      console.error("Error:", err);
+                                    }
+                                  }}
+                                >
+                                  <svg
+                                    className="download-icon"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                  >
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                  </svg>
+                                  Tải kết quả xét nghiệm
+                                </button>
+                              </>
+                            ) : isCancelled ? (
+                              <div className="result-box-status cancelled-status" style={{
+                                width: "230px",
+                                height: "88px",
+                                padding: "12px 16px",
+                                background: "#fef2f2",
+                                border: "1px dashed #ef4444",
+                                borderRadius: "8px",
+                                color: "#b91c1c",
+                                fontSize: "13px",
+                                fontWeight: "500",
+                                textAlign: "center",
+                                lineHeight: "1.4",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                boxSizing: "border-box"
+                              }}>
+                                <strong>Không có kết quả xét nghiệm</strong>
+                                <div style={{ fontSize: "11px", fontWeight: "400", marginTop: "4px", color: "#ef4444" }}>
+                                  Lịch hẹn đã bị hủy.
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="result-box-status pending-status" style={{
+                                width: "230px",
+                                height: "88px",
+                                padding: "12px 16px",
+                                background: "#fffbeb",
+                                border: "1px dashed #f59e0b",
+                                borderRadius: "8px",
+                                color: "#b45309",
+                                fontSize: "13px",
+                                fontWeight: "500",
+                                textAlign: "center",
+                                lineHeight: "1.4",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                boxSizing: "border-box"
+                              }}>
+                                <strong>Chưa có kết quả xét nghiệm</strong>
+                                <div style={{ fontSize: "11px", fontWeight: "400", marginTop: "4px", color: "#d97706" }}>
+                                  Kết quả sẽ được cập nhật sau khi hoàn tất lấy mẫu.
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
+                        {isCompleted && expandedTests[appointment.id] && (
+                          <div className="test-detail-dropdown">
+                            <TestResultDetail
+                              test={appointment}
+                              inline={true}
+                              bookingId={appointment.id}
+                            />
+                          </div>
+                        )}
                       </div>
-                      <div className="appointment-actions">
-                        <button
-                          className={`view-detail-btn ${
-                            expandedTests[appointment.id] ? "active" : ""
-                          }`}
-                          onClick={() => toggleTestDetail(appointment.id)}
-                        >
-                          {expandedTests[appointment.id] ? "Ẩn" : "Xem"} chi
-                          tiết kết quả
-                          <svg
-                            className={`chevron-icon ${
-                              expandedTests[appointment.id] ? "expanded" : ""
-                            }`}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <polyline points="6 9 12 15 18 9" />
-                          </svg>
-                        </button>
-                        <button
-                          className="download-report-btn"
-                          onClick={async () => {
-                            try {
-                              const response =
-                                await PatientServiceAPI.TestReport(
-                                  appointment.id
-                                );
-
-                              const blob = new Blob([response.data], {
-                                type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                              });
-
-                              const url = window.URL.createObjectURL(blob);
-                              const link = document.createElement("a");
-                              link.href = url;
-                              link.download = `KetQuaXetNghiem_${appointment.id}.docx`;
-                              document.body.appendChild(link);
-                              link.click();
-                              document.body.removeChild(link);
-                              window.URL.revokeObjectURL(url);
-                            } catch (err) {
-                              console.error("Error:", err);
-                            }
-                          }}
-                        >
-                          <svg
-                            className="download-icon"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                          </svg>
-                          Tải kết quả xét nghiệm
-                        </button>
-                      </div>
-                    </div>
-                    {expandedTests[appointment.id] && (
-                      <div className="test-detail-dropdown">
-                        <TestResultDetail
-                          test={appointment}
-                          inline={true}
-                          bookingId={appointment.id}
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
+                    );
+                  })
+                )}
               <div style={{ textAlign: "center", marginTop: 16 }}>
                 <CustomPagination
                   current={page}
                   pageSize={pageSize}
-                  total={appointmentHistory.length}
+                  total={filteredAppointments.length}
                   onChange={(p, ps) => {
                     setPage(p);
                     if (ps !== pageSize) {

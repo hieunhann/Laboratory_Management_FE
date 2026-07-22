@@ -1,6 +1,6 @@
 import React from "react";
 import "./SuccessBooking.css";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import packageIcon from "../../assets/icon/SVG_margin.svg";
 import locationIcon from "../../assets/icon/Location.svg";
 import calendarIcon from "../../assets/icon/Calender.svg";
@@ -13,6 +13,7 @@ export default function SuccessBooking({
   onNewBooking,
   bookingData, // Thêm prop để nhận dữ liệu từ API
 }) {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const Amount = Number(searchParams.get("Amount")) || 0;
   // Sử dụng dữ liệu từ API nếu có, nếu không dùng dữ liệu mặc định
@@ -184,6 +185,9 @@ export default function SuccessBooking({
           </div>
 
           <div className="sb-actions">
+            <button className="btn outline" onClick={() => navigate("/")}>
+              Trở về trang chủ
+            </button>
             <button className="btn outline">Tải xuống xác nhận</button>
             <button className="btn outline">Gửi lại email</button>
 

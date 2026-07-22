@@ -122,38 +122,48 @@ export const useFetchProfile = () => {
       setAuthToken(token);
 
       const check = await PatientServiceAPI.Profile();
-      if (!check?.data || check?.data?.succeeded === false || check?.data?.data?.succeeded === false) {
+      const patient = check?.data?.data?.data || check?.data?.data || check?.data;
+
+      if (!patient) {
         navigate("/create-profile");
         return;
       }
 
-      // Handle nested standard API responses safely
-      const patient = check.data?.data?.data || check.data?.data || check.data;
       const patientId = patient?.patientId || patient?.id;
 
-      if (!patientId) {
-        navigate("/create-profile");
-        return;
+      if (patientId) {
+        try {
+          const response = await PatientServiceAPI.GetProfileByPatientId(patientId);
+          const data = response?.data?.data?.data || response?.data?.data || response?.data;
+          if (data) {
+            setUserData(data);
+            dispatch(
+              setPatient({
+                patientId: data.patientId || patientId,
+                fullName: data.fullName || patient.fullName,
+                phone: data.phone || patient.phone,
+                email: data.email || patient.email,
+              })
+            );
+            return;
+          }
+        } catch (e) {
+          // If GetProfileByPatientId fail, fallback to patient info from /me
+        }
       }
 
-      const response = await PatientServiceAPI.GetProfileByPatientId(patientId);
-      const data = response?.data?.data || response?.data;
-      if (response.status === 200 && data) {
-        setUserData(data);
-
-        dispatch(
-          setPatient({
-            patientId: data.patientId,
-            fullName: data.fullName,
-            phone: data.phone,
-            email: data.email,
-          })
-        );
-      } else {
-        navigate("/create-profile");
-      }
+      // Fallback directly using patient info from /me API
+      setUserData(patient);
+      dispatch(
+        setPatient({
+          patientId: patient.patientId || patient.id,
+          fullName: patient.fullName,
+          phone: patient.phone,
+          email: patient.email,
+        })
+      );
     } catch (error) {
-      toast.error(error);
+      console.error("Fetch profile error:", error);
       navigate("/create-profile");
     }
   };

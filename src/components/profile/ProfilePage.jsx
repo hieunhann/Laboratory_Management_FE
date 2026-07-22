@@ -106,6 +106,20 @@ export default function ProfilePage() {
     setShowCreateModal,
   } = useAddMedicalRecords(page, pageSize, fetchMedicalRecords, createForm);
   // ===== RENDER MAIN UI =====
+  useEffect(() => {
+    if (showModal || showCreateModal) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
+    };
+  }, [showModal, showCreateModal]);
+
   return (
     <div className="profile-page">
       <Navbar />
@@ -130,26 +144,6 @@ export default function ProfilePage() {
                 </span>
               </div>
             </div>
-          </div>
-          <div className="profile-header-actions">
-            <button
-              className="profile-history-btn"
-              onClick={() =>
-                navigate(`/history?patientId=${userData.patientId}`)
-              }
-            >
-              <svg
-                className="clock-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12,6 12,12 16,14" />
-              </svg>
-              Lịch sử đặt lịch
-            </button>
           </div>
         </div>
       </div>
@@ -705,7 +699,7 @@ export default function ProfilePage() {
 
       {/* ===== UPDATE MODAL ===== */}
       {showModal && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
+        <div className="profile-edit-modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-1">
               <h2 className="modal-title">Cập nhật thông tin bệnh nhân</h2>

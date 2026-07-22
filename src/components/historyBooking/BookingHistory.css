@@ -61,6 +61,7 @@
   gap: 8px;
   min-width: 200px;
   flex: 1;
+  position: relative;
 }
 .filter-label {
   font-size: 14px;
@@ -78,6 +79,13 @@
   background: #fff;
   outline: none;
   transition: all 0.2s;
+  position: relative;
+  cursor: pointer;
+}
+.filter-date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
 }
 .filter-date-input:focus,
 .filter-status-select:focus {

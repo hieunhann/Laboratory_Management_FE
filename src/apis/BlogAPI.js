@@ -382,7 +382,7 @@ const BlogAPI = {
     try {
       // Try different possible endpoints
       // If backend has a specific endpoint for images
-      const response = await api.get(`blog/api/blog-posts/image/${imagePath}`, {
+      const response = await api.get(`blog/Images/${imagePath}`, {
         responseType: "blob",
       });
       return response.data;
@@ -544,19 +544,11 @@ const BlogAPI = {
     try {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const { search, postId } = params;
-      let url = "blog/api/comments/search";
+      const { search } = params;
+      let url = "blog/api/comments";
 
-      const queryParams = [];
       if (search && search.trim() !== "") {
-        queryParams.push(`search=${encodeURIComponent(search.trim())}`);
-      }
-      if (postId) {
-        queryParams.push(`postId=${postId}`);
-      }
-
-      if (queryParams.length > 0) {
-        url += `?${queryParams.join("&")}`;
+        url += `?keyword=${encodeURIComponent(search.trim())}`;
       }
 
       const response = await api.get(url);
