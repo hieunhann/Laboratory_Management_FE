@@ -42,6 +42,7 @@ import CreatePatient from "./components/profile/CreateProfile";
 import BlogPage from "./pages/blog/BlogPage";
 import BlogDetailPage from "./pages/blog/BlogDetailPage";
 import ChangePasswordModal from "./components/profile/ChangePassword";
+import UserVouchersPage from "./pages/voucher/UserVouchersPage";
 import LoadingOverlay from "./components/Loading/LoadingOverlay";
 
 import SuccessBooking from "./components/booking/SuccessBooking";
@@ -107,6 +108,15 @@ function App() {
         <>
           <AppContent />
           <HistoryPage />
+        </>
+      ),
+    },
+    {
+      path: "my-vouchers",
+      element: (
+        <>
+          <AppContent />
+          <UserVouchersPage />
         </>
       ),
     },

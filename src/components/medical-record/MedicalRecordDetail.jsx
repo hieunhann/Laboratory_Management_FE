@@ -459,7 +459,9 @@ function MedicalRecordDetail() {
                               </>
                             ) : isCancelled ? (
                               <div className="result-box-status cancelled-status" style={{
-                                padding: "12px 18px",
+                                width: "230px",
+                                height: "88px",
+                                padding: "12px 16px",
                                 background: "#fef2f2",
                                 border: "1px dashed #ef4444",
                                 borderRadius: "8px",
@@ -468,7 +470,6 @@ function MedicalRecordDetail() {
                                 fontWeight: "500",
                                 textAlign: "center",
                                 lineHeight: "1.4",
-                                height: "100%",
                                 display: "flex",
                                 flexDirection: "column",
                                 justifyContent: "center",
@@ -476,13 +477,15 @@ function MedicalRecordDetail() {
                                 boxSizing: "border-box"
                               }}>
                                 <strong>Không có kết quả xét nghiệm</strong>
-                                <div style={{ fontSize: "11px", fontWeight: "400", marginTop: "2px", color: "#ef4444" }}>
+                                <div style={{ fontSize: "11px", fontWeight: "400", marginTop: "4px", color: "#ef4444" }}>
                                   Lịch hẹn đã bị hủy.
                                 </div>
                               </div>
                             ) : (
                               <div className="result-box-status pending-status" style={{
-                                padding: "12px 18px",
+                                width: "230px",
+                                height: "88px",
+                                padding: "12px 16px",
                                 background: "#fffbeb",
                                 border: "1px dashed #f59e0b",
                                 borderRadius: "8px",
@@ -491,7 +494,6 @@ function MedicalRecordDetail() {
                                 fontWeight: "500",
                                 textAlign: "center",
                                 lineHeight: "1.4",
-                                height: "100%",
                                 display: "flex",
                                 flexDirection: "column",
                                 justifyContent: "center",
