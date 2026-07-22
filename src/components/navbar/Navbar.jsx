@@ -35,7 +35,11 @@ function Navbar() {
       const token = localStorage.getItem("accessToken");
       setAuthToken(token);
       const response = await api.get(`patient/v1/patients/me`);
-      const pid = getPatientIdFromResponse(response.data);
+      const d = response?.data;
+      const pid =
+        d?.data?.patientId || d?.data?.PatientId ||
+        d?.patientId || d?.PatientId ||
+        d?.data?.id || d?.id;
 
       if (pid) {
         navigate("/profile");

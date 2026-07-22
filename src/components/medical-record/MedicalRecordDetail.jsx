@@ -40,11 +40,8 @@ function MedicalRecordDetail() {
         const token = localStorage.getItem("accessToken");
         if (token) setAuthToken(token);
         const res = await api.get("patient/v1/patients/me");
-        const d = res?.data;
-        const pid =
-          d?.data?.patientId || d?.data?.PatientId ||
-          d?.patientId || d?.PatientId ||
-          d?.data?.id || d?.id;
+        const patient = res?.data?.data?.data || res?.data?.data || res?.data;
+        const pid = patient?.patientId || patient?.id;
         if (pid) {
           setPatientId(pid);
         } else {
