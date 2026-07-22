@@ -240,7 +240,7 @@ const BlogAPI = {
       });
       return response.data;
     } catch (error) {
-      console.log(`Error approving blog ${id}:`, error);
+      console.log("Error approving blog:", error);
       throw error;
     }
   },
@@ -258,7 +258,7 @@ const BlogAPI = {
       });
       return response.data;
     } catch (error) {
-      console.log(`Error rejecting blog ${id}:`, error);
+      console.log("Error rejecting blog:", error);
       throw error;
     }
   },

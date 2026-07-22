@@ -425,10 +425,10 @@ const BlogsManagement = () => {
     if (!formData.content.trim()) {
       errors.content = "Nội dung bài viết không được để trống";
     }
-    // Validate image: require file for create, optional for edit
-    if (!isEditMode && !formData.imageFile) {
-      errors.img = "Vui lòng chọn ảnh bài viết";
-    }
+    // Validate image: optional for both create and edit since blogs might not have images
+    // if (!isEditMode && !formData.imageFile) {
+    //   errors.img = "Vui lòng chọn ảnh bài viết";
+    // }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -945,7 +945,15 @@ const BlogsManagement = () => {
                 ) : (
                   <div className="blogs-image-preview-wrapper">
                     <div className="blogs-image-preview">
-                      <img src={imagePreview} alt="Preview" />
+                      <img 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        onError={(e) => {
+                          // Hide image and prevent infinite loop if error image also fails
+                          e.target.onerror = null;
+                          e.target.style.display = "none";
+                        }}
+                      />
                     </div>
                     <button
                       type="button"
