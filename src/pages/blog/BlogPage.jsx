@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Spin } from "antd";
+import CustomPagination from "../../components/common/Pagination";
 import Navbar from "../../components/navbar/Navbar";
 import Footer from "../../components/footer/Footer";
 import BlogService from "../../services/BlogService";
@@ -396,60 +397,12 @@ export default function BlogPage() {
                 </div>
 
                 {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div className="blog-pagination">
-                    <button
-                      className="pagination-btn"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      ‹ Trước
-                    </button>
-
-                    <div className="pagination-info">
-                      Trang {currentPage} / {totalPages} ({totalCount} bài viết)
-                    </div>
-
-                    {/* Page numbers */}
-                    <div className="pagination-numbers">
-                      {Array.from(
-                        { length: Math.min(5, totalPages) },
-                        (_, i) => {
-                          let pageNum;
-                          if (totalPages <= 5) {
-                            pageNum = i + 1;
-                          } else if (currentPage <= 3) {
-                            pageNum = i + 1;
-                          } else if (currentPage >= totalPages - 2) {
-                            pageNum = totalPages - 4 + i;
-                          } else {
-                            pageNum = currentPage - 2 + i;
-                          }
-
-                          return (
-                            <button
-                              key={pageNum}
-                              className={`pagination-number ${
-                                currentPage === pageNum ? "active" : ""
-                              }`}
-                              onClick={() => handlePageChange(pageNum)}
-                            >
-                              {pageNum}
-                            </button>
-                          );
-                        }
-                      )}
-                    </div>
-
-                    <button
-                      className="pagination-btn"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      Sau ›
-                    </button>
-                  </div>
-                )}
+                <CustomPagination
+                  current={currentPage}
+                  pageSize={pageSize}
+                  total={totalCount}
+                  onChange={(page) => handlePageChange(page)}
+                />
               </>
             )}
           </>

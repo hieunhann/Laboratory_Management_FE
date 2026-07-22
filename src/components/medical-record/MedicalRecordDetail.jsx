@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../common/Pagination";
 import { useNavigate } from "react-router-dom";
 import "./MedicalRecordDetail.css";
 import TestResultDetail from "./TestResultDetail";
@@ -544,7 +545,7 @@ function MedicalRecordDetail() {
                   </div>
                 ))}
               <div style={{ textAlign: "center", marginTop: 16 }}>
-                <Pagination
+                <CustomPagination
                   current={page}
                   pageSize={pageSize}
                   total={appointmentHistory.length}
@@ -555,8 +556,6 @@ function MedicalRecordDetail() {
                       setPage(1);
                     }
                   }}
-                  showSizeChanger
-                  pageSizeOptions={[5, 10, 20, 50]}
                 />
               </div>
             </>

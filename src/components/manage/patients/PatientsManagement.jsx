@@ -10,7 +10,7 @@ import {
   FiAlertTriangle,
   FiEye,
 } from "react-icons/fi";
-import { Pagination } from "antd";
+import CustomPagination from "../../common/Pagination";
 import { PatientServiceAPI } from "../../../apis/PatientServiceAPI.js";
 import { setAuthToken } from "../../../utils/auth.js";
 import { toast } from "react-toastify";
@@ -878,17 +878,11 @@ const PatientsManagement = () => {
 
           {/* Pagination */}
           <div className="patients-pagination">
-            <Pagination
+            <CustomPagination
               current={page}
               pageSize={pageSize}
               total={total}
               onChange={handlePageChange}
-              showSizeChanger
-              showQuickJumper
-              pageSizeOptions={["5", "10", "20", "50", "100"]}
-              showTotal={(total, range) =>
-                `${range[0]}-${range[1]} của ${total} bệnh nhân`
-              }
             />
           </div>
         </div>

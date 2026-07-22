@@ -45,6 +45,50 @@ function Navbar() {
     }
   };
 
+  const handleHistoryClick = async (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    try {
+      const token = localStorage.getItem("accessToken");
+      setAuthToken(token);
+      const response = await api.get(`patient/v1/patients/me`);
+      
+      const patient = response.data?.data?.data || response.data?.data || response.data;
+      const patientId = patient?.patientId || patient?.id;
+
+      if (patientId) {
+        navigate(`/history?patientId=${patientId}`);
+      } else {
+        navigate("/create-profile");
+      }
+    } catch (error) {
+      console.error("Error checking patient profile for history:", error);
+      navigate("/create-profile");
+    }
+  };
+
+  const handleMedicalRecordClick = async (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    try {
+      const token = localStorage.getItem("accessToken");
+      setAuthToken(token);
+      const response = await api.get(`patient/v1/patients/me`);
+      
+      const patient = response.data?.data?.data || response.data?.data || response.data;
+      const patientId = patient?.patientId || patient?.id;
+
+      if (patientId) {
+        navigate(`/medical-record?patientId=${patientId}`);
+      } else {
+        navigate("/create-profile");
+      }
+    } catch (error) {
+      console.error("Error checking patient profile for medical record:", error);
+      navigate("/create-profile");
+    }
+  };
+
   const handleNavClick = (e, sectionId) => {
     e.preventDefault();
     setMobileMenuOpen(false); // Close mobile menu when clicking a link
@@ -333,6 +377,69 @@ function Navbar() {
             <span className="navbar-menu-text">Đặt Lịch</span>
             <span className="navbar-menu-item-tooltip">Đặt Lịch</span>
           </Link>
+          {user && (
+            <div className="navbar-menu-item-dropdown" tabIndex={0}>
+              <button
+                className={`navbar-menu-item navbar-link ${
+                  location.pathname === "/history" || location.pathname === "/medical-record" ? "active" : ""
+                }`}
+                style={{ background: "none", border: "none", padding: "8px 0" }}
+              >
+                <svg
+                  className="navbar-menu-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="navbar-menu-text">Lịch sử khám</span>
+                <span className="navbar-menu-item-tooltip">Lịch sử khám</span>
+              </button>
+
+              <div className="dropdown-submenu" role="menu">
+                <button
+                  className="dropdown-submenu-item"
+                  onClick={handleMedicalRecordClick}
+                  type="button"
+                >
+                  <svg
+                    style={{ width: "16px", height: "16px", marginRight: "8px" }}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Kết quả xét nghiệm
+                </button>
+                <button
+                  className="dropdown-submenu-item"
+                  onClick={handleHistoryClick}
+                  type="button"
+                >
+                  <svg
+                    style={{ width: "16px", height: "16px", marginRight: "8px" }}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Lịch hẹn đã đặt
+                </button>
+              </div>
+            </div>
+          )}
         </nav>
         <div
           className={`navbar-actions ${mobileMenuOpen ? "mobile-open" : ""}`}

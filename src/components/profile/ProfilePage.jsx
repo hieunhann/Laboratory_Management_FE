@@ -4,7 +4,8 @@ import "./ProfilePage.css";
 import { setAuthToken } from "../../utils/auth";
 import api from "../../configs/axios";
 import { toast } from "react-toastify";
-import { Pagination, Modal, Form, Input, Select, DatePicker } from "antd";
+import { Modal, Form, Input, Select, DatePicker } from "antd";
+import CustomPagination from "../common/Pagination";
 import dayjs from "dayjs";
 import {
   parseDateToInput,
@@ -454,16 +455,18 @@ export default function ProfilePage() {
                     Thông tin chi tiết về hồ sơ bệnh án của bạn
                   </p>
                 </div>
-                <button
-                  className="profile-update-btn"
-                  onClick={() => {
-                    createForm.resetFields();
-                    setShowCreateModal(true);
-                  }}
-                  style={{ marginBottom: 0 }}
-                >
-                  + Thêm hồ sơ bệnh án
-                </button>
+                {false && (
+                  <button
+                    className="profile-update-btn"
+                    onClick={() => {
+                      createForm.resetFields();
+                      setShowCreateModal(true);
+                    }}
+                    style={{ marginBottom: 0 }}
+                  >
+                    + Thêm hồ sơ bệnh án
+                  </button>
+                )}
               </div>
               <div className="medical-records-list">
                 <div className="medical-record-card">
@@ -548,153 +551,154 @@ export default function ProfilePage() {
               </div>
             </div>
             {/* Khu vực hồ sơ bệnh án của người khác (list từ API, loại bỏ hồ sơ cá nhân nếu trùng patientId) */}
-            <div className="profile-section others" style={{ marginTop: 32 }}>
-              <h2 className="profile-section-title others">
-                Hồ sơ bệnh án của người khác
-              </h2>
-              <p className="profile-section-subtitle">
-                Danh sách hồ sơ bệnh án của người khác
-              </p>
-              <div className="medical-records-list">
-                {medicalRecords.filter(
-                  (record) => record.patientId !== userData.patientId
-                ).length === 0 ? (
-                  <div style={{ color: "#888", marginBottom: 16 }}>
-                    Không có hồ sơ bệnh án nào.
-                  </div>
-                ) : (
-                  medicalRecords
-                    .filter((record) => record.patientId !== userData.patientId)
-                    .map((record) => (
-                      <div
-                        className="medical-record-card"
-                        key={record.patientId}
-                      >
-                        <div className="medical-record-header">
-                          <h3 className="medical-record-title" title={record.patientId}>
-                            Hồ sơ bệnh án #{record.patientId?.slice(0, 8).toUpperCase()}
-                          </h3>
-                          <span className="medical-record-status">
-                            {record.status || "Đang hoạt động"}
-                          </span>
-                        </div>
-                        <div className="medical-record-dates">
-                          <span className="medical-record-date">
-                            Ngày tạo: {formatDateTime(record.createdAt)}
-                          </span>
-                          <span className="medical-record-separator">•</span>
-                          <span className="medical-record-date">
-                            Cập nhật lần cuối:{" "}
-                            {formatDateTime(record.updatedAt)}
-                          </span>
-                        </div>
-                        <div className="medical-record-patient-info">
-                          <h4 className="medical-record-patient-title">
-                            Thông tin bệnh nhân
-                          </h4>
-                          <div className="medical-record-patient-details">
-                            <div className="medical-record-patient-column">
-                              <div className="medical-record-patient-item">
-                                <span className="medical-record-patient-label">
-                                  Họ tên:
-                                </span>
-                                <span className="medical-record-patient-value">
-                                  {record.fullName}
-                                </span>
+            {false && (
+              <div className="profile-section others" style={{ marginTop: 32 }}>
+                <h2 className="profile-section-title others">
+                  Hồ sơ bệnh án của người khác
+                </h2>
+                <p className="profile-section-subtitle">
+                  Danh sách hồ sơ bệnh án của người khác
+                </p>
+                <div className="medical-records-list">
+                  {medicalRecords.filter(
+                    (record) => record.patientId !== userData.patientId
+                  ).length === 0 ? (
+                    <div style={{ color: "#888", marginBottom: 16 }}>
+                      Không có hồ sơ bệnh án nào.
+                    </div>
+                  ) : (
+                    medicalRecords
+                      .filter((record) => record.patientId !== userData.patientId)
+                      .map((record) => (
+                        <div
+                          className="medical-record-card"
+                          key={record.patientId}
+                        >
+                          <div className="medical-record-header">
+                            <h3 className="medical-record-title" title={record.patientId}>
+                              Hồ sơ bệnh án #{record.patientId?.slice(0, 8).toUpperCase()}
+                            </h3>
+                            <span className="medical-record-status">
+                              {record.status || "Đang hoạt động"}
+                            </span>
+                          </div>
+                          <div className="medical-record-dates">
+                            <span className="medical-record-date">
+                              Ngày tạo: {formatDateTime(record.createdAt)}
+                            </span>
+                            <span className="medical-record-separator">•</span>
+                            <span className="medical-record-date">
+                              Cập nhật lần cuối:{" "}
+                              {formatDateTime(record.updatedAt)}
+                            </span>
+                          </div>
+                          <div className="medical-record-patient-info">
+                            <h4 className="medical-record-patient-title">
+                              Thông tin bệnh nhân
+                            </h4>
+                            <div className="medical-record-patient-details">
+                              <div className="medical-record-patient-column">
+                                <div className="medical-record-patient-item">
+                                  <span className="medical-record-patient-label">
+                                    Họ tên:
+                                  </span>
+                                  <span className="medical-record-patient-value">
+                                    {record.fullName}
+                                  </span>
+                                </div>
+                                <div className="medical-record-patient-item">
+                                  <span className="medical-record-patient-label">
+                                    Ngày sinh:
+                                  </span>
+                                  <span className="medical-record-patient-value">
+                                    {record.dateOfBirth}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="medical-record-patient-item">
-                                <span className="medical-record-patient-label">
-                                  Ngày sinh:
-                                </span>
-                                <span className="medical-record-patient-value">
-                                  {record.dateOfBirth}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="medical-record-patient-column">
-                              <div className="medical-record-patient-item">
-                                <span className="medical-record-patient-label">
-                                  Mã BN:
-                                </span>
-                                <span className="medical-record-patient-value" title={record.patientId}>
-                                  {record.patientId?.slice(0, 8).toUpperCase()}
-                                </span>
-                              </div>
-                              <div className="medical-record-patient-item">
-                                <span className="medical-record-patient-label">
-                                  Giới tính:
-                                </span>
-                                <span className="medical-record-patient-value">
-                                  {record.gender === 1 ? "Nam" : "Nữ"}
-                                </span>
+                              <div className="medical-record-patient-column">
+                                <div className="medical-record-patient-item">
+                                  <span className="medical-record-patient-label">
+                                    Mã BN:
+                                  </span>
+                                  <span className="medical-record-patient-value" title={record.patientId}>
+                                    {record.patientId?.slice(0, 8).toUpperCase()}
+                                  </span>
+                                </div>
+                                <div className="medical-record-patient-item">
+                                  <span className="medical-record-patient-label">
+                                    Giới tính:
+                                  </span>
+                                  <span className="medical-record-patient-value">
+                                    {record.gender === 1 ? "Nam" : "Nữ"}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: 8,
-                            justifyContent: "flex-end",
-                          }}
-                        >
-                          <button
-                            className="medical-record-view-btn"
-                            onClick={() =>
-                              navigate(
-                                `/medical-record?patientId=${record.patientId}`
-                              )
-                            }
-                          >
-                            <svg
-                              className="view-icon"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
-                            Xem chi tiết hồ sơ bệnh án
-                          </button>
-                          <button
-                            className="medical-record-delete-btn"
-                            onClick={() => {
-                              setRecordToDelete(record);
-                              setIsDeleteModalOpen(true);
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: 8,
+                              justifyContent: "flex-end",
                             }}
                           >
-                            <svg
-                              className="delete-icon"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
+                            <button
+                              className="medical-record-view-btn"
+                              onClick={() =>
+                                navigate(
+                                  `/medical-record?patientId=${record.patientId}`
+                                )
+                              }
                             >
-                              <line x1="18" y1="6" x2="6" y2="18" />
-                              <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                            Xóa
-                          </button>
+                              <svg
+                                className="view-icon"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                              Xem chi tiết hồ sơ bệnh án
+                            </button>
+                            <button
+                              className="medical-record-delete-btn"
+                              onClick={() => {
+                                setRecordToDelete(record);
+                                setIsDeleteModalOpen(true);
+                              }}
+                            >
+                              <svg
+                                className="delete-icon"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                              </svg>
+                              Xóa
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))
-                )}
-                <div style={{ textAlign: "center", marginTop: 16 }}>
-                  <Pagination
-                    current={page}
-                    pageSize={pageSize}
-                    total={totalRecords}
-                    onChange={(p, ps) => {
-                      setPage(p);
-                      setPageSize(ps);
-                    }}
-                    showSizeChanger
-                  />
+                      ))
+                  )}
+                  <div style={{ textAlign: "center", marginTop: 16 }}>
+                    <CustomPagination
+                      current={page}
+                      pageSize={pageSize}
+                      total={totalRecords}
+                      onChange={(p, ps) => {
+                        setPage(p);
+                        setPageSize(ps);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>

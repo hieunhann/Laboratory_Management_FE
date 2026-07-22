@@ -13,7 +13,8 @@ import {
   FiShield,
   FiUsers,
 } from "react-icons/fi";
-import { Pagination, Card, Spin } from "antd";
+import { Card, Spin } from "antd";
+import CustomPagination from "../../common/Pagination";
 import api from "../../../configs/axios.js";
 import { setAuthToken } from "../../../utils/auth.js";
 import { toast } from "react-toastify";
@@ -1066,31 +1067,11 @@ const UsersManagement = () => {
 
           {/* Pagination */}
           <div className="users-pagination">
-            <Pagination
+            <CustomPagination
               current={page}
               pageSize={pageSize}
               total={total}
               onChange={handlePageChange}
-              showSizeChanger
-              showQuickJumper
-              showTotal={(total, range) =>
-                total > 0
-                  ? `${range[0]}-${range[1]} của ${total} dữ liệu`
-                  : "0 dữ liệu"
-              }
-              pageSizeOptions={["5", "10", "20", "50", "100"]}
-              locale={{
-                items_per_page: "/ trang",
-                jump_to: "Đến",
-                jump_to_confirm: "xác nhận",
-                page: "",
-                prev_page: "Trang trước",
-                next_page: "Trang sau",
-                prev_5: "5 trang trước",
-                next_5: "5 trang sau",
-                prev_3: "3 trang trước",
-                next_3: "3 trang sau",
-              }}
             />
           </div>
         </div>
