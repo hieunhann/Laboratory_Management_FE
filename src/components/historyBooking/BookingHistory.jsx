@@ -60,7 +60,7 @@ function BookingHistory() {
 
           setAllBookings(allItems);
           // Get total from API response
-          setTotal(response?.data?.totalRecords || response?.data?.data?.totalRecords || response?.data?.totalItems || response?.data?.data?.totalItems || allItems.length);
+          setTotal(response?.data?.totalItem || response?.data?.data?.totalItem || response?.data?.totalRecords || response?.data?.data?.totalRecords || response?.data?.totalItems || response?.data?.data?.totalItems || allItems.length);
           setBookingHistory(allItems);
 
           // Build unique ids from all items
