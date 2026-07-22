@@ -64,6 +64,8 @@ function BookingHistory() {
   const [filterStatus, setFilterStatus] = useState(""); // "" means all statuses
   const [sortByDate, setSortByDate] = useState("newest");
 
+
+
   useEffect(() => {
     const fetchAPi = async () => {
       try {
@@ -357,7 +359,7 @@ function BookingHistory() {
               value={filterStatus}
               onChange={(e) => {
                 setFilterStatus(e.target.value);
-                setPage(1); // Reset to first page when filter changes
+                setPage(1);
               }}
             >
               <option value="">Tất cả</option>
@@ -371,6 +373,7 @@ function BookingHistory() {
           </div>
         </div>
       </div>
+
 
       <div className="booking-list">
         {loading ? (

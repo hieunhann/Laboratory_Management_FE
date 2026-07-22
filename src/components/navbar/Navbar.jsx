@@ -62,6 +62,7 @@ function Navbar() {
     navigate("/profile");
   };
 
+
   const handleHistoryClick = async (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
