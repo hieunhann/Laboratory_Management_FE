@@ -22,7 +22,7 @@ import { updateUserRoles } from "../../../services/IAMService.jsx";
 import { IAMServiceAPI } from "../../../apis/IAMServiceAPI.jsx";
 import "./UsersManagement.css";
 
-const endPoint = "http://localhost:8080/iam/api/users";
+const endPoint = "iam/api/users";
 
 const getUserId = (user) =>
   user?.id ?? user?.userId ?? user?.uuid ?? user?.Id ?? null;

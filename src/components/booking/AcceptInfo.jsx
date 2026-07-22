@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { CiCalendar } from "react-icons/ci";
 import { IoMdTime } from "react-icons/io";
 import { HiOutlineLocationMarker, HiOutlineTicket } from "react-icons/hi";
+import { FiTag, FiX } from "react-icons/fi";
 import api from "../../configs/axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
@@ -30,6 +31,11 @@ function AcceptInfo({
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [voucherMessage, setVoucherMessage] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
+
+  const [voucherInput, setVoucherInput] = useState("");
+  const [appliedVoucher, setAppliedVoucher] = useState(null); // { code, discountAmount, finalAmount }
+  const [isValidatingVoucher, setIsValidatingVoucher] = useState(false);
+  const [voucherError, setVoucherError] = useState("");
 
   let headerTitle = "Xét nghiệm đã chọn";
   let itemList = [];
@@ -260,6 +266,49 @@ function AcceptInfo({
 
   const { patientId, fullName, phone, email } = selectedPatient || {};
 
+  const handleApplyVoucher = async () => {
+    const code = voucherInput.trim().toUpperCase();
+    if (!code) {
+      setVoucherError("Vui lòng nhập mã voucher.");
+      return;
+    }
+    setIsValidatingVoucher(true);
+    setVoucherError("");
+    try {
+      const response = await api.post("testorder/api/vouchers/validate", {
+        code: code,
+        orderValue: total,
+      });
+      const data = response.data;
+      if (data && data.isValid) {
+        setAppliedVoucher({
+          code: code,
+          discountAmount: data.discountAmount || 0,
+          finalAmount: data.finalAmount ?? (total - (data.discountAmount || 0)),
+        });
+        toast.success(data.message || "Áp dụng voucher thành công!");
+      } else {
+        setVoucherError(data?.message || "Mã voucher không hợp lệ.");
+        setAppliedVoucher(null);
+      }
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Mã voucher không hợp lệ hoặc đã hết hạn.";
+      setVoucherError(typeof errorMsg === "string" ? errorMsg : "Voucher không hợp lệ.");
+      setAppliedVoucher(null);
+    } finally {
+      setIsValidatingVoucher(false);
+    }
+  };
+
+  const handleRemoveVoucher = () => {
+    setAppliedVoucher(null);
+    setVoucherInput("");
+    setVoucherError("");
+  };
+
   const handleBooking = async () => {
     if (!patientId || !fullName || !phone || !email) {
       alert("Vui lòng cập nhật đầy đủ thông tin cá nhân trước khi đặt lịch!");
@@ -276,7 +325,7 @@ function AcceptInfo({
         createdBy: decode.sub,
         bundleId: bundleId > 0 ? bundleId : 0,
         catalogs: bundleId > 0 ? [] : catalogs,
-        voucherCode: appliedCode || undefined,
+        voucherCode: appliedCode || (appliedVoucher ? appliedVoucher.code : undefined),
         slotDTO: slotDTO,
       });
       if (response.status >= 200 && response.status < 300) {
@@ -567,4 +616,5 @@ function AcceptInfo({
 }
 
 export default AcceptInfo;
+
 

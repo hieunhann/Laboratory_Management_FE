@@ -498,7 +498,8 @@
   margin-bottom: 12px;
 }
 
-.voucher-input-group input {
+.voucher-input-group input,
+.voucher-input {
   flex: 1;
   padding: 10px 14px;
   border: 1px solid #cbd5e1;
@@ -511,7 +512,8 @@
   transition: border-color 0.2s ease;
 }
 
-.voucher-input-group input:focus {
+.voucher-input-group input:focus,
+.voucher-input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
