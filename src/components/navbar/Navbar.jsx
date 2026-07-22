@@ -28,13 +28,16 @@ function Navbar() {
     navigate("/login");
   };
 
+
+
   const handleProfileClick = async () => {
     try {
       const token = localStorage.getItem("accessToken");
       setAuthToken(token);
       const response = await api.get(`patient/v1/patients/me`);
+      const pid = getPatientIdFromResponse(response.data);
 
-      if (response.data) {
+      if (pid) {
         navigate("/profile");
       } else {
         navigate("/create-profile");
@@ -45,42 +48,16 @@ function Navbar() {
     }
   };
 
-  const handleHistoryClick = async (e) => {
+  const handleHistoryClick = (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    try {
-      const token = localStorage.getItem("accessToken");
-      setAuthToken(token);
-      const response = await api.get(`patient/v1/patients/me`);
-
-      if (response.data && response.data.succeeded === true && response.data.data) {
-        navigate(`/history?patientId=${response.data.data.patientId}`);
-      } else {
-        navigate("/create-profile");
-      }
-    } catch (error) {
-      console.error("Error checking patient profile:", error);
-      navigate("/create-profile");
-    }
+    navigate("/history");
   };
 
-  const handleMedicalRecordClick = async (e) => {
+  const handleMedicalRecordClick = (e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    try {
-      const token = localStorage.getItem("accessToken");
-      setAuthToken(token);
-      const response = await api.get(`patient/v1/patients/me`);
-
-      if (response.data && response.data.succeeded === true && response.data.data) {
-        navigate(`/medical-record?patientId=${response.data.data.patientId}`);
-      } else {
-        navigate("/create-profile");
-      }
-    } catch (error) {
-      console.error("Error checking patient profile:", error);
-      navigate("/create-profile");
-    }
+    navigate("/medical-record");
   };
 
   const handleNavClick = (e, sectionId) => {
@@ -373,12 +350,12 @@ function Navbar() {
           </Link>
           {user && (
             <>
-              <a
-                href="/history"
+              <Link
+                to="/history"
                 className={`navbar-menu-item navbar-link ${
                   location.pathname === "/history" ? "active" : ""
                 }`}
-                onClick={handleHistoryClick}
+                onClick={() => setMobileMenuOpen(false)}
                 title="Lịch sử đặt lịch"
               >
                 <svg
@@ -393,13 +370,13 @@ function Navbar() {
                 </svg>
                 <span className="navbar-menu-text">Lịch sử đặt lịch</span>
                 <span className="navbar-menu-item-tooltip">Lịch sử đặt lịch</span>
-              </a>
-              <a
-                href="/medical-record"
+              </Link>
+              <Link
+                to="/medical-record"
                 className={`navbar-menu-item navbar-link ${
                   location.pathname === "/medical-record" ? "active" : ""
                 }`}
-                onClick={handleMedicalRecordClick}
+                onClick={() => setMobileMenuOpen(false)}
                 title="Xem kết quả"
               >
                 <svg
@@ -417,7 +394,7 @@ function Navbar() {
                 </svg>
                 <span className="navbar-menu-text">Xem kết quả</span>
                 <span className="navbar-menu-item-tooltip">Xem kết quả</span>
-              </a>
+              </Link>
             </>
           )}
         </nav>

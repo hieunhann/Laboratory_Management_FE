@@ -15,17 +15,47 @@ function MedicalRecordDetail() {
   const navigate = useNavigate();
   const [expandedTests, setExpandedTests] = useState({});
   const [searchParams] = useSearchParams();
-  const patientId = searchParams.get("patientId");
+  const patientIdFromUrl = searchParams.get("patientId");
   const autoExpandBookingId = searchParams.get("bookingId");
+  const [patientId, setPatientId] = useState(patientIdFromUrl || null);
   const [patients, setPatient] = useState(null);
   const [appointmentHistory, setAppointmentHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [noProfile, setNoProfile] = useState(false);
   // Pagination state
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   // Date filtering state
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+
+  // If patientId not in URL, fetch from patients/me
+  useEffect(() => {
+    if (patientIdFromUrl) {
+      setPatientId(patientIdFromUrl);
+      return;
+    }
+    const resolvePatientId = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (token) setAuthToken(token);
+        const res = await api.get("patient/v1/patients/me");
+        const d = res?.data;
+        const pid =
+          d?.data?.patientId || d?.data?.PatientId ||
+          d?.patientId || d?.PatientId ||
+          d?.data?.id || d?.id;
+        if (pid) {
+          setPatientId(pid);
+        } else {
+          setNoProfile(true);
+        }
+      } catch {
+        setNoProfile(true);
+      }
+    };
+    resolvePatientId();
+  }, [patientIdFromUrl]);
 
   // Client-side filter based on appointment date
   const filteredAppointments = appointmentHistory.filter((item) => {
@@ -179,6 +209,51 @@ function MedicalRecordDetail() {
       setExpandedTests((prev) => ({ ...prev, [autoExpandBookingId]: true }));
     }
   }, [autoExpandBookingId]);
+
+  if (noProfile) {
+    return (
+      <div className="medical-record-detail">
+        <Navbar />
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "80px 24px",
+          gap: "16px",
+          color: "#64748b"
+        }}>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <p style={{ fontSize: "16px", fontWeight: 500, color: "#475569" }}>
+            Bạn chưa có kết quả xét nghiệm nào
+          </p>
+          <p style={{ fontSize: "14px", color: "#94a3b8", textAlign: "center" }}>
+            Hãy đặt lịch xét nghiệm để xem kết quả tại đây.
+          </p>
+          <a
+            href="/booking"
+            style={{
+              marginTop: "8px",
+              padding: "10px 24px",
+              background: "#2563eb",
+              color: "#fff",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 500,
+              fontSize: "14px"
+            }}
+          >
+            Đặt lịch ngay
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="medical-record-detail">

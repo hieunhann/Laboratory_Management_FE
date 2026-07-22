@@ -22,7 +22,37 @@ function BookingHistory() {
   const [Catalogs, setCatalogs] = useState({}); // map: catalogId -> catalog
   const [Payments, SetPayments] = useState({}); // map: bookingId -> payment
   const [searchParams] = useSearchParams();
-  const patientId = searchParams.get("patientId");
+  const patientIdFromUrl = searchParams.get("patientId");
+  const [patientId, setPatientId] = useState(patientIdFromUrl || null);
+  const [noProfile, setNoProfile] = useState(false);
+
+  // If patientId not in URL, fetch from patients/me
+  useEffect(() => {
+    if (patientIdFromUrl) {
+      setPatientId(patientIdFromUrl);
+      return;
+    }
+    const resolvePatientId = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (token) setAuthToken(token);
+        const res = await api.get("patient/v1/patients/me");
+        const d = res?.data;
+        const pid =
+          d?.data?.patientId || d?.data?.PatientId ||
+          d?.patientId || d?.PatientId ||
+          d?.data?.id || d?.id;
+        if (pid) {
+          setPatientId(pid);
+        } else {
+          setNoProfile(true);
+        }
+      } catch {
+        setNoProfile(true);
+      }
+    };
+    resolvePatientId();
+  }, [patientIdFromUrl]);
 
   // pagination & loading
   const [page, setPage] = useState(1);
@@ -222,6 +252,52 @@ function BookingHistory() {
       toast.error(e?.response?.data?.message || "Tạo URL thanh toán thất bại");
     }
   };
+
+  if (noProfile) {
+    return (
+      <div className="booking-history-page">
+        <div className="booking-history-header">
+          <h1>Lịch sử đặt lịch</h1>
+          <p>Xem tất cả các lịch hẹn đã đặt</p>
+        </div>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "80px 24px",
+          gap: "16px",
+          color: "#64748b"
+        }}>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <p style={{ fontSize: "16px", fontWeight: 500, color: "#475569" }}>
+            Bạn chưa có lịch đặt nào
+          </p>
+          <p style={{ fontSize: "14px", color: "#94a3b8", textAlign: "center" }}>
+            Hãy đặt lịch xét nghiệm để theo dõi lịch sử tại đây.
+          </p>
+          <a
+            href="/booking"
+            style={{
+              marginTop: "8px",
+              padding: "10px 24px",
+              background: "#2563eb",
+              color: "#fff",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 500,
+              fontSize: "14px"
+            }}
+          >
+            Đặt lịch ngay
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="booking-history-page">
