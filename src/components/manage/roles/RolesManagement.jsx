@@ -816,6 +816,8 @@ const RolesManagement = () => {
                                         <span className="perm-key-code">
                                           {permKey}
                                         </span>
+                                      </div>
+                                    </td>
                     {/* Permission Checkbox Cells for Each Role */}
                                     {roles.map((role) => {
                                       const roleId = getRoleId(role);
