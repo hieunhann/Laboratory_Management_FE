@@ -55,21 +55,12 @@ function MedicalRecordDetail() {
     resolvePatientId();
   }, [patientIdFromUrl]);
 
-  // Client-side filter and sort based on status and date
+  // Client-side filter and sort based on date, fixed to completed status
   const filteredAppointments = appointmentHistory
     .filter((item) => {
-      if (!filterStatus) return true;
       const statusStr = String(item.status).toLowerCase();
-      if (filterStatus === "completed") {
-        return statusStr === "completed" || statusStr === "5";
-      }
-      if (filterStatus === "cancelled") {
-        return statusStr === "cancelled" || statusStr === "6";
-      }
-      if (filterStatus === "pending") {
-        return statusStr !== "completed" && statusStr !== "5" && statusStr !== "cancelled" && statusStr !== "6";
-      }
-      return true;
+      // Only show completed
+      return statusStr === "completed" || statusStr === "5";
     })
     .sort((a, b) => {
       const dateA = new Date(a.booking?.slotInfo?.appointmentDate || a.booking?.appointmentDate || 0);
@@ -310,31 +301,6 @@ function MedicalRecordDetail() {
                 <option value="oldest">Cũ nhất</option>
               </select>
             </div>
-            <div className="date-picker">
-              <label>Trạng thái</label>
-              <select
-                value={filterStatus}
-                onChange={(e) => {
-                  setFilterStatus(e.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="">Tất cả</option>
-                <option value="completed">Đã hoàn thành (Có kết quả)</option>
-                <option value="pending">Chưa có kết quả</option>
-                <option value="cancelled">Đã hủy</option>
-              </select>
-            </div>
-            <button
-              className="filter-reset"
-              onClick={() => {
-                setSortByDate("newest");
-                setFilterStatus("");
-                setPage(1);
-              }}
-            >
-              <span>Thiết lập lại</span>
-            </button>
           </div>
         </div>
 

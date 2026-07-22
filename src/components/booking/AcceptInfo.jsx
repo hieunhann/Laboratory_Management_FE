@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { formatDate1 } from "../../utils/formatDate";
 import { setAuthToken } from "../../utils/auth";
 import VoucherAPI from "../../apis/VoucherAPI";
+import SvgMarginIcon from "../../assets/icon/SVG_margin.svg";
 
 const endPoint = "testorder/api/bookings";
 
@@ -372,7 +373,7 @@ function AcceptInfo({
           {itemList.map((it, idx) => (
             <li key={idx} className="selected-item">
               <div className="item-left">
-                <img src="src/assets/icon/SVG_margin.svg" alt="icon" />
+                <img src={SvgMarginIcon} alt="icon" />
                 <span className="item-name">
                   {it.name || it.testName || "Không rõ"}
                 </span>
