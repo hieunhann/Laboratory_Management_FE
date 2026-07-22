@@ -139,6 +139,39 @@ function AcceptInfo({
     }
   };
 
+  const fixEncoding = (msg) => {
+    if (!msg) return "";
+    if (
+      msg.includes("thnh") ||
+      msg.includes("Thnh") ||
+      msg.includes("cng") ||
+      msg.includes("\uFFFD")
+    ) {
+      return "Áp dụng voucher thành công!";
+    }
+    return msg;
+  };
+
+  const calculateDiscount = (voucher, totalAmount, resDiscount) => {
+    if (typeof resDiscount === "number" && resDiscount > 0) {
+      return resDiscount;
+    }
+    if (!voucher) return 0;
+    const type = voucher.discountType || voucher.DiscountType;
+    const val = voucher.discountValue || voucher.DiscountValue || 0;
+    const maxDisc = voucher.maxDiscountAmount || voucher.MaxDiscountAmount;
+    if (type === 1) {
+      // Percentage
+      let computed = (totalAmount * val) / 100;
+      if (maxDisc && computed > maxDisc) computed = maxDisc;
+      return Math.min(computed, totalAmount);
+    } else if (type === 2) {
+      // Fixed amount
+      return Math.min(val, totalAmount);
+    }
+    return 0;
+  };
+
   // Apply Voucher Code
   const applyVoucherCode = async (codeToApply, voucherObj = null) => {
     if (!codeToApply || codeToApply.trim() === "") {
@@ -148,22 +181,35 @@ function AcceptInfo({
     const cleanCode = codeToApply.trim().toUpperCase();
     try {
       const res = await VoucherAPI.validateVoucher(cleanCode, total);
-      if (res && res.isValid) {
-        setAppliedDiscount(res.discountAmount || 0);
-        setVoucherMessage(res.message || "Áp dụng voucher thành công!");
+      const isOK = res?.isValid ?? res?.IsValid ?? false;
+      if (isOK) {
+        const matchedVoucher =
+          voucherObj ||
+          vouchers.find((v) => v.code?.toUpperCase() === cleanCode);
+        const discountVal = calculateDiscount(
+          matchedVoucher,
+          total,
+          res?.discountAmount ?? res?.DiscountAmount
+        );
+        setAppliedDiscount(discountVal);
+        const rawMsg = res?.message || res?.Message;
+        const cleanMsg = fixEncoding(rawMsg) || "Áp dụng voucher thành công!";
+        setVoucherMessage(cleanMsg);
         setAppliedCode(cleanCode);
-        setSelectedVoucher(voucherObj || { code: cleanCode });
+        setSelectedVoucher(matchedVoucher || { code: cleanCode });
         toast.success(
-          `Áp dụng mã ${cleanCode} thành công! Giảm ${res.discountAmount?.toLocaleString(
+          `Áp dụng mã ${cleanCode} thành công! Giảm ${discountVal.toLocaleString(
             "vi-VN"
           )}₫`
         );
       } else {
         setAppliedDiscount(0);
-        setVoucherMessage(res?.message || "Mã voucher không hợp lệ.");
+        const rawMsg = res?.message || res?.Message;
+        const errMsg = fixEncoding(rawMsg) || "Mã voucher không hợp lệ.";
+        setVoucherMessage(errMsg);
         setAppliedCode("");
         setSelectedVoucher(null);
-        toast.error(res?.message || "Mã voucher không hợp lệ.");
+        toast.error(errMsg);
       }
     } catch (err) {
       console.error("Error applying voucher:", err);
@@ -379,7 +425,7 @@ function AcceptInfo({
             {voucherMessage && (
               <div
                 className={`voucher-alert-msg ${
-                  appliedDiscount > 0 ? "success" : "error"
+                  appliedCode ? "success" : "error"
                 }`}
               >
                 {voucherMessage}
@@ -453,12 +499,21 @@ function AcceptInfo({
           <div className="total-label">Tổng chi phí</div>
           <div className="total-sub">Tạm tính: {formattedTotal}</div>
           {appliedDiscount > 0 && (
-            <div className="discount-tag-info">
-              Đã giảm ({appliedCode}): -{appliedDiscount.toLocaleString("vi-VN")}₫
+            <div className="discount-tag-info" style={{ color: "#16a34a", fontWeight: 600, marginTop: "6px", fontSize: "14px" }}>
+              🎟️ Voucher giảm ({appliedCode}): -{appliedDiscount.toLocaleString("vi-VN")}₫
             </div>
           )}
         </div>
-        <div className="total-amount">{formattedFinalTotal}</div>
+        <div className="total-amount-wrapper" style={{ textAlign: "right" }}>
+          {appliedDiscount > 0 && (
+            <div style={{ textDecoration: "line-through", color: "#94a3b8", fontSize: "14px", marginBottom: "2px" }}>
+              {formattedTotal}
+            </div>
+          )}
+          <div className="total-amount" style={{ color: "#1976d2", fontSize: "24px", fontWeight: 700 }}>
+            {formattedFinalTotal}
+          </div>
+        </div>
       </div>
 
       <div className="note-card">

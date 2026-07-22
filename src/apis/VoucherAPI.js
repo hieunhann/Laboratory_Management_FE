@@ -55,10 +55,25 @@ const VoucherAPI = {
         code,
         orderValue,
       });
-      return response.data;
+      const data = response.data;
+      return {
+        isValid: data?.isValid ?? data?.IsValid ?? true,
+        message: data?.message ?? data?.Message ?? "Áp dụng voucher thành công.",
+        discountAmount: data?.discountAmount ?? data?.DiscountAmount ?? 0,
+        finalAmount:
+          data?.finalAmount ??
+          data?.FinalAmount ??
+          orderValue - (data?.discountAmount ?? data?.DiscountAmount ?? 0),
+      };
     } catch (error) {
       if (error.response && error.response.data) {
-        return error.response.data;
+        const data = error.response.data;
+        return {
+          isValid: data?.isValid ?? data?.IsValid ?? false,
+          message: data?.message ?? data?.Message ?? "Mã voucher không hợp lệ.",
+          discountAmount: data?.discountAmount ?? data?.DiscountAmount ?? 0,
+          finalAmount: data?.finalAmount ?? data?.FinalAmount ?? orderValue,
+        };
       }
       return {
         isValid: false,

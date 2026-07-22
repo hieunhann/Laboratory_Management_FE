@@ -428,6 +428,37 @@
   accent-color: #1976d2;
 }
 
+/* Modal Footer Centered with Equal-Width Buttons */
+.voucher-modal-form .modal-footer,
+.category-modal .modal-footer,
+.delete-modal-footer {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 16px 24px !important;
+  border-top: none !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.voucher-modal-form .modal-footer .modal-button,
+.category-modal .modal-footer .modal-button,
+.delete-modal-footer .modal-button {
+  min-width: 140px !important;
+  height: 42px !important;
+  padding: 0 24px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
 /* Share Preview Box inside Share Modal */
 .share-preview-box {
   background: #f0f7ff;
