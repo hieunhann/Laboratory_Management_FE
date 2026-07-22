@@ -7,6 +7,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import TestOrderServiceAPI from "../../apis/TestOrderServiceAPI";
+import { bookingService } from "../../services/TestOrderService.jsx";
 import { setAuthToken } from "../../utils/auth";
 
 function BookingHistory() {
@@ -202,17 +203,18 @@ function BookingHistory() {
         return toast.error("Không xác định được số tiền");
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const resp = await TestOrderServiceAPI.bookingService.createVnPayUrl(
+      const resp = await bookingService.createVnPayUrl(
         bookingId,
         amount
       );
-      // Giả sử API trả về { data: { paymentUrl: "..." } } hoặc trực tiếp url
       const payUrl =
-        resp?.data?.paymentUrl ||
-        resp?.data?.url ||
-        resp?.data?.vnpUrl ||
-        resp?.data;
-      if (typeof payUrl === "string") {
+        typeof resp === "string"
+          ? resp
+          : resp?.data?.paymentUrl ||
+            resp?.data?.url ||
+            resp?.data?.vnpUrl ||
+            resp?.data;
+      if (typeof payUrl === "string" && payUrl.startsWith("http")) {
         window.location.href = payUrl;
       } else {
         toast.error("Không lấy được URL thanh toán");
