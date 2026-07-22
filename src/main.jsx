@@ -9,7 +9,7 @@ import { store } from "./data/store.js";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId="834593887103-av11ov3n9l5pp160ekmr68e844nq2kg2.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="1037103717152-a63mvuqkkainigu8q232knqpbmci430v.apps.googleusercontent.com">
       <Provider store={store}>
         <App />
       </Provider>
