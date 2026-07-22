@@ -392,7 +392,7 @@ function AcceptInfo({
               <div className="voucher-loading">Đang tải danh sách Voucher...</div>
             ) : vouchers.length === 0 ? (
               <div className="voucher-empty-msg">
-                Hiện tại hệ thống chưa có Voucher nào khả dụng.
+                Bạn chưa có voucher nào khả dụng.
               </div>
             ) : (
               <div className="voucher-list">
