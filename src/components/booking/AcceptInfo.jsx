@@ -1,8 +1,9 @@
 import "./AcceptInfo.css";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { CiCalendar } from "react-icons/ci";
 import { IoMdTime } from "react-icons/io";
 import { HiOutlineLocationMarker } from "react-icons/hi";
+import { FiTag, FiX } from "react-icons/fi";
 import api from "../../configs/axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
@@ -21,6 +22,11 @@ function AcceptInfo({
 }) {
   // selectedItems: { source:'package', package: {...}, total } OR { source:'catalog', items:[{name,price}], total }
   // Không cần dispatch nữa vì không fetch patient
+
+  const [voucherInput, setVoucherInput] = useState("");
+  const [appliedVoucher, setAppliedVoucher] = useState(null); // { code, discountAmount, finalAmount }
+  const [isValidatingVoucher, setIsValidatingVoucher] = useState(false);
+  const [voucherError, setVoucherError] = useState("");
 
   let headerTitle = "Xét nghiệm đã chọn";
   let itemList = [];
@@ -84,7 +90,13 @@ function AcceptInfo({
       selectedItems.total || itemList.reduce((s, it) => s + (it.price || 0), 0);
   }
 
-  const formattedTotal = total ? total.toLocaleString("vi-VN") + "₫" : "0₫";
+  const discountAmount = appliedVoucher ? appliedVoucher.discountAmount : 0;
+  const finalTotal = appliedVoucher ? appliedVoucher.finalAmount : total;
+
+  const formattedOriginalTotal = total ? total.toLocaleString("vi-VN") + "₫" : "0₫";
+  const formattedDiscountAmount = discountAmount ? "-" + discountAmount.toLocaleString("vi-VN") + "₫" : "0₫";
+  const formattedFinalTotal = finalTotal ? finalTotal.toLocaleString("vi-VN") + "₫" : "0₫";
+
   const formatDateLabel = (isoDate) => {
     if (!isoDate) return "";
     try {
@@ -135,6 +147,49 @@ function AcceptInfo({
   // Lấy thông tin bệnh nhân từ props (bắt buộc phải truyền từ Booking.jsx)
   const { patientId, fullName, phone, email } = selectedPatient || {};
 
+  const handleApplyVoucher = async () => {
+    const code = voucherInput.trim().toUpperCase();
+    if (!code) {
+      setVoucherError("Vui lòng nhập mã voucher.");
+      return;
+    }
+    setIsValidatingVoucher(true);
+    setVoucherError("");
+    try {
+      const response = await api.post("testorder/api/vouchers/validate", {
+        code: code,
+        orderValue: total,
+      });
+      const data = response.data;
+      if (data && data.isValid) {
+        setAppliedVoucher({
+          code: code,
+          discountAmount: data.discountAmount || 0,
+          finalAmount: data.finalAmount ?? (total - (data.discountAmount || 0)),
+        });
+        toast.success(data.message || "Áp dụng voucher thành công!");
+      } else {
+        setVoucherError(data?.message || "Mã voucher không hợp lệ.");
+        setAppliedVoucher(null);
+      }
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Mã voucher không hợp lệ hoặc đã hết hạn.";
+      setVoucherError(typeof errorMsg === "string" ? errorMsg : "Voucher không hợp lệ.");
+      setAppliedVoucher(null);
+    } finally {
+      setIsValidatingVoucher(false);
+    }
+  };
+
+  const handleRemoveVoucher = () => {
+    setAppliedVoucher(null);
+    setVoucherInput("");
+    setVoucherError("");
+  };
+
   const handleBooking = async () => {
     if (!patientId || !fullName || !phone || !email) {
       alert("Vui lòng cập nhật đầy đủ thông tin cá nhân trước khi đặt lịch!");
@@ -152,6 +207,7 @@ function AcceptInfo({
         bundleId: bundleId > 0 ? bundleId : 0,
         catalogs: bundleId > 0 ? [] : catalogs,
         slotDTO: slotDTO,
+        voucherCode: appliedVoucher ? appliedVoucher.code : "",
       });
       if (response.status >= 200 && response.status < 300) {
         toast.success(
@@ -201,7 +257,7 @@ function AcceptInfo({
           {itemList.map((it, idx) => (
             <li key={idx} className="selected-item">
               <div className="item-left">
-                <img src="src/assets/icon/SVG_margin.svg" />
+                <img src="src/assets/icon/SVG_margin.svg" alt="icon" />
                 <span className="item-name">
                   {it.name || it.testName || "Không rõ"}
                 </span>
@@ -264,12 +320,76 @@ function AcceptInfo({
         </div>
       </div>
 
-      <div className="card total-card">
-        <div>
-          <div className="total-label">Tổng chi phí</div>
-          <div className="total-sub">Tạm tính</div>
+      {/* Voucher Input Card */}
+      <div className="card voucher-card">
+        <div className="card-title-row">
+          <FiTag className="voucher-icon" />
+          <span className="card-title-text">Mã giảm giá (Voucher)</span>
         </div>
-        <div className="total-amount">{formattedTotal}</div>
+        {appliedVoucher ? (
+          <div className="applied-voucher-badge">
+            <span>
+              Mã <strong>{appliedVoucher.code}</strong> đã áp dụng (-{appliedVoucher.discountAmount.toLocaleString("vi-VN")}₫)
+            </span>
+            <button
+              type="button"
+              className="btn-remove-voucher"
+              onClick={handleRemoveVoucher}
+            >
+              <FiX /> Hủy
+            </button>
+          </div>
+        ) : (
+          <div className="voucher-input-group">
+            <input
+              type="text"
+              className="voucher-input"
+              placeholder="Nhập mã voucher giảm giá (nếu có)"
+              value={voucherInput}
+              onChange={(e) => {
+                setVoucherInput(e.target.value);
+                setVoucherError("");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleApplyVoucher();
+                }
+              }}
+            />
+            <button
+              type="button"
+              className="btn-apply-voucher"
+              onClick={handleApplyVoucher}
+              disabled={isValidatingVoucher}
+            >
+              {isValidatingVoucher ? "Đang kiểm tra..." : "Áp dụng"}
+            </button>
+          </div>
+        )}
+        {voucherError && <div className="voucher-error-msg">{voucherError}</div>}
+      </div>
+
+      <div className="card total-card">
+        <div className="total-summary-container">
+          <div className="summary-row">
+            <span className="total-label">Tạm tính:</span>
+            <span className="total-value">{formattedOriginalTotal}</span>
+          </div>
+          {appliedVoucher && (
+            <div className="summary-row discount-row">
+              <span className="total-label">Giảm giá ({appliedVoucher.code}):</span>
+              <span className="discount-value">{formattedDiscountAmount}</span>
+            </div>
+          )}
+          <div className="summary-row final-row">
+            <div>
+              <div className="total-label-main">Tổng thanh toán:</div>
+              <div className="total-sub">Đã bao gồm thuế & phí</div>
+            </div>
+            <div className="total-amount">{formattedFinalTotal}</div>
+          </div>
+        </div>
       </div>
 
       <div className="note-card">
@@ -301,4 +421,5 @@ function AcceptInfo({
 }
 
 export default AcceptInfo;
+
 // Không cần sửa gì thêm, đã lấy đúng dữ liệu từ selectedItems

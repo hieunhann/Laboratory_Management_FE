@@ -327,3 +327,141 @@
     font-size: 12px;
   }
 }
+
+/* Voucher Card & Summary Styles */
+.voucher-card {
+  border: 1px dashed #3b82f6;
+  background: #f8fafc;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.voucher-icon {
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.voucher-input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.voucher-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  text-transform: uppercase;
+}
+
+.voucher-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.btn-apply-voucher {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.btn-apply-voucher:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.btn-apply-voucher:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.applied-voucher-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #1e40af;
+  font-size: 14px;
+}
+
+.btn-remove-voucher {
+  background: transparent;
+  border: 1px solid #93c5fd;
+  color: #ef4444;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btn-remove-voucher:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.voucher-error-msg {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* Total summary details */
+.total-summary-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #475569;
+}
+
+.discount-row {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.discount-value {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.final-row {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.total-label-main {
+  font-weight: 700;
+  font-size: 16px;
+  color: #0f172a;
+}
+
