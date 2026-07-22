@@ -9,7 +9,7 @@ function DateTimeSelection({ onBack, onContinue }) {
   const days = useMemo(() => {
     const arr = [];
     const today = new Date();
-    for (let i = 1; i < 31; i++) {
+    for (let i = 0; i < 30; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
       // set giờ về giữa trưa để tránh vấn đề timezone khi parse ISO trên client khác múi giờ
@@ -63,6 +63,31 @@ function DateTimeSelection({ onBack, onContinue }) {
     );
     // console.log("Found slot:", slot);
     return slot ? slot.isFullyBooked : false;
+  };
+
+  // Helper function to check if a slot is in the past for today
+  const isPastSlot = (dateISO, time) => {
+    if (!dateISO || !time) return false;
+    const selected = new Date(dateISO);
+    const now = new Date();
+    
+    // Check if selected date is today
+    if (
+      selected.getFullYear() === now.getFullYear() &&
+      selected.getMonth() === now.getMonth() &&
+      selected.getDate() === now.getDate()
+    ) {
+      const slotHour = parseInt(time.split(":")[0], 10);
+      const slotMinute = parseInt(time.split(":")[1], 10);
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      
+      // If the slot is in the past
+      if (slotHour < currentHour || (slotHour === currentHour && slotMinute <= currentMinute)) {
+        return true;
+      }
+    }
+    return false;
   };
 
   // Helper function to get booking count
@@ -131,15 +156,17 @@ function DateTimeSelection({ onBack, onContinue }) {
           {morningSlots.map((t) => {
             const isFullyBooked = isSlotFullyBooked(selectedDate, t);
             const remainingSlots = getRemainingSlots(selectedDate, t);
+            const pastSlot = isPastSlot(selectedDate, t);
+            const isDisabled = !selectedDate || isFullyBooked || pastSlot;
 
             return (
               <button
                 key={t}
                 className={`dt-slot ${selectedTime === t ? "selected" : ""} ${
-                  isFullyBooked ? "fully-booked" : ""
+                  isFullyBooked || pastSlot ? "fully-booked" : ""
                 }`}
                 onClick={() => setSelectedTime(t)}
-                disabled={!selectedDate || isFullyBooked}
+                disabled={isDisabled}
                 type="button"
               >
                 <div>{t}</div>
@@ -147,13 +174,13 @@ function DateTimeSelection({ onBack, onContinue }) {
                   <div
                     style={{
                       fontSize: "0.7rem",
-                      color: isFullyBooked ? "#ef4444" : selectedTime === t ? "#ffffff" : "#6b7280",
+                      color: isDisabled ? "#ef4444" : selectedTime === t ? "#ffffff" : "#6b7280",
                       marginTop: "2px",
-                      fontWeight: isFullyBooked ? "600" : "normal",
-                      cursor: isFullyBooked ? "not-allowed" : "pointer",
+                      fontWeight: isDisabled ? "600" : "normal",
+                      cursor: isDisabled ? "not-allowed" : "pointer",
                     }}
                   >
-                    {isFullyBooked ? "Hết chỗ" : `Còn ${remainingSlots} chỗ`}
+                    {pastSlot ? "Đã qua" : isFullyBooked ? "Hết chỗ" : `Còn ${remainingSlots} chỗ`}
                   </div>
                 )}
               </button>
@@ -166,15 +193,17 @@ function DateTimeSelection({ onBack, onContinue }) {
           {afternoonSlots.map((t) => {
             const isFullyBooked = isSlotFullyBooked(selectedDate, t);
             const remainingSlots = getRemainingSlots(selectedDate, t);
+            const pastSlot = isPastSlot(selectedDate, t);
+            const isDisabled = !selectedDate || isFullyBooked || pastSlot;
 
             return (
               <button
                 key={t}
                 className={`dt-slot ${selectedTime === t ? "selected" : ""} ${
-                  isFullyBooked ? "fully-booked" : ""
+                  isFullyBooked || pastSlot ? "fully-booked" : ""
                 }`}
                 onClick={() => setSelectedTime(t)}
-                disabled={!selectedDate || isFullyBooked}
+                disabled={isDisabled}
                 type="button"
               >
                 <div>{t}</div>
@@ -182,12 +211,12 @@ function DateTimeSelection({ onBack, onContinue }) {
                   <div
                     style={{
                       fontSize: "0.7rem",
-                      color: isFullyBooked ? "#ef4444" : selectedTime === t ? "#ffffff" : "#6b7280",
+                      color: isDisabled ? "#ef4444" : selectedTime === t ? "#ffffff" : "#6b7280",
                       marginTop: "2px",
-                      fontWeight: isFullyBooked ? "600" : "normal",
+                      fontWeight: isDisabled ? "600" : "normal",
                     }}
                   >
-                    {isFullyBooked ? "Hết chỗ" : `Còn ${remainingSlots} chỗ`}
+                    {pastSlot ? "Đã qua" : isFullyBooked ? "Hết chỗ" : `Còn ${remainingSlots} chỗ`}
                   </div>
                 )}
               </button>
