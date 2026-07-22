@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../common/Pagination";
 import "./BookingHistory.css";
 import api from "../../configs/axios";
 import { formatDate, formatTime } from "../../utils/formatDate";
@@ -528,7 +529,7 @@ function BookingHistory() {
         {/* Pagination */}
         {totalRecords > 0 && (
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            <Pagination
+            <CustomPagination
               current={page}
               pageSize={pageSize}
               total={totalRecords}
@@ -536,11 +537,9 @@ function BookingHistory() {
                 setPage(p);
                 if (ps !== pageSize) {
                   setPageSize(ps);
-                  setPage(1); // reset to first when pageSize changes
+                  setPage(1);
                 }
               }}
-              showSizeChanger
-              pageSizeOptions={[5, 10, 20, 50]}
             />
           </div>
         )}

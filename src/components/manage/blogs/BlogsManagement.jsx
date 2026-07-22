@@ -15,7 +15,8 @@ import {
   FiUpload,
   FiImage,
 } from "react-icons/fi";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../../common/Pagination";
 import { toast } from "react-toastify";
 import BlogService from "../../../services/BlogService";
 import { setAuthToken } from "../../../utils/auth";
@@ -864,7 +865,7 @@ const BlogsManagement = () => {
           </div>
 
           <div className="blogs-pagination">
-            <Pagination
+            <CustomPagination
               current={page}
               pageSize={pageSize}
               total={filteredBlogs.length}
@@ -874,9 +875,6 @@ const BlogsManagement = () => {
                   setPageSize(newPageSize);
                 }
               }}
-              showSizeChanger
-              showQuickJumper
-              pageSizeOptions={["5", "10", "20", "50", "100"]}
             />
           </div>
         </div>

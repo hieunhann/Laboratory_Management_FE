@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../../../components/common/Pagination";
 import AdminLayout from "../../../components/admin/layout/AdminLayout";
 import {
   FiCalendar,
@@ -798,19 +799,16 @@ const AdminAppointmentSchedulePage = () => {
                 padding: "16px 0",
               }}
             >
-              <Pagination
+              <CustomPagination
                 current={currentPage}
                 total={total}
                 pageSize={pageSize}
-                showSizeChanger
-                showQuickJumper
-                pageSizeOptions={["5", "10", "20", "50"]}
-                onChange={(page) => {
+                onChange={(page, size) => {
                   setCurrentPage(page);
-                }}
-                onShowSizeChange={(current, size) => {
-                  setPageSize(size);
-                  setCurrentPage(1); // Reset về trang 1 khi đổi pageSize
+                  if (size !== pageSize) {
+                    setPageSize(size);
+                    setCurrentPage(1);
+                  }
                 }}
               />
             </div>
