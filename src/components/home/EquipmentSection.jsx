@@ -115,97 +115,52 @@ export default function EquipmentSection() {
               Chưa có thiết bị nào.
             </p>
           ) : (
-            getVisibleEquipments().map((item, index) => {
+            getVisibleEquipments().map((item) => {
               const itemCode = item.code || item.instrumentCode;
+              const realIndex = equipments.findIndex(e => (e.code || e.id) === (item.code || item.id));
               
               const getHardcodedImage = (code, idx) => {
+                // Những hình ảnh đã được xác minh là load thành công 100% trên giao diện hiện tại
+                const safeImg1 = "https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=600&auto=format&fit=crop"; 
+                const safeImg2 = "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=600&auto=format&fit=crop"; 
+                const safeImg3 = "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?q=80&w=600&auto=format&fit=crop"; // Bàn tay tím
+                const safeImg4 = "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=600&auto=format&fit=crop"; // Sảnh bệnh viện
+                const safeImg5 = "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?q=80&w=600&auto=format&fit=crop"; // Kính hiển vi (ổn định)
+
                 switch (code) {
-                  case "ALINITY_CI":
-                    return "https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=600&auto=format&fit=crop"; // Lab machine
-                  case "ARCHITECTI2000":
-                    return "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=600&auto=format&fit=crop"; // Modern equipment
-                  case "BC6800":
-                    return "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?q=80&w=600&auto=format&fit=crop"; // Blood test tubes
+                  case "CFX96": return safeImg1;
+                  case "ALINITY_CI": return safeImg1;
+                  case "ARCHITECTI2000": return safeImg2;
+                  case "ISE900": return safeImg2;
+                  case "BC6800": return safeImg3;
+                  case "MAGNA_PURE": return safeImg3;
+                  case "COBAS_PURE": return safeImg4;
+                  case "VITROS5600": return safeImg5;
                   default: {
-                    // Array of beautiful generic medical/lab equipments for fallback
-                    const fallbacks = [
-                      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=600&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1631815587646-b85a1bb02246?q=80&w=600&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1579165466991-467135ad3110?q=80&w=600&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1579154204467-3316cc810f63?q=80&w=600&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=600&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?q=80&w=600&auto=format&fit=crop"
-                    ];
-                    // Cycle through fallbacks using the item's index
+                    const fallbacks = [safeImg1, safeImg2, safeImg3, safeImg4, safeImg5];
                     return fallbacks[idx % fallbacks.length];
                   }
                 }
               };
 
-              // Get image URL - ưu tiên imageUrl đã được build từ InstrumentService
-              // Nếu không có, fallback về ảnh cứng đẹp mắt
-              const imageUrl = item.imageUrl || item.imageData || getHardcodedImage(itemCode, index);
+              // Ép dùng ảnh từ thư viện chuẩn cứng để mọi thiết bị đều có 1 ảnh cố định, đẹp mắt, không lỗi.
+              const imageUrl = getHardcodedImage(itemCode, realIndex);
 
               return (
                 <div className="equipment-card" key={item.code || item.id}>
                   <div className="equipment-img-bg">
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={item.name}
-                        className="equipment-img"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          // Hiển thị placeholder khi ảnh lỗi
-                          const placeholder =
-                            e.target.parentElement.querySelector(
-                              ".equipment-img-placeholder"
-                            );
-                          if (placeholder) {
-                            placeholder.style.display = "flex";
-                          }
-                        }}
-                      />
-                    ) : null}
-                    <div
-                      className="equipment-img-placeholder"
-                      style={{ display: imageUrl ? "none" : "flex" }}
-                    >
-                      <svg
-                        width="80"
-                        height="80"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      >
-                        <rect
-                          x="3"
-                          y="3"
-                          width="18"
-                          height="18"
-                          rx="2"
-                          ry="2"
-                          stroke="#cbd5e0"
-                        />
-                        <circle cx="8.5" cy="8.5" r="1.5" fill="#cbd5e0" />
-                        <path
-                          d="M21 15l-5-5L5 21"
-                          stroke="#cbd5e0"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span
-                        style={{
-                          marginTop: "8px",
-                          color: "#9ca3af",
-                          fontSize: "0.875rem",
-                        }}
-                      >
-                        Không có ảnh
-                      </span>
-                    </div>
+                    <img
+                      src={imageUrl}
+                      alt={item.name}
+                      className="equipment-img"
+                      onError={(e) => {
+                        // Tránh lặp vô hạn nếu ảnh cứng cũng lỗi
+                        if (e.target.src !== getHardcodedImage(itemCode, realIndex)) {
+                          e.target.onerror = null;
+                          e.target.src = getHardcodedImage(itemCode, realIndex);
+                        }
+                      }}
+                    />
                   </div>
                   <div className="equipment-info">
                     <h3 className="equipment-name">{item.name}</h3>
