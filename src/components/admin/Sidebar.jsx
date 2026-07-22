@@ -12,6 +12,7 @@ import {
   FiBox,
   FiCalendar,
   FiFolder,
+  FiTag,
 } from "react-icons/fi";
 import "./layout/AdminLayout.css";
 import { getMenuItems } from "../../utils/role";
@@ -29,6 +30,7 @@ const iconMap = {
   packages: <FiBox />,
   catalogs: <FiPackage />,
   parameter: <FiActivity />,
+  vouchers: <FiTag />,
   reports: <FiBarChart2 />,
 };
 

@@ -11,16 +11,6 @@ import TestOrderServiceAPI from "../../apis/TestOrderServiceAPI";
 import { bookingService } from "../../services/TestOrderService.jsx";
 import { setAuthToken } from "../../utils/auth";
 
-import filterIcon from "../../assets/icon/Fillter.svg";
-import calenderIcon from "../../assets/icon/Calender.svg";
-import userIcon from "../../assets/icon/User.svg";
-import mailIcon from "../../assets/icon/Mail.svg";
-import phoneIcon from "../../assets/icon/Phone.svg";
-import documentGrayIcon from "../../assets/icon/Document_Gray.svg";
-import payIcon from "../../assets/icon/Pay.svg";
-import documentBorderIcon from "../../assets/icon/Document_Border.svg";
-import documentWhiteIcon from "../../assets/icon/Document_white.svg";
-
 function BookingHistory() {
   const endPoint = "testorder/api/bookings/patient";
   const endPoint1 = "testorder/api/test-bundles";
@@ -34,7 +24,37 @@ function BookingHistory() {
   const [Catalogs, setCatalogs] = useState({}); // map: catalogId -> catalog
   const [Payments, SetPayments] = useState({}); // map: bookingId -> payment
   const [searchParams] = useSearchParams();
-  const patientId = searchParams.get("patientId");
+  const patientIdFromUrl = searchParams.get("patientId");
+  const [patientId, setPatientId] = useState(patientIdFromUrl || null);
+  const [noProfile, setNoProfile] = useState(false);
+
+  // If patientId not in URL, fetch from patients/me
+  useEffect(() => {
+    if (patientIdFromUrl) {
+      setPatientId(patientIdFromUrl);
+      return;
+    }
+    const resolvePatientId = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (token) setAuthToken(token);
+        const res = await api.get("patient/v1/patients/me");
+        console.log("[BookingHistory] patients/me response:", JSON.stringify(res?.data, null, 2));
+        const patient = res?.data?.data?.data || res?.data?.data || res?.data;
+        const pid = patient?.patientId || patient?.id;
+        console.log("[BookingHistory] resolved patientId:", pid);
+        if (pid) {
+          setPatientId(pid);
+        } else {
+          setNoProfile(true);
+        }
+      } catch (err) {
+        console.error("[BookingHistory] patients/me error:", err);
+        setNoProfile(true);
+      }
+    };
+    resolvePatientId();
+  }, [patientIdFromUrl]);
 
   // pagination & loading
   const [page, setPage] = useState(1);
@@ -42,6 +62,9 @@ function BookingHistory() {
   const [totalRecords, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState(""); // "" means all statuses
+  const [sortByDate, setSortByDate] = useState("newest");
+
+
 
   useEffect(() => {
     const fetchAPi = async () => {
@@ -50,11 +73,8 @@ function BookingHistory() {
         const token = localStorage.getItem("accessToken");
         if (token) setAuthToken(token);
 
-        // Build API URL with filters
-        let apiUrl = `testorder/api/patients/${patientId}/bookings?pageNumber=${page}&pageSize=${pageSize}`;
-        if (filterStatus) {
-          apiUrl += `&filterStatus=${filterStatus}`;
-        }
+        // Build API URL to fetch all bookings (client-side sort/filter across pages)
+        let apiUrl = `testorder/api/patients/${patientId}/bookings?pageNumber=1&pageSize=1000`;
 
         const response = await api.get(apiUrl);
         const data = response?.data?.bookingResponses || response?.data?.data?.bookingResponses || response?.data?.items || response?.data?.data?.items || response?.data?.data || response?.data;
@@ -172,7 +192,7 @@ function BookingHistory() {
     };
 
     if (patientId) fetchAPi();
-  }, [patientId, page, pageSize, filterStatus]);
+  }, [patientId]);
 
   const toggle = (bookingCode) => {
     setExpanded((s) => ({ ...s, [bookingCode]: !s[bookingCode] }));
@@ -235,6 +255,66 @@ function BookingHistory() {
       toast.error(e?.response?.data?.message || "Tạo URL thanh toán thất bại");
     }
   };
+  const filteredBookings = allBookings
+    .filter((b) => {
+      if (!filterStatus) return true;
+      return String(b.status) === String(filterStatus);
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.slotInfo?.appointmentDate || 0);
+      const dateB = new Date(b.createdAt || b.slotInfo?.appointmentDate || 0);
+      if (sortByDate === "newest") {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
+
+  if (noProfile) {
+    return (
+      <div className="booking-history-page">
+        <div className="booking-history-header">
+          <h1>Lịch sử đặt lịch</h1>
+          <p>Xem tất cả các lịch hẹn đã đặt</p>
+        </div>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "80px 24px",
+          gap: "16px",
+          color: "#64748b"
+        }}>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <p style={{ fontSize: "16px", fontWeight: 500, color: "#475569" }}>
+            Bạn chưa có lịch đặt nào
+          </p>
+          <p style={{ fontSize: "14px", color: "#94a3b8", textAlign: "center" }}>
+            Hãy đặt lịch xét nghiệm để theo dõi lịch sử tại đây.
+          </p>
+          <a
+            href="/booking"
+            style={{
+              marginTop: "8px",
+              padding: "10px 24px",
+              background: "#2563eb",
+              color: "#fff",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 500,
+              fontSize: "14px"
+            }}
+          >
+            Đặt lịch ngay
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="booking-history-page">
@@ -245,30 +325,33 @@ function BookingHistory() {
 
       <div className="booking-filters">
         <div className="filters-title">
-          <img src={filterIcon} alt="Filters" />
+          <img src="src\assets\icon\Fillter.svg" alt="Filters" />
           <strong>Bộ lọc</strong>
         </div>
         <span style={{ color: "#737373", fontSize: "15px" }}>
-          Lọc lịch hẹn theo ngày và trạng thái
+          Sắp xếp theo ngày và lọc theo trạng thái lịch hẹn
         </span>
         <div className="filter-row">
-          <div style={{ display: "flex", gap: "16px" }}>
-            <div className="filter-item">
-              <label htmlFor="from-date" className="filter-label">
-                Từ ngày
-              </label>
-              <input type="date" id="from-date" className="filter-date-input" />
-            </div>
-            <div className="filter-item">
-              <label htmlFor="to-date" className="filter-label">
-                Đến ngày
-              </label>
-              <input type="date" id="to-date" className="filter-date-input" />
-            </div>
+          <div className="filter-item">
+            <label htmlFor="sort-by-date" className="filter-label">
+              Sắp xếp theo ngày
+            </label>
+            <select
+              id="sort-by-date"
+              className="filter-status-select"
+              value={sortByDate}
+              onChange={(e) => {
+                setSortByDate(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+            </select>
           </div>
           <div className="filter-item">
             <label htmlFor="status" className="filter-label">
-              Trạng thái
+              Trạng thái lịch hẹn
             </label>
             <select
               id="status"
@@ -276,7 +359,7 @@ function BookingHistory() {
               value={filterStatus}
               onChange={(e) => {
                 setFilterStatus(e.target.value);
-                setPage(1); // Reset to first page when filter changes
+                setPage(1);
               }}
             >
               <option value="">Tất cả</option>
@@ -291,13 +374,18 @@ function BookingHistory() {
         </div>
       </div>
 
+
       <div className="booking-list">
         {loading ? (
           <div style={{ textAlign: "center", padding: 24 }}>
             <Spin size="large" />
           </div>
+        ) : filteredBookings.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#64748b" }}>
+            Không tìm thấy lịch hẹn nào phù hợp với bộ lọc.
+          </div>
         ) : (
-          BookingHistory.map((b) => {
+          filteredBookings.slice((page - 1) * pageSize, page * pageSize).map((b) => {
             const s = statusLabel(b.status);
             const isExpanded = !!expanded[b.bookingCode];
             const pkg = b.bundleId ? Package?.[b.bundleId] : null;
@@ -328,7 +416,7 @@ function BookingHistory() {
                     Mã đặt lịch: {b.bookingCode}
                   </div>
                   <div className="booking-main">
-                    <img src={calenderIcon} alt="Calender" />
+                    <img src="src\assets\icon\Calender.svg" alt="Calender" />
                     <div className="booking-date&time">
                       <div className="booking-date">{b.RunDate}</div>
                       <div className="booking-time">
@@ -366,21 +454,21 @@ function BookingHistory() {
                         <h4>Thông tin cá nhân</h4>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src={userIcon} alt="User" />
+                            <img src="src\assets\icon\User.svg" alt="User" />
                             <span className="label">Họ và tên</span>
                           </div>
                           <span className="value">{b.patientName}</span>
                         </div>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src={mailIcon} alt="Email" />
+                            <img src="src\assets\icon\Mail.svg" alt="Email" />
                             <span className="label">Email</span>
                           </div>
                           <span className="value">{b.patientEmail}</span>
                         </div>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src={phoneIcon} alt="Phone" />{" "}
+                            <img src="src\assets\icon\Phone.svg" alt="Phone" />{" "}
                             <span className="label">Điện thoại</span>
                           </div>
                           <span className="value">{b.patientPhoneNumber}</span>
@@ -394,7 +482,7 @@ function BookingHistory() {
                         <div className="info-row">
                           <div className="info-row-1">
                             <img
-                              src={documentGrayIcon}
+                              src="src\assets\icon\Document_Gray.svg"
                               alt="Document"
                             />
                             <span className="label">
@@ -419,7 +507,7 @@ function BookingHistory() {
                         <h4>Thông tin thanh toán</h4>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src={payIcon} alt="Pay" />
+                            <img src="src\assets\icon\Pay.svg" alt="Pay" />
                             <span className="label">Hình thức</span>
                           </div>
                           <span className="value">
@@ -430,7 +518,7 @@ function BookingHistory() {
                         {derivedAmount > 0 && (
                           <div className="info-row">
                             <div className="info-row-1">
-                              <img src={payIcon} alt="Pay" />
+                              <img src="src\assets\icon\Pay.svg" alt="Pay" />
                               <span className="label">Tổng tiền</span>
                             </div>
                             <span className="value">
@@ -474,7 +562,7 @@ function BookingHistory() {
                     {String(b.status).toLowerCase() === "completed" ? (
                       <div className="result-box ready">
                         <img
-                          src={documentBorderIcon}
+                          src="src\assets\icon\Document_Border.svg"
                           alt="Document_Borders"
                           className="img-doc"
                         />{" "}
@@ -501,8 +589,8 @@ function BookingHistory() {
                           }}
                         >
                           <img
-                            src={documentWhiteIcon}
-                            alt="Document"
+                            src="src/assets/icon/Document_white.svg"
+                            alt=""
                           />
                           Xem chi tiết kết quả xét nghiệm
                         </button>
@@ -537,12 +625,12 @@ function BookingHistory() {
           })
         )}
         {/* Pagination */}
-        {totalRecords > 0 && (
+        {filteredBookings.length > 0 && (
           <div style={{ textAlign: "center", marginTop: 16 }}>
             <CustomPagination
               current={page}
               pageSize={pageSize}
-              total={totalRecords}
+              total={filteredBookings.length}
               onChange={(p, ps) => {
                 setPage(p);
                 if (ps !== pageSize) {
