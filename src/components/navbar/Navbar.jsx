@@ -62,17 +62,7 @@ function Navbar() {
     navigate("/profile");
   };
 
-  const handleHistoryClick = (e) => {
-    e.preventDefault();
-    setMobileMenuOpen(false);
-    navigate("/history");
-  };
 
-  const handleMedicalRecordClick = (e) => {
-    e.preventDefault();
-    setMobileMenuOpen(false);
-    navigate("/medical-record");
-  };
 
   const handleHistoryClick = async (e) => {
     e.preventDefault();
@@ -407,12 +397,75 @@ function Navbar() {
             <span className="navbar-menu-item-tooltip">Đặt Lịch</span>
           </Link>
           {user && (
-            <div className="navbar-menu-item-dropdown" tabIndex={0}>
-              <button
+            <>
+              <div className="navbar-menu-item-dropdown" tabIndex={0}>
+                <button
+                  className={`navbar-menu-item navbar-link ${
+                    location.pathname === "/history" || location.pathname === "/medical-record" ? "active" : ""
+                  }`}
+                  style={{ background: "none", border: "none", padding: "8px 0" }}
+                >
+                  <svg
+                    className="navbar-menu-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="navbar-menu-text">Lịch sử khám</span>
+                  <span className="navbar-menu-item-tooltip">Lịch sử khám</span>
+                </button>
+
+                <div className="dropdown-submenu" role="menu">
+                  <button
+                    className="dropdown-submenu-item"
+                    onClick={handleMedicalRecordClick}
+                    type="button"
+                  >
+                    <svg
+                      style={{ width: "16px", height: "16px", marginRight: "8px" }}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Kết quả xét nghiệm
+                  </button>
+                  <button
+                    className="dropdown-submenu-item"
+                    onClick={handleHistoryClick}
+                    type="button"
+                  >
+                    <svg
+                      style={{ width: "16px", height: "16px", marginRight: "8px" }}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Lịch hẹn đã đặt
+                  </button>
+                </div>
+              </div>
+              <Link
+                to="/my-vouchers"
                 className={`navbar-menu-item navbar-link ${
-                  location.pathname === "/history" || location.pathname === "/medical-record" ? "active" : ""
+                  location.pathname === "/my-vouchers" ? "active" : ""
                 }`}
-                style={{ background: "none", border: "none", padding: "8px 0" }}
+                onClick={() => setMobileMenuOpen(false)}
+                title="Kho Voucher"
               >
                 <svg
                   className="navbar-menu-icon"
@@ -420,75 +473,14 @@ function Navbar() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
                 >
-                  <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                  <line x1="7" y1="7" x2="7.01" y2="7" />
                 </svg>
-                <span className="navbar-menu-text">Lịch sử khám</span>
-                <span className="navbar-menu-item-tooltip">Lịch sử khám</span>
-              </button>
-
-              <div className="dropdown-submenu" role="menu">
-                <button
-                  className="dropdown-submenu-item"
-                  onClick={handleMedicalRecordClick}
-                  type="button"
-                >
-                  <svg
-                    style={{ width: "16px", height: "16px", marginRight: "8px" }}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Kết quả xét nghiệm
-                </button>
-                <button
-                  className="dropdown-submenu-item"
-                  onClick={handleHistoryClick}
-                  type="button"
-                >
-                  <svg
-                    style={{ width: "16px", height: "16px", marginRight: "8px" }}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  Lịch hẹn đã đặt
-                </button>
-              </div>
-            </div>
-            <Link
-              to="/my-vouchers"
-              className={`navbar-menu-item navbar-link ${
-                location.pathname === "/my-vouchers" ? "active" : ""
-              }`}
-              onClick={() => setMobileMenuOpen(false)}
-              title="Kho Voucher"
-            >
-              <svg
-                className="navbar-menu-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                <line x1="7" y1="7" x2="7.01" y2="7" />
-              </svg>
-              <span className="navbar-menu-text">Kho Voucher</span>
-              <span className="navbar-menu-item-tooltip">Kho Voucher</span>
-            </Link>
+                <span className="navbar-menu-text">Kho Voucher</span>
+                <span className="navbar-menu-item-tooltip">Kho Voucher</span>
+              </Link>
+            </>
           )}
         </nav>
         <div
