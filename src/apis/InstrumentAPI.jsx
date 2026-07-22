@@ -59,7 +59,7 @@ export const startInstrumentRun = async (bookingId, instrumentCode) => {
   const code = instrumentCode || generateInstrumentCode();
   const payload = { bookingId, instrumentCode: code };
   const res = await api.post("instrument/api/instruments/runs", payload);
-  return res?.data ?? {};
+  return res?.data?.data ?? res?.data ?? {};
 };
 
 export default {

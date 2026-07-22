@@ -360,7 +360,7 @@ const AdminAppointmentSchedulePage = () => {
       const response = await api.post(
         `testorder/api/bookings/${bookingId}/check-in`
       );
-      const data = response.data || {};
+      const data = response.data?.data ?? response.data ?? {};
 
       if (data.responseCode === -2) {
         toast.error(data.message || "Không thể check-in.");
@@ -373,7 +373,12 @@ const AdminAppointmentSchedulePage = () => {
         setJustCheckedInId(bookingId);
       }
     } catch (err) {
-      const message = "Bạn Chỉ Được CheckIn vào đúng ngày, giờ!!!";
+      const payload = err.response?.data;
+      const message =
+        payload?.data?.message ||
+        payload?.detail ||
+        payload?.message ||
+        "Check-in thất bại.";
       toast.error(message);
       console.error("Check-in failed:", err);
     } finally {

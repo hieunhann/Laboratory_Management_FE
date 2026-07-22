@@ -15,7 +15,7 @@ export const startInstrumentRun = async (bookingId, instrumentCode) => {
   if (token) setAuthToken(token);
   const payload = { bookingId, instrumentCode };
   const res = await api.post("instrument/api/instruments/runs", payload);
-  return res?.data ?? {};
+  return res?.data?.data ?? res?.data ?? {};
 };
 
 export default {

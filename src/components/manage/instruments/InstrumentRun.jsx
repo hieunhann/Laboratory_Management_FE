@@ -67,7 +67,7 @@ const InstrumentRun = () => {
     api
       .get(`/testorder/api/bookings/${bookingId}/results`)
       .then((res) => {
-        const catalogs = res.data?.catalogs;
+        const catalogs = (res.data?.data ?? res.data)?.catalogs;
         if (hasActualResults(catalogs)) {
           setResults(catalogs);
           setPhase("done");
@@ -235,7 +235,7 @@ const InstrumentRun = () => {
                 const res = await api.get(
                   `/testorder/api/bookings/${bookingId}/results`
                 );
-                const catalogs = res.data?.catalogs;
+                const catalogs = (res.data?.data ?? res.data)?.catalogs;
                 if (hasActualResults(catalogs)) {
                   setResults(catalogs);
                   setPhase("done");
@@ -296,8 +296,9 @@ const InstrumentRun = () => {
           const res = await api.get(
             `/testorder/api/bookings/${bookingId}/results`
           );
-          if (res.data && Array.isArray(res.data.catalogs)) {
-            setResults(res.data.catalogs);
+          const payload = res.data?.data ?? res.data;
+          if (payload && Array.isArray(payload.catalogs)) {
+            setResults(payload.catalogs);
           } else {
             setResults([]);
           }
