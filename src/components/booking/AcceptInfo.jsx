@@ -494,24 +494,46 @@ function AcceptInfo({
         )}
       </div>
 
-      <div className="card total-card">
-        <div className="total-left-group">
-          <div className="total-label">Tổng chi phí</div>
-          <div className="total-sub">Tạm tính: {formattedTotal}</div>
-          {appliedDiscount > 0 && (
-            <div className="discount-tag-info" style={{ color: "#16a34a", fontWeight: 600, marginTop: "6px", fontSize: "14px" }}>
-              🎟️ Voucher giảm ({appliedCode}): -{appliedDiscount.toLocaleString("vi-VN")}₫
-            </div>
-          )}
+      {/* Chi tiết chi phí thanh toán */}
+      <div className="billing-summary-card">
+        <div className="billing-card-header">
+          <span className="billing-title">Chi tiết thanh toán</span>
         </div>
-        <div className="total-amount-wrapper" style={{ textAlign: "right" }}>
+        <div className="billing-card-body">
+          <div className="billing-row">
+            <span className="billing-label">Tạm tính dịch vụ</span>
+            <span className="billing-value">{formattedTotal}</span>
+          </div>
+
           {appliedDiscount > 0 && (
-            <div style={{ textDecoration: "line-through", color: "#94a3b8", fontSize: "14px", marginBottom: "2px" }}>
-              {formattedTotal}
+            <div className="billing-row discount-row">
+              <span className="billing-label">
+                <span className="voucher-badge-inline">VOUCHER</span> {appliedCode}
+              </span>
+              <span className="billing-value discount-text">
+                -{appliedDiscount.toLocaleString("vi-VN")}₫
+              </span>
             </div>
           )}
-          <div className="total-amount" style={{ color: "#1976d2", fontSize: "24px", fontWeight: 700 }}>
-            {formattedFinalTotal}
+
+          <div className="billing-row">
+            <span className="billing-label">Phí dịch vụ & Khám</span>
+            <span className="billing-value free-text">Miễn phí</span>
+          </div>
+
+          <div className="billing-divider"></div>
+
+          <div className="billing-row total-row">
+            <div className="total-label-group">
+              <span className="total-title">Tổng thanh toán</span>
+              <span className="total-subtext">Đã bao gồm thuế và các khoản ưu đãi</span>
+            </div>
+            <div className="total-price-group">
+              {appliedDiscount > 0 && (
+                <span className="original-price-strike">{formattedTotal}</span>
+              )}
+              <span className="final-price">{formattedFinalTotal}</span>
+            </div>
           </div>
         </div>
       </div>
