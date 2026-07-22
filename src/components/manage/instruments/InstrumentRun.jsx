@@ -53,84 +53,104 @@ const InstrumentRun = () => {
   useEffect(() => {
     if (!bookingId) return;
 
-    // Kiểm tra xem đã có instrument run trong localStorage chưa
-    const storageKey = `instrument_run_${bookingId}`;
-    const stored = localStorage.getItem(storageKey);
+    const token = localStorage.getItem("accessToken");
+    if (token) setAuthToken(token);
 
-    if (stored) {
-      // Đã chọn máy rồi, khôi phục trạng thái
-      try {
-        const data = JSON.parse(stored);
-        const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
-        const remaining = Math.max(0, (data.totalSeconds || 15) - elapsed);
-
-        setShowModal(false);
-        setWaiting(true);
-        hasStartedRef.current = false;
-
-        if (data.phase === "done") {
+    // 1. Kiểm tra xem booking đã hoàn thành và có kết quả chưa
+    api
+      .get(`/testorder/api/bookings/${bookingId}/results`)
+      .then((res) => {
+        if (
+          res.data &&
+          Array.isArray(res.data.catalogs) &&
+          res.data.catalogs.length > 0
+        ) {
+          setResults(res.data.catalogs);
           setPhase("done");
           setProgress(100);
-          setSeconds(0);
-        } else if (remaining > 0) {
-          // Vẫn còn đang chạy
-          setPhase("pending");
-          setSeconds(remaining);
-          setProgress(0);
-        } else {
-          // Đã hết thời gian nhưng chưa gọi API
-          setPhase("pending");
-          setSeconds(0);
-          setProgress(0);
+          setShowModal(false);
+          setWaiting(false);
+          localStorage.removeItem(`instrument_run_${bookingId}`);
+          return true;
         }
-        // Lấy thông tin máy đã chọn
-        if (data.instrumentCode) {
+        return false;
+      })
+      .catch(() => false)
+      .then((alreadyDone) => {
+        if (alreadyDone) return;
+
+        // 2. Kiểm tra xem đã có instrument run trong localStorage chưa
+        const storageKey = `instrument_run_${bookingId}`;
+        const stored = localStorage.getItem(storageKey);
+
+        if (stored) {
+          try {
+            const data = JSON.parse(stored);
+            const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
+            const remaining = Math.max(0, (data.totalSeconds || 15) - elapsed);
+
+            setShowModal(false);
+            setWaiting(true);
+            hasStartedRef.current = false;
+
+            if (data.phase === "done") {
+              setPhase("done");
+              setProgress(100);
+              setSeconds(0);
+            } else if (remaining > 0) {
+              setPhase("pending");
+              setSeconds(remaining);
+              setProgress(0);
+            } else {
+              setPhase("pending");
+              setSeconds(0);
+              setProgress(0);
+            }
+            if (data.instrumentCode) {
+              setLoadingInstruments(true);
+              getAllInstrument()
+                .then((instrumentData) => {
+                  const list = extractInstrumentList(instrumentData);
+                  const selected = list.find(
+                    (ins) => ins.instrumentCode === data.instrumentCode
+                  );
+                  if (selected) {
+                    setSelectedInstrument(selected);
+                  }
+                  setInstruments(list);
+                })
+                .catch(() => setInstruments([]))
+                .finally(() => setLoadingInstruments(false));
+            }
+          } catch (e) {
+            console.error("Error parsing stored run data:", e);
+            setShowModal(true);
+            setSelectedInstrument(null);
+            setWaiting(false);
+            hasStartedRef.current = false;
+            setLoadingInstruments(true);
+            getAllInstrument()
+              .then((data) => {
+                setInstruments(extractInstrumentList(data));
+              })
+              .catch(() => setInstruments([]))
+              .finally(() => setLoadingInstruments(false));
+          }
+        } else {
+          setShowModal(true);
+          setSelectedInstrument(null);
+          setWaiting(false);
+          hasStartedRef.current = false;
           setLoadingInstruments(true);
           getAllInstrument()
-            .then((instrumentData) => {
-              const list = extractInstrumentList(instrumentData);
-              const selected = list.find(
-                (ins) => ins.instrumentCode === data.instrumentCode
-              );
-              if (selected) {
-                setSelectedInstrument(selected);
-              }
-              setInstruments(list);
+            .then((data) => {
+              setInstruments(extractInstrumentList(data));
             })
             .catch(() => setInstruments([]))
             .finally(() => setLoadingInstruments(false));
         }
-      } catch (e) {
-        console.error("Error parsing stored run data:", e);
-        // Nếu có lỗi, hiển thị modal chọn máy
-        setShowModal(true);
-        setSelectedInstrument(null);
-        setWaiting(false);
-        hasStartedRef.current = false;
-        setLoadingInstruments(true);
-        getAllInstrument()
-          .then((data) => {
-            setInstruments(extractInstrumentList(data));
-          })
-          .catch(() => setInstruments([]))
-          .finally(() => setLoadingInstruments(false));
-      }
-    } else {
-      // Chưa chọn máy, hiển thị modal
-      setShowModal(true);
-      setSelectedInstrument(null);
-      setWaiting(false);
-      hasStartedRef.current = false;
-      setLoadingInstruments(true);
-      getAllInstrument()
-        .then((data) => {
-          setInstruments(extractInstrumentList(data));
-        })
-        .catch(() => setInstruments([]))
-        .finally(() => setLoadingInstruments(false));
-    }
+      });
 
-    // Reset các state khác nếu cần
     setMessage("");
     setResults([]);
   }, [bookingId]);
@@ -204,6 +224,29 @@ const InstrumentRun = () => {
                 setPhase("error");
               }
             } catch (e) {
+              // Thử lấy kết quả nếu booking đã được hoàn tất trước đó
+              try {
+                const res = await api.get(
+                  `/testorder/api/bookings/${bookingId}/results`
+                );
+                if (
+                  res.data &&
+                  Array.isArray(res.data.catalogs) &&
+                  res.data.catalogs.length > 0
+                ) {
+                  setResults(res.data.catalogs);
+                  setPhase("done");
+                  setProgress(100);
+                  setShowModal(false);
+                  if (bookingId) {
+                    localStorage.removeItem(`instrument_run_${bookingId}`);
+                  }
+                  return;
+                }
+              } catch {
+                // Không lấy được kết quả, tiếp tục báo lỗi
+              }
+
               let msg = "Không thể khởi chạy thiết bị. Vui lòng thử lại.";
               if (typeof e === "string") {
                 msg = e;
