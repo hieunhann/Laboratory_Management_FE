@@ -45,6 +45,44 @@ function Navbar() {
     }
   };
 
+  const handleHistoryClick = async (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    try {
+      const token = localStorage.getItem("accessToken");
+      setAuthToken(token);
+      const response = await api.get(`patient/v1/patients/me`);
+
+      if (response.data && response.data.succeeded === true && response.data.data) {
+        navigate(`/history?patientId=${response.data.data.patientId}`);
+      } else {
+        navigate("/create-profile");
+      }
+    } catch (error) {
+      console.error("Error checking patient profile:", error);
+      navigate("/create-profile");
+    }
+  };
+
+  const handleMedicalRecordClick = async (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    try {
+      const token = localStorage.getItem("accessToken");
+      setAuthToken(token);
+      const response = await api.get(`patient/v1/patients/me`);
+
+      if (response.data && response.data.succeeded === true && response.data.data) {
+        navigate(`/medical-record?patientId=${response.data.data.patientId}`);
+      } else {
+        navigate("/create-profile");
+      }
+    } catch (error) {
+      console.error("Error checking patient profile:", error);
+      navigate("/create-profile");
+    }
+  };
+
   const handleNavClick = (e, sectionId) => {
     e.preventDefault();
     setMobileMenuOpen(false); // Close mobile menu when clicking a link
@@ -333,6 +371,55 @@ function Navbar() {
             <span className="navbar-menu-text">Đặt Lịch</span>
             <span className="navbar-menu-item-tooltip">Đặt Lịch</span>
           </Link>
+          {user && (
+            <>
+              <a
+                href="/history"
+                className={`navbar-menu-item navbar-link ${
+                  location.pathname === "/history" ? "active" : ""
+                }`}
+                onClick={handleHistoryClick}
+                title="Lịch sử đặt lịch"
+              >
+                <svg
+                  className="navbar-menu-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <span className="navbar-menu-text">Lịch sử đặt lịch</span>
+                <span className="navbar-menu-item-tooltip">Lịch sử đặt lịch</span>
+              </a>
+              <a
+                href="/medical-record"
+                className={`navbar-menu-item navbar-link ${
+                  location.pathname === "/medical-record" ? "active" : ""
+                }`}
+                onClick={handleMedicalRecordClick}
+                title="Xem kết quả"
+              >
+                <svg
+                  className="navbar-menu-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+                <span className="navbar-menu-text">Xem kết quả</span>
+                <span className="navbar-menu-item-tooltip">Xem kết quả</span>
+              </a>
+            </>
+          )}
         </nav>
         <div
           className={`navbar-actions ${mobileMenuOpen ? "mobile-open" : ""}`}

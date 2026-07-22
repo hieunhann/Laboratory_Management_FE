@@ -121,7 +121,7 @@ const BlogService = {
     }
     
     // Otherwise, assume it's just a filename and try common paths
-    return `${baseURL}/blog/api/BlogPost/Images/${trimmedPath}`;
+    return `${baseURL}/blog/Images/${trimmedPath}`;
   },
 
   /**
@@ -419,7 +419,7 @@ const BlogService = {
       let totalPages = 1;
       
       if (apiResponse && typeof apiResponse === 'object') {
-        totalCount = apiResponse.totalCount || apiResponse.total || apiResponse.count || apiBlogs.length;
+        totalCount = apiResponse.totalItems || apiResponse.totalCount || apiResponse.total || apiResponse.count || apiBlogs.length;
         totalPages = apiResponse.totalPages || Math.ceil(totalCount / pageSize) || 1;
       } else {
         totalCount = apiBlogs.length;
@@ -507,7 +507,7 @@ const BlogService = {
       let totalPages = 1;
       
       if (apiResponse && typeof apiResponse === 'object') {
-        totalCount = apiResponse.totalCount || apiResponse.total || apiResponse.count || apiBlogs.length;
+        totalCount = apiResponse.totalItems || apiResponse.totalCount || apiResponse.total || apiResponse.count || apiBlogs.length;
         totalPages = apiResponse.totalPages || Math.ceil(totalCount / pageSize) || 1;
       } else {
         totalCount = apiBlogs.length;
