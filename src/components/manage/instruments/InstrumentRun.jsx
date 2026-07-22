@@ -106,9 +106,11 @@ const InstrumentRun = () => {
               setSeconds(remaining);
               setProgress(0);
             } else {
-              setPhase("pending");
-              setSeconds(0);
-              setProgress(0);
+              localStorage.removeItem(storageKey);
+              setShowModal(true);
+              setSelectedInstrument(null);
+              setWaiting(false);
+              hasStartedRef.current = false;
             }
             if (data.instrumentCode) {
               setLoadingInstruments(true);

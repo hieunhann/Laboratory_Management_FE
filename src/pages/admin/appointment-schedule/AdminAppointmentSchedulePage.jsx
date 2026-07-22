@@ -661,9 +661,8 @@ const AdminAppointmentSchedulePage = () => {
                         const totalSeconds = data.totalSeconds || 30;
                         const remaining = Math.max(0, totalSeconds - elapsed);
                         const isRunning =
-                          remaining > 0 ||
-                          data.phase === "running" ||
-                          data.phase === "pending";
+                          remaining > 0 &&
+                          (data.phase === "running" || data.phase === "pending");
                         const isDone = data.phase === "done";
                         return {
                           hasActiveRun: isRunning || isDone,
