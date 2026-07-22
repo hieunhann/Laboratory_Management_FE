@@ -14,7 +14,7 @@ export const startInstrumentRun = async (bookingId, instrumentCode) => {
   const token = localStorage.getItem("accessToken");
   if (token) setAuthToken(token);
   const payload = { bookingId, instrumentCode };
-  const res = await api.post("instrument/api/instruments/runs/start", payload);
+  const res = await api.post("instrument/api/instruments/runs", payload);
   return res?.data ?? {};
 };
 
