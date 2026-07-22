@@ -23,6 +23,13 @@ const extractInstrumentList = (apiData) => {
   return [];
 };
 
+const hasActualResults = (catalogs) => {
+  if (!Array.isArray(catalogs) || catalogs.length === 0) return false;
+  return catalogs.some(
+    (cat) => Array.isArray(cat.parameters) && cat.parameters.length > 0
+  );
+};
+
 const InstrumentRun = () => {
   // const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -56,16 +63,13 @@ const InstrumentRun = () => {
     const token = localStorage.getItem("accessToken");
     if (token) setAuthToken(token);
 
-    // 1. Kiểm tra xem booking đã hoàn thành và có kết quả chưa
+    // 1. Kiểm tra xem booking đã hoàn thành và có kết quả thực sự (chứa parameters) chưa
     api
       .get(`/testorder/api/bookings/${bookingId}/results`)
       .then((res) => {
-        if (
-          res.data &&
-          Array.isArray(res.data.catalogs) &&
-          res.data.catalogs.length > 0
-        ) {
-          setResults(res.data.catalogs);
+        const catalogs = res.data?.catalogs;
+        if (hasActualResults(catalogs)) {
+          setResults(catalogs);
           setPhase("done");
           setProgress(100);
           setShowModal(false);
@@ -229,12 +233,9 @@ const InstrumentRun = () => {
                 const res = await api.get(
                   `/testorder/api/bookings/${bookingId}/results`
                 );
-                if (
-                  res.data &&
-                  Array.isArray(res.data.catalogs) &&
-                  res.data.catalogs.length > 0
-                ) {
-                  setResults(res.data.catalogs);
+                const catalogs = res.data?.catalogs;
+                if (hasActualResults(catalogs)) {
+                  setResults(catalogs);
                   setPhase("done");
                   setProgress(100);
                   setShowModal(false);
