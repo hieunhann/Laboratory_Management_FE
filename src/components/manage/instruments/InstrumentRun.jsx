@@ -74,21 +74,29 @@ const InstrumentRun = () => {
           setProgress(0);
         }
 
+const extractInstrumentList = (apiData) => {
+  if (!apiData) return [];
+  if (Array.isArray(apiData)) return apiData;
+  if (Array.isArray(apiData.items)) return apiData.items;
+  if (Array.isArray(apiData.data)) return apiData.data;
+  if (apiData.data && Array.isArray(apiData.data.items)) return apiData.data.items;
+  if (apiData.data && Array.isArray(apiData.data.data)) return apiData.data.data;
+  return [];
+};
+
         // Lấy thông tin máy đã chọn
         if (data.instrumentCode) {
           setLoadingInstruments(true);
           getAllInstrument()
             .then((instrumentData) => {
-              const instruments = Array.isArray(instrumentData.items)
-                ? instrumentData.items
-                : instrumentData;
-              const selected = instruments.find(
+              const list = extractInstrumentList(instrumentData);
+              const selected = list.find(
                 (ins) => ins.instrumentCode === data.instrumentCode
               );
               if (selected) {
                 setSelectedInstrument(selected);
               }
-              setInstruments(instruments);
+              setInstruments(list);
             })
             .catch(() => setInstruments([]))
             .finally(() => setLoadingInstruments(false));
@@ -103,7 +111,7 @@ const InstrumentRun = () => {
         setLoadingInstruments(true);
         getAllInstrument()
           .then((data) => {
-            setInstruments(Array.isArray(data.items) ? data.items : data);
+            setInstruments(extractInstrumentList(data));
           })
           .catch(() => setInstruments([]))
           .finally(() => setLoadingInstruments(false));
@@ -117,7 +125,7 @@ const InstrumentRun = () => {
       setLoadingInstruments(true);
       getAllInstrument()
         .then((data) => {
-          setInstruments(Array.isArray(data.items) ? data.items : data);
+          setInstruments(extractInstrumentList(data));
         })
         .catch(() => setInstruments([]))
         .finally(() => setLoadingInstruments(false));
@@ -353,7 +361,7 @@ const InstrumentRun = () => {
           </div>
         ) : (
           <div className="ir-instrument-modal">
-            {instruments.length === 0 ? (
+            {!Array.isArray(instruments) || instruments.length === 0 ? (
               <div>Không có máy nào khả dụng.</div>
             ) : (
               instruments.map((ins) => {
