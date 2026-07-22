@@ -32,10 +32,12 @@ function DateTimeSelection({ onBack, onContinue }) {
     const fetchSlotCounts = async () => {
       try {
         const response = await bookingService.getAppointmentSlotCounts();
+        
+        // Trích xuất mảng dữ liệu từ các lớp bọc của Axios và Backend (thường là response.data.items hoặc response.data.data.items)
+        const items = response?.data?.data?.items || response?.data?.items || response?.data?.data || response?.data || response?.items || [];
 
-        const data = response;
-        if (Array.isArray(data)) {
-          setSlotCounts(data);
+        if (Array.isArray(items)) {
+          setSlotCounts(items);
         } else {
           setSlotCounts([]);
         }
