@@ -63,6 +63,12 @@ function BookingHistory() {
   const [loading, setLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState(""); // "" means all statuses
 
+  // Date filter states — pending (input) vs applied (sent to API)
+  const [pendingFromDate, setPendingFromDate] = useState("");
+  const [pendingToDate, setPendingToDate] = useState("");
+  const [appliedFromDate, setAppliedFromDate] = useState("");
+  const [appliedToDate, setAppliedToDate] = useState("");
+
   useEffect(() => {
     const fetchAPi = async () => {
       try {
@@ -74,6 +80,12 @@ function BookingHistory() {
         let apiUrl = `testorder/api/patients/${patientId}/bookings?pageNumber=${page}&pageSize=${pageSize}`;
         if (filterStatus) {
           apiUrl += `&filterStatus=${filterStatus}`;
+        }
+        if (appliedFromDate) {
+          apiUrl += `&fromDate=${appliedFromDate}`;
+        }
+        if (appliedToDate) {
+          apiUrl += `&toDate=${appliedToDate}`;
         }
 
         const response = await api.get(apiUrl);
@@ -192,7 +204,7 @@ function BookingHistory() {
     };
 
     if (patientId) fetchAPi();
-  }, [patientId, page, pageSize, filterStatus]);
+  }, [patientId, page, pageSize, filterStatus, appliedFromDate, appliedToDate]);
 
   const toggle = (bookingCode) => {
     setExpanded((s) => ({ ...s, [bookingCode]: !s[bookingCode] }));
@@ -318,19 +330,29 @@ function BookingHistory() {
           Lọc lịch hẹn theo ngày và trạng thái
         </span>
         <div className="filter-row">
-          <div style={{ display: "flex", gap: "16px" }}>
-            <div className="filter-item">
-              <label htmlFor="from-date" className="filter-label">
-                Từ ngày
-              </label>
-              <input type="date" id="from-date" className="filter-date-input" />
-            </div>
-            <div className="filter-item">
-              <label htmlFor="to-date" className="filter-label">
-                Đến ngày
-              </label>
-              <input type="date" id="to-date" className="filter-date-input" />
-            </div>
+          <div className="filter-item">
+            <label htmlFor="from-date" className="filter-label">
+              Từ ngày
+            </label>
+            <input
+              type="date"
+              id="from-date"
+              className="filter-date-input"
+              value={pendingFromDate}
+              onChange={(e) => setPendingFromDate(e.target.value)}
+            />
+          </div>
+          <div className="filter-item">
+            <label htmlFor="to-date" className="filter-label">
+              Đến ngày
+            </label>
+            <input
+              type="date"
+              id="to-date"
+              className="filter-date-input"
+              value={pendingToDate}
+              onChange={(e) => setPendingToDate(e.target.value)}
+            />
           </div>
           <div className="filter-item">
             <label htmlFor="status" className="filter-label">
@@ -342,7 +364,7 @@ function BookingHistory() {
               value={filterStatus}
               onChange={(e) => {
                 setFilterStatus(e.target.value);
-                setPage(1); // Reset to first page when filter changes
+                setPage(1);
               }}
             >
               <option value="">Tất cả</option>
@@ -354,8 +376,26 @@ function BookingHistory() {
               <option value="6">Đã hủy</option>
             </select>
           </div>
+          <div className="filter-search-btn-wrap">
+            <button
+              id="btn-search-booking"
+              className="btn-filter-search"
+              onClick={() => {
+                setAppliedFromDate(pendingFromDate);
+                setAppliedToDate(pendingToDate);
+                setPage(1);
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              Tìm kiếm
+            </button>
+          </div>
         </div>
       </div>
+
 
       <div className="booking-list">
         {loading ? (

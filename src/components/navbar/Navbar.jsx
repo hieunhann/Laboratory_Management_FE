@@ -407,23 +407,12 @@ function Navbar() {
             <span className="navbar-menu-item-tooltip">Đặt Lịch</span>
           </Link>
           {user && (
-<<<<<<< HEAD
             <div className="navbar-menu-item-dropdown" tabIndex={0}>
               <button
                 className={`navbar-menu-item navbar-link ${
                   location.pathname === "/history" || location.pathname === "/medical-record" ? "active" : ""
                 }`}
                 style={{ background: "none", border: "none", padding: "8px 0" }}
-=======
-            <>
-              <Link
-                to="/history"
-                className={`navbar-menu-item navbar-link ${
-                  location.pathname === "/history" ? "active" : ""
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-                title="Lịch sử đặt lịch"
->>>>>>> fix/test-customer-role
               >
                 <svg
                   className="navbar-menu-icon"
