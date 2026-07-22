@@ -46,7 +46,7 @@ const buildInstrumentImageUrl = (imagePath) => {
   if (!imagePath || imagePath.trim() === "") return "";
 
   const trimmedPath = imagePath.trim();
-  const baseURL = "http://localhost:8080";
+  const baseURL = "https://hemalink-gateway-5ils.onrender.com";
 
   // If already a full URL (starts with http:// or https://), return as is
   if (trimmedPath.startsWith("http://") || trimmedPath.startsWith("https://")) {
