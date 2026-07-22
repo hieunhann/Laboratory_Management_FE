@@ -45,15 +45,10 @@
 }
 .filter-row {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   align-items: flex-end;
   margin-top: 20px;
-}
-
-.filter-row > div:first-child {
-  display: flex;
-  gap: 16px;
 }
 .filter-item {
   display: flex;
@@ -617,12 +612,8 @@
   }
 
   .filter-row {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 14px;
-  }
-
-  .filter-row > div:first-child {
-    gap: 12px;
   }
 
   .regular-layout,
@@ -684,11 +675,6 @@
     align-items: stretch;
     gap: 12px;
     margin-top: 16px;
-  }
-
-  .filter-row > div:first-child {
-    flex-direction: column;
-    gap: 12px;
   }
 
   .filter-item {

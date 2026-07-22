@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import AdminLayout from "../../admin/layout/AdminLayout";
 import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiX } from "react-icons/fi";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../../common/Pagination";
 import { setAuthToken } from "../../../utils/auth";
 import { toast } from "react-toastify";
 import BlogService from "../../../services/BlogService";
@@ -537,13 +538,11 @@ const CategoriesManagement = () => {
 
           {total > 0 && (
             <div className="categories-pagination">
-              <Pagination
+               <CustomPagination
                 current={page}
                 pageSize={pageSize}
                 total={total}
                 onChange={handlePageChange}
-                showSizeChanger
-                pageSizeOptions={["10", "20", "50", "100"]}
               />
             </div>
           )}

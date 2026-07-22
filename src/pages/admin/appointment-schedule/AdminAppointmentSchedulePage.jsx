@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../../../components/common/Pagination";
 import AdminLayout from "../../../components/admin/layout/AdminLayout";
 import {
   FiCalendar,
@@ -357,10 +358,10 @@ const AdminAppointmentSchedulePage = () => {
       setCheckingInId(bookingId);
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const response = await api.put(
+      const response = await api.post(
         `testorder/api/bookings/${bookingId}/check-in`
       );
-      const data = response.data || {};
+      const data = response.data?.data ?? response.data ?? {};
 
       if (data.responseCode === -2) {
         toast.error(data.message || "Không thể check-in.");
@@ -373,7 +374,12 @@ const AdminAppointmentSchedulePage = () => {
         setJustCheckedInId(bookingId);
       }
     } catch (err) {
-      const message = "Bạn Chỉ Được CheckIn vào đúng ngày, giờ!!!";
+      const payload = err.response?.data;
+      const message =
+        payload?.data?.message ||
+        payload?.detail ||
+        payload?.message ||
+        "Check-in thất bại.";
       toast.error(message);
       console.error("Check-in failed:", err);
     } finally {
@@ -661,9 +667,8 @@ const AdminAppointmentSchedulePage = () => {
                         const totalSeconds = data.totalSeconds || 30;
                         const remaining = Math.max(0, totalSeconds - elapsed);
                         const isRunning =
-                          remaining > 0 ||
-                          data.phase === "running" ||
-                          data.phase === "pending";
+                          remaining > 0 &&
+                          (data.phase === "running" || data.phase === "pending");
                         const isDone = data.phase === "done";
                         return {
                           hasActiveRun: isRunning || isDone,
@@ -794,19 +799,16 @@ const AdminAppointmentSchedulePage = () => {
                 padding: "16px 0",
               }}
             >
-              <Pagination
+              <CustomPagination
                 current={currentPage}
                 total={total}
                 pageSize={pageSize}
-                showSizeChanger
-                showQuickJumper
-                pageSizeOptions={["5", "10", "20", "50"]}
-                onChange={(page) => {
+                onChange={(page, size) => {
                   setCurrentPage(page);
-                }}
-                onShowSizeChange={(current, size) => {
-                  setPageSize(size);
-                  setCurrentPage(1); // Reset về trang 1 khi đổi pageSize
+                  if (size !== pageSize) {
+                    setPageSize(size);
+                    setCurrentPage(1);
+                  }
                 }}
               />
             </div>

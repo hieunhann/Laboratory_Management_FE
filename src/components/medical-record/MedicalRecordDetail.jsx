@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../common/Pagination";
 import { useNavigate } from "react-router-dom";
 import "./MedicalRecordDetail.css";
 import TestResultDetail from "./TestResultDetail";
@@ -25,9 +26,9 @@ function MedicalRecordDetail() {
   // Pagination state
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  // Date filtering state
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  // Sorting and Filtering states
+  const [sortByDate, setSortByDate] = useState("newest");
+  const [filterStatus, setFilterStatus] = useState("");
 
   // If patientId not in URL, fetch from patients/me
   useEffect(() => {
@@ -54,22 +55,31 @@ function MedicalRecordDetail() {
     resolvePatientId();
   }, [patientIdFromUrl]);
 
-  // Client-side filter based on appointment date
-  const filteredAppointments = appointmentHistory.filter((item) => {
-    const rawDate = item.booking?.slotInfo?.appointmentDate || item.booking?.appointmentDate;
-    if (!rawDate) return true;
-    
-    // Extract YYYY-MM-DD
-    const appDateStr = rawDate.split("T")[0];
-    
-    if (fromDate && appDateStr < fromDate) {
-      return false;
-    }
-    if (toDate && appDateStr > toDate) {
-      return false;
-    }
-    return true;
-  });
+  // Client-side filter and sort based on status and date
+  const filteredAppointments = appointmentHistory
+    .filter((item) => {
+      if (!filterStatus) return true;
+      const statusStr = String(item.status).toLowerCase();
+      if (filterStatus === "completed") {
+        return statusStr === "completed" || statusStr === "5";
+      }
+      if (filterStatus === "cancelled") {
+        return statusStr === "cancelled" || statusStr === "6";
+      }
+      if (filterStatus === "pending") {
+        return statusStr !== "completed" && statusStr !== "5" && statusStr !== "cancelled" && statusStr !== "6";
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.booking?.slotInfo?.appointmentDate || a.booking?.appointmentDate || 0);
+      const dateB = new Date(b.booking?.slotInfo?.appointmentDate || b.booking?.appointmentDate || 0);
+      if (sortByDate === "newest") {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -283,41 +293,47 @@ function MedicalRecordDetail() {
             </svg>
             <span>Bộ lọc</span>
             <span className="filter-note">
-              Lọc xét nghiệm theo ngày trước ngày tháng năm
+              Sắp xếp theo ngày và lọc theo trạng thái kết quả
             </span>
           </div>
           <div className="filter-dates">
             <div className="date-picker">
-              <label>Từ ngày</label>
-              <input
-                type="date"
-                value={fromDate}
+              <label>Sắp xếp theo ngày</label>
+              <select
+                value={sortByDate}
                 onChange={(e) => {
-                  setFromDate(e.target.value);
-                  setPage(1); // Reset page on filter change
+                  setSortByDate(e.target.value);
+                  setPage(1);
                 }}
-              />
+              >
+                <option value="newest">Mới nhất</option>
+                <option value="oldest">Cũ nhất</option>
+              </select>
             </div>
             <div className="date-picker">
-              <label>Đến ngày</label>
-              <input
-                type="date"
-                value={toDate}
+              <label>Trạng thái</label>
+              <select
+                value={filterStatus}
                 onChange={(e) => {
-                  setToDate(e.target.value);
-                  setPage(1); // Reset page on filter change
+                  setFilterStatus(e.target.value);
+                  setPage(1);
                 }}
-              />
+              >
+                <option value="">Tất cả</option>
+                <option value="completed">Đã hoàn thành (Có kết quả)</option>
+                <option value="pending">Chưa có kết quả</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
             </div>
             <button
               className="filter-reset"
               onClick={() => {
-                setFromDate("");
-                setToDate("");
+                setSortByDate("newest");
+                setFilterStatus("");
                 setPage(1);
               }}
             >
-              <span>Tất cả</span>
+              <span>Thiết lập lại</span>
             </button>
           </div>
         </div>
@@ -522,7 +538,7 @@ function MedicalRecordDetail() {
                   })
                 )}
               <div style={{ textAlign: "center", marginTop: 16 }}>
-                <Pagination
+                <CustomPagination
                   current={page}
                   pageSize={pageSize}
                   total={filteredAppointments.length}
@@ -533,8 +549,6 @@ function MedicalRecordDetail() {
                       setPage(1);
                     }
                   }}
-                  showSizeChanger
-                  pageSizeOptions={[5, 10, 20, 50]}
                 />
               </div>
             </>

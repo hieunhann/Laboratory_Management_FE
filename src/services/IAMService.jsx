@@ -12,6 +12,9 @@ import {
   patchRolePermissionsByModule as patchRolePermissionsByModuleAPI,
   createRole as createRoleAPI,
   deleteRole as deleteRoleAPI,
+  createPermissionAPI,
+  updatePermissionAPI,
+  deletePermissionAPI,
 } from "../apis/IAMServiceAPI.jsx";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
@@ -508,4 +511,26 @@ export const updateUserRoles = async (userId, roleIds) => {
   }
   const response = await IAMServiceAPI.UpdateUserRoles(userId, roleIds);
   return response?.data || response;
+};
+
+// ==================== Permission CRUD Services ====================
+export const createPermission = async (payload) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) setAuthToken(token);
+  const res = await createPermissionAPI(payload);
+  return res?.data || res;
+};
+
+export const updatePermission = async (id, payload) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) setAuthToken(token);
+  const res = await updatePermissionAPI(id, payload);
+  return res?.data || res;
+};
+
+export const deletePermission = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) setAuthToken(token);
+  const res = await deletePermissionAPI(id);
+  return res?.data || res;
 };

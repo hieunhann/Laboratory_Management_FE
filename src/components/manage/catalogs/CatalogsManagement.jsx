@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import AdminLayout from "../../admin/layout/AdminLayout";
 import { FiPlus, FiEdit2, FiSearch, FiX, FiPackage } from "react-icons/fi";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../../common/Pagination";
 import { setAuthToken } from "../../../utils/auth";
 import { toast } from "react-toastify";
 import {
@@ -648,16 +649,11 @@ const CatalogsManagement = () => {
           </div>
 
           <div className="catalogs-pagination">
-            <Pagination
+            <CustomPagination
               current={page}
               pageSize={pageSize}
               total={total}
               onChange={handlePageChange}
-              showSizeChanger
-              pageSizeOptions={["5", "10", "20", "50", "100"]}
-              showTotal={(tot, range) =>
-                tot > 0 ? `${range[0]}-${range[1]} của ${tot} mục` : "0 mục"
-              }
             />
           </div>
         </div>

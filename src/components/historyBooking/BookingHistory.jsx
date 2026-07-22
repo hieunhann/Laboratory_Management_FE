@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../common/Pagination";
 import "./BookingHistory.css";
 import api from "../../configs/axios";
 import { formatDate, formatTime } from "../../utils/formatDate";
@@ -7,6 +8,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import TestOrderServiceAPI from "../../apis/TestOrderServiceAPI";
+import { bookingService } from "../../services/TestOrderService.jsx";
 import { setAuthToken } from "../../utils/auth";
 
 function BookingHistory() {
@@ -60,6 +62,7 @@ function BookingHistory() {
   const [totalRecords, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState(""); // "" means all statuses
+  const [sortByDate, setSortByDate] = useState("newest");
 
   useEffect(() => {
     const fetchAPi = async () => {
@@ -68,11 +71,8 @@ function BookingHistory() {
         const token = localStorage.getItem("accessToken");
         if (token) setAuthToken(token);
 
-        // Build API URL with filters
-        let apiUrl = `testorder/api/patients/${patientId}/bookings?pageNumber=${page}&pageSize=${pageSize}`;
-        if (filterStatus) {
-          apiUrl += `&filterStatus=${filterStatus}`;
-        }
+        // Build API URL to fetch all bookings (client-side sort/filter across pages)
+        let apiUrl = `testorder/api/patients/${patientId}/bookings?pageNumber=1&pageSize=1000`;
 
         const response = await api.get(apiUrl);
         const data = response?.data?.bookingResponses || response?.data?.data?.bookingResponses || response?.data?.items || response?.data?.data?.items || response?.data?.data || response?.data;
@@ -88,7 +88,7 @@ function BookingHistory() {
 
           setAllBookings(allItems);
           // Get total from API response
-          setTotal(response?.data?.totalRecords || response?.data?.data?.totalRecords || response?.data?.totalItems || response?.data?.data?.totalItems || allItems.length);
+          setTotal(response?.data?.totalItem || response?.data?.data?.totalItem || response?.data?.totalRecords || response?.data?.data?.totalRecords || response?.data?.totalItems || response?.data?.data?.totalItems || allItems.length);
           setBookingHistory(allItems);
 
           // Build unique ids from all items
@@ -190,7 +190,7 @@ function BookingHistory() {
     };
 
     if (patientId) fetchAPi();
-  }, [patientId, page, pageSize, filterStatus]);
+  }, [patientId]);
 
   const toggle = (bookingCode) => {
     setExpanded((s) => ({ ...s, [bookingCode]: !s[bookingCode] }));
@@ -232,17 +232,18 @@ function BookingHistory() {
         return toast.error("Không xác định được số tiền");
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const resp = await TestOrderServiceAPI.bookingService.createVnPayUrl(
+      const resp = await bookingService.createVnPayUrl(
         bookingId,
         amount
       );
-      // Giả sử API trả về { data: { paymentUrl: "..." } } hoặc trực tiếp url
       const payUrl =
-        resp?.data?.paymentUrl ||
-        resp?.data?.url ||
-        resp?.data?.vnpUrl ||
-        resp?.data;
-      if (typeof payUrl === "string") {
+        typeof resp === "string"
+          ? resp
+          : resp?.data?.paymentUrl ||
+            resp?.data?.url ||
+            resp?.data?.vnpUrl ||
+            resp?.data;
+      if (typeof payUrl === "string" && payUrl.startsWith("http")) {
         window.location.href = payUrl;
       } else {
         toast.error("Không lấy được URL thanh toán");
@@ -252,6 +253,20 @@ function BookingHistory() {
       toast.error(e?.response?.data?.message || "Tạo URL thanh toán thất bại");
     }
   };
+  const filteredBookings = allBookings
+    .filter((b) => {
+      if (!filterStatus) return true;
+      return String(b.status) === String(filterStatus);
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.slotInfo?.appointmentDate || 0);
+      const dateB = new Date(b.createdAt || b.slotInfo?.appointmentDate || 0);
+      if (sortByDate === "newest") {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
 
   if (noProfile) {
     return (
@@ -312,26 +327,29 @@ function BookingHistory() {
           <strong>Bộ lọc</strong>
         </div>
         <span style={{ color: "#737373", fontSize: "15px" }}>
-          Lọc lịch hẹn theo ngày và trạng thái
+          Sắp xếp theo ngày và lọc theo trạng thái lịch hẹn
         </span>
         <div className="filter-row">
-          <div style={{ display: "flex", gap: "16px" }}>
-            <div className="filter-item">
-              <label htmlFor="from-date" className="filter-label">
-                Từ ngày
-              </label>
-              <input type="date" id="from-date" className="filter-date-input" />
-            </div>
-            <div className="filter-item">
-              <label htmlFor="to-date" className="filter-label">
-                Đến ngày
-              </label>
-              <input type="date" id="to-date" className="filter-date-input" />
-            </div>
+          <div className="filter-item">
+            <label htmlFor="sort-by-date" className="filter-label">
+              Sắp xếp theo ngày
+            </label>
+            <select
+              id="sort-by-date"
+              className="filter-status-select"
+              value={sortByDate}
+              onChange={(e) => {
+                setSortByDate(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+            </select>
           </div>
           <div className="filter-item">
             <label htmlFor="status" className="filter-label">
-              Trạng thái
+              Trạng thái lịch hẹn
             </label>
             <select
               id="status"
@@ -359,8 +377,12 @@ function BookingHistory() {
           <div style={{ textAlign: "center", padding: 24 }}>
             <Spin size="large" />
           </div>
+        ) : filteredBookings.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#64748b" }}>
+            Không tìm thấy lịch hẹn nào phù hợp với bộ lọc.
+          </div>
         ) : (
-          BookingHistory.map((b) => {
+          filteredBookings.slice((page - 1) * pageSize, page * pageSize).map((b) => {
             const s = statusLabel(b.status);
             const isExpanded = !!expanded[b.bookingCode];
             const pkg = b.bundleId ? Package?.[b.bundleId] : null;
@@ -600,21 +622,19 @@ function BookingHistory() {
           })
         )}
         {/* Pagination */}
-        {totalRecords > 0 && (
+        {filteredBookings.length > 0 && (
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            <Pagination
+            <CustomPagination
               current={page}
               pageSize={pageSize}
-              total={totalRecords}
+              total={filteredBookings.length}
               onChange={(p, ps) => {
                 setPage(p);
                 if (ps !== pageSize) {
                   setPageSize(ps);
-                  setPage(1); // reset to first when pageSize changes
+                  setPage(1);
                 }
               }}
-              showSizeChanger
-              pageSizeOptions={[5, 10, 20, 50]}
             />
           </div>
         )}

@@ -706,7 +706,6 @@
   z-index: 1000000 !important;
   padding: 24px;
   overscroll-behavior: contain;
-  touch-action: none;
 }
 
 .modal-content {
@@ -714,6 +713,9 @@
   border-radius: 16px;
   width: 100%;
   max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   border: 1px solid #e5e7eb;
@@ -768,6 +770,8 @@
 .modal-body-1 {
   padding: 20px 24px;
   background: white;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .form-row-1 {

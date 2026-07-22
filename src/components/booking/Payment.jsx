@@ -10,10 +10,8 @@ export default function Payment({
   selectedDateTime,
   bookingId,
   selectedPatient,
-
-  // onProceed, // legacy prop
-  // onConfirm,
-  // onFinish, // prop để gọi khi thanh toán thành công
+  onBack,
+  onFinish,
 }) {
   const [form, setForm] = useState({
     fullName: "Tuấn Lê",
@@ -188,9 +186,11 @@ export default function Payment({
             )}
           </div>
 
-          {/* <button className="btn-back" onClick={onBack}>
-            Quay lại
-          </button> */}
+          {onBack && (
+            <button type="button" className="btn-back" onClick={onBack}>
+              Quay lại
+            </button>
+          )}
         </div>
 
         {/* RIGHT COLUMN */}

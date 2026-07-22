@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Form, Input, Select, DatePicker } from "antd";
-import { useMedicalRecord, useAddMedicalRecords } from "../../services/PatientService";
+import { useMedicalRecord, useAddMedicalRecords, useFetchProfile } from "../../services/PatientService";
 import { bloodTypeOptions } from "../../utils/bloodType";
 import dayjs from "dayjs";
 import "./PatientSelection.css";
@@ -12,6 +12,8 @@ function PatientSelection({ onSelectPatient, onBack }) {
   const [form] = Form.useForm();
   const { fetchMedicalRecords, medicalRecords } = useMedicalRecord();
   const [loading, setLoading] = useState(false);
+
+  const { fetchProfile, userData } = useFetchProfile();
 
   const {
     handleCreateMedicalRecord,
@@ -28,12 +30,30 @@ function PatientSelection({ onSelectPatient, onBack }) {
   useEffect(() => {
     const loadPatients = async () => {
       setLoading(true);
+      await fetchProfile();
       await fetchMedicalRecords(1, 10000); // Lấy tất cả patient
       setLoading(false);
     };
 
     loadPatients();
   }, []);
+
+  // Filter list to only show the logged-in user profile
+  const filteredPatients = medicalRecords.filter(
+    (p) => p != null && userData && p.patientId === userData.patientId
+  );
+
+  // Fallback if list is empty but userData has patientId
+  const displayPatients = filteredPatients.length > 0 
+    ? filteredPatients 
+    : (userData?.patientId ? [userData] : []);
+
+  // Auto-select the logged-in user profile once loaded
+  useEffect(() => {
+    if (userData?.patientId) {
+      setSelectedPatientId(userData.patientId);
+    }
+  }, [userData]);
 
   useEffect(() => {
     if (showCreateModal) {
@@ -51,7 +71,7 @@ function PatientSelection({ onSelectPatient, onBack }) {
   };
 
   const handleContinue = () => {
-    const selected = medicalRecords.find(
+    const selected = displayPatients.find(
       (p) => p.patientId === selectedPatientId
     );
     if (selected && onSelectPatient) {
@@ -81,7 +101,7 @@ function PatientSelection({ onSelectPatient, onBack }) {
       ) : (
         <>
           <div className="patient-list">
-            {medicalRecords.length === 0 ? (
+            {displayPatients.length === 0 ? (
               <div className="no-patients">
                 <svg
                   viewBox="0 0 24 24"
@@ -97,16 +117,18 @@ function PatientSelection({ onSelectPatient, onBack }) {
                 <p style={{ fontSize: 14, color: "#888", marginTop: 8 }}>
                   Vui lòng tạo hồ sơ bệnh nhân trước khi đặt lịch
                 </p>
-                <button
-                  className="btn-create-profile"
-                  type="button"
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  Tạo hồ sơ bệnh nhân
-                </button>
+                {false && (
+                  <button
+                    className="btn-create-profile"
+                    type="button"
+                    onClick={() => setShowCreateModal(true)}
+                  >
+                    Tạo hồ sơ bệnh nhân
+                  </button>
+                )}
               </div>
             ) : (
-              medicalRecords.filter(p => p != null).map((patient) => (
+              displayPatients.filter(p => p != null).map((patient) => (
                 <div
                   key={patient.patientId}
                   className={`patient-card ${

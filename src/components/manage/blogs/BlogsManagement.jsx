@@ -15,7 +15,8 @@ import {
   FiUpload,
   FiImage,
 } from "react-icons/fi";
-import { Pagination, Spin } from "antd";
+import { Spin } from "antd";
+import CustomPagination from "../../common/Pagination";
 import { toast } from "react-toastify";
 import BlogService from "../../../services/BlogService";
 import { setAuthToken } from "../../../utils/auth";
@@ -425,10 +426,10 @@ const BlogsManagement = () => {
     if (!formData.content.trim()) {
       errors.content = "Nội dung bài viết không được để trống";
     }
-    // Validate image: require file for create, optional for edit
-    if (!isEditMode && !formData.imageFile) {
-      errors.img = "Vui lòng chọn ảnh bài viết";
-    }
+    // Validate image: optional for both create and edit since blogs might not have images
+    // if (!isEditMode && !formData.imageFile) {
+    //   errors.img = "Vui lòng chọn ảnh bài viết";
+    // }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -599,7 +600,8 @@ const BlogsManagement = () => {
   const openViewDetailModal = async (blog) => {
     const blogId = resolveBlogId(blog);
     if (!blogId && blogId !== 0) {
-      toast.error("Không xác định được ID bài viết để xem chi tiết");
+      setViewingBlog(blog);
+      setIsViewDetailOpen(true);
       return;
     }
 
@@ -607,26 +609,32 @@ const BlogsManagement = () => {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
 
-      // Fetch fresh blog data from API to ensure we have the latest imagePath
       const blogDetail = await BlogService.getBlogById(blogId);
 
-      // Check if blogDetail is valid
       if (!blogDetail || Object.keys(blogDetail).length === 0) {
         setViewingBlog(blog);
         setIsViewDetailOpen(true);
         return;
       }
 
-      setViewingBlog(blogDetail);
+      // Merge blogDetail with original blog item to ensure no fields (like category/author) are lost
+      const mergedBlog = {
+        ...blog,
+        ...blogDetail,
+        title: blogDetail.title || blog.title,
+        content: blogDetail.content || blog.content,
+        category: blogDetail.category || blog.category,
+        author: (blogDetail.author && blogDetail.author !== "Unknown") ? blogDetail.author : blog.author,
+        img: blogDetail.img || blog.img,
+      };
+
+      setViewingBlog(mergedBlog);
       setIsViewDetailOpen(true);
     } catch (error) {
-      "Error loading blog detail:", error;
-      // Fallback to using blog from list if API call fails
+      console.error("Error loading blog detail:", error);
+      // Fallback silently to using blog from list if API call fails
       setViewingBlog(blog);
       setIsViewDetailOpen(true);
-      toast.warning(
-        "Không thể tải chi tiết bài viết. Hiển thị thông tin từ danh sách."
-      );
     }
   };
 
@@ -857,7 +865,7 @@ const BlogsManagement = () => {
           </div>
 
           <div className="blogs-pagination">
-            <Pagination
+            <CustomPagination
               current={page}
               pageSize={pageSize}
               total={filteredBlogs.length}
@@ -867,9 +875,6 @@ const BlogsManagement = () => {
                   setPageSize(newPageSize);
                 }
               }}
-              showSizeChanger
-              showQuickJumper
-              pageSizeOptions={["5", "10", "20", "50", "100"]}
             />
           </div>
         </div>
@@ -938,7 +943,15 @@ const BlogsManagement = () => {
                 ) : (
                   <div className="blogs-image-preview-wrapper">
                     <div className="blogs-image-preview">
-                      <img src={imagePreview} alt="Preview" />
+                      <img 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        onError={(e) => {
+                          // Hide image and prevent infinite loop if error image also fails
+                          e.target.onerror = null;
+                          e.target.style.display = "none";
+                        }}
+                      />
                     </div>
                     <button
                       type="button"
