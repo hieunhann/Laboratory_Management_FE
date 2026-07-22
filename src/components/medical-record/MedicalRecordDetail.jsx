@@ -51,8 +51,9 @@ function MedicalRecordDetail() {
     const fetchPatientAPI = async () => {
       const response = await PatientServiceAPI.GetProfileByPatientId(patientId);
       if (response.status >= 200 && response.status < 300) {
-        setPatient(response.data);
-        console.log(response.data);
+        const data = response.data?.data || response.data;
+        setPatient(data);
+        console.log("Patient data:", data);
       }
     };
 
@@ -67,20 +68,24 @@ function MedicalRecordDetail() {
         const token = localStorage.getItem("accessToken");
         if (token) setAuthToken(token);
         const response = await api.get(
-          `testorder/api/Booking/patient?patientId=${patientId}&pageNumber=1&pageSize=1000`
+          `testorder/api/patients/${patientId}/bookings?pageNumber=1&pageSize=1000`
         );
         if (response.status >= 200 && response.status < 300) {
           // Hỗ trợ cả trường hợp trả về object có bookingResponses hoặc array
           let bookingsRaw = [];
-          if (Array.isArray(response.data)) {
-            bookingsRaw = response.data;
-          } else if (Array.isArray(response.data?.bookingResponses)) {
-            bookingsRaw = response.data.bookingResponses;
-          } else if (Array.isArray(response.data?.items)) {
-            bookingsRaw = response.data.items;
-          } else if (Array.isArray(response.data?.data)) {
-            bookingsRaw = response.data.data;
+          const dataObj = response.data?.data || response.data;
+          console.log("Bookings API Response DataObj:", dataObj);
+          
+          if (Array.isArray(dataObj)) {
+            bookingsRaw = dataObj;
+          } else if (Array.isArray(dataObj?.bookingResponses)) {
+            bookingsRaw = dataObj.bookingResponses;
+          } else if (Array.isArray(dataObj?.items)) {
+            bookingsRaw = dataObj.items;
+          } else if (Array.isArray(dataObj?.data)) {
+            bookingsRaw = dataObj.data;
           }
+          console.log("Bookings Raw parsed:", bookingsRaw);
           // Xử lý từng booking để lấy thông tin gói hoặc catalog
           const processedBookings = await Promise.all(
             bookingsRaw.map(async (booking) => {
@@ -148,6 +153,7 @@ function MedicalRecordDetail() {
               };
             })
           );
+          console.log("Processed Bookings:", processedBookings);
           setAppointmentHistory(processedBookings);
         }
       } catch (error) {

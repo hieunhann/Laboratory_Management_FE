@@ -863,8 +863,24 @@
 }
 
 .CheckIn-Button {
-  background-color: rgb(161, 243, 39);
-  padding: 10px;
+  background-color: #10b981;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.CheckIn-Button:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.CheckIn-Button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
 }
 
 .Process-Button {

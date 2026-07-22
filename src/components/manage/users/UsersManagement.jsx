@@ -22,7 +22,7 @@ import { updateUserRoles } from "../../../services/IAMService.jsx";
 import { IAMServiceAPI } from "../../../apis/IAMServiceAPI.jsx";
 import "./UsersManagement.css";
 
-const endPoint = "http://localhost:8080/iam/api/Users";
+const endPoint = "http://localhost:8080/iam/api/users";
 
 const getUserId = (user) =>
   user?.id ?? user?.userId ?? user?.uuid ?? user?.Id ?? null;
@@ -436,7 +436,7 @@ const UsersManagement = () => {
     try {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const response = await api.post(`iam/api/Users/${id}/lock`);
+      const response = await api.post(`iam/api/users/${id}/lock`);
       if (
         response?.data?.data?.status === "locked" ||
         (response.status >= 200 && response.status < 300)
@@ -597,7 +597,7 @@ const UsersManagement = () => {
     try {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const response = await api.post(`iam/api/Users/${id}/unlock`);
+      const response = await api.post(`iam/api/users/${id}/unlock`);
       if (
         response?.data?.data?.status === "unlocked" ||
         (response.status >= 200 && response.status < 300)
@@ -728,7 +728,7 @@ const UsersManagement = () => {
     try {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const response = await api.put(`iam/api/Users/${id}`, requestData);
+      const response = await api.put(`iam/api/users/${id}`, requestData);
 
       if (response.status === 200 || response.status === 204) {
         toast.success("Cập nhật thông tin người dùng thành công!");

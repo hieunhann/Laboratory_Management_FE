@@ -28,7 +28,7 @@ export default function EquipmentSection() {
         pageSize: 100,
         page: 1,
       });
-      const items = response.items || [];
+      const items = response?.data?.data?.items || response?.data?.items || response?.data?.data || response?.items || [];
       setEquipments(items);
     } catch {
       // Nếu có lỗi (401, 403...), không hiển thị dữ liệu
@@ -115,10 +115,36 @@ export default function EquipmentSection() {
               Chưa có thiết bị nào.
             </p>
           ) : (
-            getVisibleEquipments().map((item) => {
+            getVisibleEquipments().map((item, index) => {
+              const itemCode = item.code || item.instrumentCode;
+              
+              const getHardcodedImage = (code, idx) => {
+                switch (code) {
+                  case "ALINITY_CI":
+                    return "https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=600&auto=format&fit=crop"; // Lab machine
+                  case "ARCHITECTI2000":
+                    return "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=600&auto=format&fit=crop"; // Modern equipment
+                  case "BC6800":
+                    return "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?q=80&w=600&auto=format&fit=crop"; // Blood test tubes
+                  default: {
+                    // Array of beautiful generic medical/lab equipments for fallback
+                    const fallbacks = [
+                      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=600&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1631815587646-b85a1bb02246?q=80&w=600&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1579165466991-467135ad3110?q=80&w=600&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1579154204467-3316cc810f63?q=80&w=600&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=600&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?q=80&w=600&auto=format&fit=crop"
+                    ];
+                    // Cycle through fallbacks using the item's index
+                    return fallbacks[idx % fallbacks.length];
+                  }
+                }
+              };
+
               // Get image URL - ưu tiên imageUrl đã được build từ InstrumentService
-              // Fallback to imageData (base64) nếu có
-              const imageUrl = item.imageUrl || item.imageData || "";
+              // Nếu không có, fallback về ảnh cứng đẹp mắt
+              const imageUrl = item.imageUrl || item.imageData || getHardcodedImage(itemCode, index);
 
               return (
                 <div className="equipment-card" key={item.code || item.id}>
