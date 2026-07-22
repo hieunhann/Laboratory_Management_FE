@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import "./Payment.css";
 import { bookingService } from "../../services/TestOrderService.jsx";
+import atmIcon from "../../assets/icon/ATM.svg";
+import momoIcon from "../../assets/icon/Momo.svg";
+import bankIcon from "../../assets/icon/bank.svg";
 // import api from "../../configs/axios";
 // import { toast } from "react-toastify";
 
@@ -121,7 +124,7 @@ export default function Payment({
                   checked={form.paymentMethod === "credit"}
                   onChange={handleChange}
                 />
-                <img src="src\\assets\\icon\\ATM.svg" />
+                <img src={atmIcon} alt="ATM" />
                 <span>Thẻ Visa</span>
               </label>
 
@@ -133,7 +136,7 @@ export default function Payment({
                   checked={form.paymentMethod === "VnPay"}
                   onChange={handleChange}
                 />
-                <img src="src\\assets\\icon\\Momo.svg" />
+                <img src={momoIcon} alt="VnPay" />
                 <span>VnPay</span>
               </label>
 
@@ -145,7 +148,7 @@ export default function Payment({
                   checked={form.paymentMethod === "momo"}
                   onChange={handleChange}
                 />
-                <img src="src\\assets\\icon\\bank.svg" />
+                <img src={bankIcon} alt="Momo" />
                 <span>Ví Momo</span>
               </label>
             </div>
