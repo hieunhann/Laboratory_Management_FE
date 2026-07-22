@@ -54,10 +54,10 @@ export const deleteInstrumentByCode = async (code) => {
   return unwrap(res);
 };
 
-export const startInstrumentRun = async (bookingId) => {
+export const startInstrumentRun = async (bookingId, instrumentCode) => {
   ensureAuth();
-  const instrumentCode = generateInstrumentCode();
-  const payload = { bookingId, instrumentCode };
+  const code = instrumentCode || generateInstrumentCode();
+  const payload = { bookingId, instrumentCode: code };
   const res = await api.post("instrument/api/instruments/runs", payload);
   return res?.data ?? {};
 };

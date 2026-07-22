@@ -599,7 +599,8 @@ const BlogsManagement = () => {
   const openViewDetailModal = async (blog) => {
     const blogId = resolveBlogId(blog);
     if (!blogId && blogId !== 0) {
-      toast.error("Không xác định được ID bài viết để xem chi tiết");
+      setViewingBlog(blog);
+      setIsViewDetailOpen(true);
       return;
     }
 
@@ -607,26 +608,32 @@ const BlogsManagement = () => {
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
 
-      // Fetch fresh blog data from API to ensure we have the latest imagePath
       const blogDetail = await BlogService.getBlogById(blogId);
 
-      // Check if blogDetail is valid
       if (!blogDetail || Object.keys(blogDetail).length === 0) {
         setViewingBlog(blog);
         setIsViewDetailOpen(true);
         return;
       }
 
-      setViewingBlog(blogDetail);
+      // Merge blogDetail with original blog item to ensure no fields (like category/author) are lost
+      const mergedBlog = {
+        ...blog,
+        ...blogDetail,
+        title: blogDetail.title || blog.title,
+        content: blogDetail.content || blog.content,
+        category: blogDetail.category || blog.category,
+        author: (blogDetail.author && blogDetail.author !== "Unknown") ? blogDetail.author : blog.author,
+        img: blogDetail.img || blog.img,
+      };
+
+      setViewingBlog(mergedBlog);
       setIsViewDetailOpen(true);
     } catch (error) {
-      "Error loading blog detail:", error;
-      // Fallback to using blog from list if API call fails
+      console.error("Error loading blog detail:", error);
+      // Fallback silently to using blog from list if API call fails
       setViewingBlog(blog);
       setIsViewDetailOpen(true);
-      toast.warning(
-        "Không thể tải chi tiết bài viết. Hiển thị thông tin từ danh sách."
-      );
     }
   };
 

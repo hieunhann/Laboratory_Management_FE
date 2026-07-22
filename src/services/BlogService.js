@@ -130,53 +130,55 @@ const BlogService = {
    * @returns {Object} Transformed blog object for UI
    */
   transformBlogFromAPI: (apiBlog) => {
+    if (!apiBlog) return {};
+    const rawBlog = apiBlog?.data && typeof apiBlog.data === "object" && !Array.isArray(apiBlog.data) && (apiBlog.data.blogPostId || apiBlog.data.postId || apiBlog.data.id || apiBlog.data.title) ? apiBlog.data : (apiBlog?.data || apiBlog);
     const categoryName =
-      apiBlog.category?.categoryName ||
-      apiBlog.categoryName ||
-      apiBlog.tag ||
+      rawBlog.category?.categoryName ||
+      rawBlog.categoryName ||
+      rawBlog.tag ||
       "";
-    const status = BlogService.mapStatusFromAPI(apiBlog.status);
+    const status = BlogService.mapStatusFromAPI(rawBlog.status);
     
     // Get image URL from various possible fields (including imagePath from API)
-    const rawImageUrl = apiBlog.imagePath || apiBlog.imageUrl || apiBlog.thumbnailUrl || apiBlog.img || apiBlog.image || "";
+    const rawImageUrl = rawBlog.imagePath || rawBlog.imageUrl || rawBlog.thumbnailUrl || rawBlog.img || rawBlog.image || "";
     const imageUrl = BlogService.buildImageUrl(rawImageUrl);
     
     return {
-      id: apiBlog.blogPostId || apiBlog.postId || apiBlog.id,
-      title: apiBlog.title || "",
-      author: apiBlog.author || apiBlog.authorName || "Unknown",
-      authorId: apiBlog.authorId || apiBlog.author?.id || "",
-      categoryId: apiBlog.categoryId || apiBlog.category?.categoryId || null,
+      id: rawBlog.blogPostId || rawBlog.postId || rawBlog.id,
+      title: rawBlog.title || "",
+      author: rawBlog.author || rawBlog.authorName || "Unknown",
+      authorId: rawBlog.authorId || rawBlog.author?.id || "",
+      categoryId: rawBlog.categoryId || rawBlog.category?.categoryId || null,
       category: categoryName,
-      tag: apiBlog.tag || categoryName,
+      tag: rawBlog.tag || categoryName,
       status,
-      content: apiBlog.content || "",
+      content: rawBlog.content || "",
       img: imageUrl,
       thumbnailUrl: imageUrl,
       imageUrl: imageUrl,
       // Keep original imagePath for fallback
-      imagePath: apiBlog.imagePath || rawImageUrl || "",
-      createdDate: apiBlog.createdDate ? formatDate1(apiBlog.createdDate) : "",
-      updatedDate: apiBlog.updatedDate ? formatDate1(apiBlog.updatedDate) : "",
-      date: apiBlog.createdDate
-        ? formatDate1(apiBlog.createdDate)
+      imagePath: rawBlog.imagePath || rawImageUrl || "",
+      createdDate: rawBlog.createdDate ? formatDate1(rawBlog.createdDate) : "",
+      updatedDate: rawBlog.updatedDate ? formatDate1(rawBlog.updatedDate) : "",
+      date: rawBlog.createdDate
+        ? formatDate1(rawBlog.createdDate)
         : formatDate1(new Date().toISOString()),
-      fullDate: apiBlog.createdDate
-        ? new Date(apiBlog.createdDate).toLocaleDateString("vi-VN", {
+      fullDate: rawBlog.createdDate
+        ? new Date(rawBlog.createdDate).toLocaleDateString("vi-VN", {
             weekday: "long",
             day: "numeric",
             month: "long",
             year: "numeric",
           })
         : "",
-      time: apiBlog.createdDate
-        ? formatTimeAgo(new Date(apiBlog.createdDate))
+      time: rawBlog.createdDate
+        ? formatTimeAgo(new Date(rawBlog.createdDate))
         : "Vừa xong",
-      views: apiBlog.views || 0,
-      comments: apiBlog.comments || 0,
+      views: rawBlog.views || 0,
+      comments: rawBlog.comments || 0,
       desc:
-        apiBlog.description ||
-        (apiBlog.content ? apiBlog.content.substring(0, 100) + "..." : ""),
+        rawBlog.description ||
+        (rawBlog.content ? rawBlog.content.substring(0, 100) + "..." : ""),
     };
   },
 

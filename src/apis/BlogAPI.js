@@ -235,8 +235,8 @@ const BlogAPI = {
    */
   approveBlog: async (id, status = 1) => {
     try {
-      const response = await api.put(`blog/api/blog-posts/status/${id}`, {
-        status: status,
+      const response = await api.patch(`blog/api/blog-posts/${id}/status`, {
+        status: Number(status),
       });
       return response.data;
     } catch (error) {
@@ -253,8 +253,8 @@ const BlogAPI = {
    */
   rejectBlog: async (id, status = 2) => {
     try {
-      const response = await api.put(`blog/api/blog-posts/status/${id}`, {
-        status: status,
+      const response = await api.patch(`blog/api/blog-posts/${id}/status`, {
+        status: Number(status),
       });
       return response.data;
     } catch (error) {

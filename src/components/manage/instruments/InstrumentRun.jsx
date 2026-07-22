@@ -13,6 +13,16 @@ const BASE_URL = "https://hemalink-gateway-5ils.onrender.com";
 
 // Không dùng defaultResults nữa, sẽ lấy từ API
 
+const extractInstrumentList = (apiData) => {
+  if (!apiData) return [];
+  if (Array.isArray(apiData)) return apiData;
+  if (Array.isArray(apiData.items)) return apiData.items;
+  if (Array.isArray(apiData.data)) return apiData.data;
+  if (apiData.data && Array.isArray(apiData.data.items)) return apiData.data.items;
+  if (apiData.data && Array.isArray(apiData.data.data)) return apiData.data.data;
+  return [];
+};
+
 const InstrumentRun = () => {
   // const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -43,87 +53,104 @@ const InstrumentRun = () => {
   useEffect(() => {
     if (!bookingId) return;
 
-    // Kiểm tra xem đã có instrument run trong localStorage chưa
-    const storageKey = `instrument_run_${bookingId}`;
-    const stored = localStorage.getItem(storageKey);
+    const token = localStorage.getItem("accessToken");
+    if (token) setAuthToken(token);
 
-    if (stored) {
-      // Đã chọn máy rồi, khôi phục trạng thái
-      try {
-        const data = JSON.parse(stored);
-        const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
-        const remaining = Math.max(0, (data.totalSeconds || 15) - elapsed);
-
-        setShowModal(false);
-        setWaiting(true);
-        hasStartedRef.current = false;
-
-        if (data.phase === "done") {
+    // 1. Kiểm tra xem booking đã hoàn thành và có kết quả chưa
+    api
+      .get(`/testorder/api/bookings/${bookingId}/results`)
+      .then((res) => {
+        if (
+          res.data &&
+          Array.isArray(res.data.catalogs) &&
+          res.data.catalogs.length > 0
+        ) {
+          setResults(res.data.catalogs);
           setPhase("done");
           setProgress(100);
-          setSeconds(0);
-        } else if (remaining > 0) {
-          // Vẫn còn đang chạy
-          setPhase("pending");
-          setSeconds(remaining);
-          setProgress(0);
-        } else {
-          // Đã hết thời gian nhưng chưa gọi API
-          setPhase("pending");
-          setSeconds(0);
-          setProgress(0);
+          setShowModal(false);
+          setWaiting(false);
+          localStorage.removeItem(`instrument_run_${bookingId}`);
+          return true;
         }
+        return false;
+      })
+      .catch(() => false)
+      .then((alreadyDone) => {
+        if (alreadyDone) return;
 
-        // Lấy thông tin máy đã chọn
-        if (data.instrumentCode) {
+        // 2. Kiểm tra xem đã có instrument run trong localStorage chưa
+        const storageKey = `instrument_run_${bookingId}`;
+        const stored = localStorage.getItem(storageKey);
+
+        if (stored) {
+          try {
+            const data = JSON.parse(stored);
+            const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
+            const remaining = Math.max(0, (data.totalSeconds || 15) - elapsed);
+
+            setShowModal(false);
+            setWaiting(true);
+            hasStartedRef.current = false;
+
+            if (data.phase === "done") {
+              setPhase("done");
+              setProgress(100);
+              setSeconds(0);
+            } else if (remaining > 0) {
+              setPhase("pending");
+              setSeconds(remaining);
+              setProgress(0);
+            } else {
+              setPhase("pending");
+              setSeconds(0);
+              setProgress(0);
+            }
+            if (data.instrumentCode) {
+              setLoadingInstruments(true);
+              getAllInstrument()
+                .then((instrumentData) => {
+                  const list = extractInstrumentList(instrumentData);
+                  const selected = list.find(
+                    (ins) => ins.instrumentCode === data.instrumentCode
+                  );
+                  if (selected) {
+                    setSelectedInstrument(selected);
+                  }
+                  setInstruments(list);
+                })
+                .catch(() => setInstruments([]))
+                .finally(() => setLoadingInstruments(false));
+            }
+          } catch (e) {
+            console.error("Error parsing stored run data:", e);
+            setShowModal(true);
+            setSelectedInstrument(null);
+            setWaiting(false);
+            hasStartedRef.current = false;
+            setLoadingInstruments(true);
+            getAllInstrument()
+              .then((data) => {
+                setInstruments(extractInstrumentList(data));
+              })
+              .catch(() => setInstruments([]))
+              .finally(() => setLoadingInstruments(false));
+          }
+        } else {
+          setShowModal(true);
+          setSelectedInstrument(null);
+          setWaiting(false);
+          hasStartedRef.current = false;
           setLoadingInstruments(true);
           getAllInstrument()
-            .then((instrumentData) => {
-              const instruments = Array.isArray(instrumentData.items)
-                ? instrumentData.items
-                : instrumentData;
-              const selected = instruments.find(
-                (ins) => ins.instrumentCode === data.instrumentCode
-              );
-              if (selected) {
-                setSelectedInstrument(selected);
-              }
-              setInstruments(instruments);
+            .then((data) => {
+              setInstruments(extractInstrumentList(data));
             })
             .catch(() => setInstruments([]))
             .finally(() => setLoadingInstruments(false));
         }
-      } catch (e) {
-        console.error("Error parsing stored run data:", e);
-        // Nếu có lỗi, hiển thị modal chọn máy
-        setShowModal(true);
-        setSelectedInstrument(null);
-        setWaiting(false);
-        hasStartedRef.current = false;
-        setLoadingInstruments(true);
-        getAllInstrument()
-          .then((data) => {
-            setInstruments(Array.isArray(data.items) ? data.items : data);
-          })
-          .catch(() => setInstruments([]))
-          .finally(() => setLoadingInstruments(false));
-      }
-    } else {
-      // Chưa chọn máy, hiển thị modal
-      setShowModal(true);
-      setSelectedInstrument(null);
-      setWaiting(false);
-      hasStartedRef.current = false;
-      setLoadingInstruments(true);
-      getAllInstrument()
-        .then((data) => {
-          setInstruments(Array.isArray(data.items) ? data.items : data);
-        })
-        .catch(() => setInstruments([]))
-        .finally(() => setLoadingInstruments(false));
-    }
+      });
 
-    // Reset các state khác nếu cần
     setMessage("");
     setResults([]);
   }, [bookingId]);
@@ -197,9 +224,34 @@ const InstrumentRun = () => {
                 setPhase("error");
               }
             } catch (e) {
+              // Thử lấy kết quả nếu booking đã được hoàn tất trước đó
+              try {
+                const res = await api.get(
+                  `/testorder/api/bookings/${bookingId}/results`
+                );
+                if (
+                  res.data &&
+                  Array.isArray(res.data.catalogs) &&
+                  res.data.catalogs.length > 0
+                ) {
+                  setResults(res.data.catalogs);
+                  setPhase("done");
+                  setProgress(100);
+                  setShowModal(false);
+                  if (bookingId) {
+                    localStorage.removeItem(`instrument_run_${bookingId}`);
+                  }
+                  return;
+                }
+              } catch {
+                // Không lấy được kết quả, tiếp tục báo lỗi
+              }
+
               let msg = "Không thể khởi chạy thiết bị. Vui lòng thử lại.";
               if (typeof e === "string") {
                 msg = e;
+              } else if (e?.response?.data?.error) {
+                msg = String(e.response.data.error);
               } else if (e?.response?.data?.message) {
                 msg = String(e.response.data.message);
               } else if (e?.message) {
@@ -213,6 +265,9 @@ const InstrumentRun = () => {
               }
               setMessage(msg);
               setPhase("error");
+              if (bookingId) {
+                localStorage.removeItem(`instrument_run_${bookingId}`);
+              }
             }
           })();
           return 0;
@@ -223,87 +278,6 @@ const InstrumentRun = () => {
 
     return () => clearInterval(timer);
   }, [waiting, selectedInstrument, bookingId]);
-
-  // Kick off API when countdown reaches 0
-  useEffect(() => {
-    if (phase !== "pending" || seconds !== 0 || !bookingId) return;
-
-    const run = async () => {
-      const storageKey = `instrument_run_${bookingId}`;
-      const stored = localStorage.getItem(storageKey);
-      const originalStartTime = stored
-        ? JSON.parse(stored).startTime
-        : Date.now();
-
-      try {
-        setPhase("running");
-        setProgress(35);
-
-        // Cập nhật localStorage - GIỮ NGUYÊN startTime gốc
-        localStorage.setItem(
-          storageKey,
-          JSON.stringify({
-            startTime: originalStartTime,
-            phase: "running",
-            progress: 35,
-            message: "",
-          })
-        );
-
-        const data = await startInstrumentRun(bookingId);
-        const status = data?.status || data?.Status || "";
-        const msg = String(data?.message || data?.Message || "");
-        setMessage(msg);
-
-        // Simulate progress finishing quickly after response
-        setProgress(100);
-        if (status === 1) {
-          setPhase("done");
-        } else {
-          setPhase("error");
-          localStorage.setItem(
-            storageKey,
-            JSON.stringify({
-              startTime: originalStartTime,
-              phase: "error",
-              progress: 100,
-              message: msg,
-            })
-          );
-        }
-      } catch (e) {
-        let msg = "Không thể khởi chạy thiết bị. Vui lòng thử lại.";
-
-        if (typeof e === "string") {
-          msg = e;
-        } else if (e?.response?.data?.message) {
-          msg = String(e.response.data.message);
-        } else if (e?.message) {
-          msg = String(e.message);
-        } else if (e) {
-          try {
-            msg = JSON.stringify(e);
-          } catch {
-            msg = "Không thể khởi chạy thiết bị. Vui lòng thử lại.";
-          }
-        }
-
-        setMessage(msg);
-        setPhase("error");
-        localStorage.setItem(
-          storageKey,
-          JSON.stringify({
-            startTime: originalStartTime,
-            phase: "error",
-            progress: 0,
-            message: msg,
-          })
-        );
-      }
-    };
-
-    run();
-  }, [seconds, phase, bookingId]);
 
   // Khi phase done, gọi API lấy kết quả thực tế
   useEffect(() => {
@@ -325,7 +299,8 @@ const InstrumentRun = () => {
             setResults([]);
           }
         } catch (e) {
-          setResults([e || "Error"]);
+          console.error("Error fetching results:", e);
+          setResults([]);
         }
       };
       fetchResults();
@@ -350,7 +325,7 @@ const InstrumentRun = () => {
           </div>
         ) : (
           <div className="ir-instrument-modal">
-            {instruments.length === 0 ? (
+            {!Array.isArray(instruments) || instruments.length === 0 ? (
               <div>Không có máy nào khả dụng.</div>
             ) : (
               instruments.map((ins) => {
@@ -621,6 +596,24 @@ const InstrumentRun = () => {
             </div>
             <div className="ir-complete-desc">
               {String(message || "Vui lòng thử lại hoặc liên hệ quản trị.")}
+            </div>
+            <div style={{ marginTop: "16px", textAlign: "center" }}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  if (bookingId) {
+                    localStorage.removeItem(`instrument_run_${bookingId}`);
+                  }
+                  hasStartedRef.current = false;
+                  setSelectedInstrument(null);
+                  setShowModal(true);
+                  setWaiting(false);
+                  setPhase("pending");
+                  setMessage("");
+                }}
+              >
+                Thử chọn máy và chạy lại
+              </Button>
             </div>
           </div>
         )}
