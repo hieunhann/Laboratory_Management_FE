@@ -11,6 +11,16 @@ import TestOrderServiceAPI from "../../apis/TestOrderServiceAPI";
 import { bookingService } from "../../services/TestOrderService.jsx";
 import { setAuthToken } from "../../utils/auth";
 
+import filterIcon from "../../assets/icon/Fillter.svg";
+import calenderIcon from "../../assets/icon/Calender.svg";
+import userIcon from "../../assets/icon/User.svg";
+import mailIcon from "../../assets/icon/Mail.svg";
+import phoneIcon from "../../assets/icon/Phone.svg";
+import documentGrayIcon from "../../assets/icon/Document_Gray.svg";
+import payIcon from "../../assets/icon/Pay.svg";
+import documentBorderIcon from "../../assets/icon/Document_Border.svg";
+import documentWhiteIcon from "../../assets/icon/Document_white.svg";
+
 function BookingHistory() {
   const endPoint = "testorder/api/bookings/patient";
   const endPoint1 = "testorder/api/test-bundles";
@@ -235,7 +245,7 @@ function BookingHistory() {
 
       <div className="booking-filters">
         <div className="filters-title">
-          <img src="src\assets\icon\Fillter.svg" alt="Filters" />
+          <img src={filterIcon} alt="Filters" />
           <strong>Bộ lọc</strong>
         </div>
         <span style={{ color: "#737373", fontSize: "15px" }}>
@@ -318,7 +328,7 @@ function BookingHistory() {
                     Mã đặt lịch: {b.bookingCode}
                   </div>
                   <div className="booking-main">
-                    <img src="src\assets\icon\Calender.svg" alt="Calender" />
+                    <img src={calenderIcon} alt="Calender" />
                     <div className="booking-date&time">
                       <div className="booking-date">{b.RunDate}</div>
                       <div className="booking-time">
@@ -356,21 +366,21 @@ function BookingHistory() {
                         <h4>Thông tin cá nhân</h4>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src="src\assets\icon\User.svg" alt="User" />
+                            <img src={userIcon} alt="User" />
                             <span className="label">Họ và tên</span>
                           </div>
                           <span className="value">{b.patientName}</span>
                         </div>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src="src\assets\icon\Mail.svg" alt="Email" />
+                            <img src={mailIcon} alt="Email" />
                             <span className="label">Email</span>
                           </div>
                           <span className="value">{b.patientEmail}</span>
                         </div>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src="src\assets\icon\Phone.svg" alt="Phone" />{" "}
+                            <img src={phoneIcon} alt="Phone" />{" "}
                             <span className="label">Điện thoại</span>
                           </div>
                           <span className="value">{b.patientPhoneNumber}</span>
@@ -384,7 +394,7 @@ function BookingHistory() {
                         <div className="info-row">
                           <div className="info-row-1">
                             <img
-                              src="src\assets\icon\Document_Gray.svg"
+                              src={documentGrayIcon}
                               alt="Document"
                             />
                             <span className="label">
@@ -409,7 +419,7 @@ function BookingHistory() {
                         <h4>Thông tin thanh toán</h4>
                         <div className="info-row">
                           <div className="info-row-1">
-                            <img src="src\assets\icon\Pay.svg" alt="Pay" />
+                            <img src={payIcon} alt="Pay" />
                             <span className="label">Hình thức</span>
                           </div>
                           <span className="value">
@@ -420,7 +430,7 @@ function BookingHistory() {
                         {derivedAmount > 0 && (
                           <div className="info-row">
                             <div className="info-row-1">
-                              <img src="src\assets\icon\Pay.svg" alt="Pay" />
+                              <img src={payIcon} alt="Pay" />
                               <span className="label">Tổng tiền</span>
                             </div>
                             <span className="value">
@@ -464,7 +474,7 @@ function BookingHistory() {
                     {String(b.status).toLowerCase() === "completed" ? (
                       <div className="result-box ready">
                         <img
-                          src="src\assets\icon\Document_Border.svg"
+                          src={documentBorderIcon}
                           alt="Document_Borders"
                           className="img-doc"
                         />{" "}
@@ -491,8 +501,8 @@ function BookingHistory() {
                           }}
                         >
                           <img
-                            src="src/assets/icon/Document_white.svg"
-                            alt=""
+                            src={documentWhiteIcon}
+                            alt="Document"
                           />
                           Xem chi tiết kết quả xét nghiệm
                         </button>
