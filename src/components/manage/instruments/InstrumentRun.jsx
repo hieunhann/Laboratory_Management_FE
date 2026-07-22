@@ -13,6 +13,16 @@ const BASE_URL = "https://hemalink-gateway-5ils.onrender.com";
 
 // Không dùng defaultResults nữa, sẽ lấy từ API
 
+const extractInstrumentList = (apiData) => {
+  if (!apiData) return [];
+  if (Array.isArray(apiData)) return apiData;
+  if (Array.isArray(apiData.items)) return apiData.items;
+  if (Array.isArray(apiData.data)) return apiData.data;
+  if (apiData.data && Array.isArray(apiData.data.items)) return apiData.data.items;
+  if (apiData.data && Array.isArray(apiData.data.data)) return apiData.data.data;
+  return [];
+};
+
 const InstrumentRun = () => {
   // const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -73,17 +83,6 @@ const InstrumentRun = () => {
           setSeconds(0);
           setProgress(0);
         }
-
-const extractInstrumentList = (apiData) => {
-  if (!apiData) return [];
-  if (Array.isArray(apiData)) return apiData;
-  if (Array.isArray(apiData.items)) return apiData.items;
-  if (Array.isArray(apiData.data)) return apiData.data;
-  if (apiData.data && Array.isArray(apiData.data.items)) return apiData.data.items;
-  if (apiData.data && Array.isArray(apiData.data.data)) return apiData.data.data;
-  return [];
-};
-
         // Lấy thông tin máy đã chọn
         if (data.instrumentCode) {
           setLoadingInstruments(true);
@@ -336,7 +335,8 @@ const extractInstrumentList = (apiData) => {
             setResults([]);
           }
         } catch (e) {
-          setResults([e || "Error"]);
+          console.error("Error fetching results:", e);
+          setResults([]);
         }
       };
       fetchResults();
