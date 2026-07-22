@@ -28,6 +28,7 @@ import AdminParameterPage from "./pages/admin/parameter/AdminParameterPage";
 import AdminReportsPage from "./pages/admin/reports/AdminReportsPage";
 import AdminAppointmentSchedulePage from "./pages/admin/appointment-schedule/AdminAppointmentSchedulePage";
 import AdminCategoriesPage from "./pages/admin/categories/AdminCategoriesPage";
+import AdminVouchersPage from "./pages/admin/vouchers/AdminVouchersPage";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS
@@ -259,6 +260,15 @@ function App() {
         <>
           <AppContent />
           <AdminParameterPage />
+        </>
+      ),
+    },
+    {
+      path: "/vouchers",
+      element: (
+        <>
+          <AppContent />
+          <AdminVouchersPage />
         </>
       ),
     },
