@@ -357,7 +357,7 @@ const AdminAppointmentSchedulePage = () => {
       setCheckingInId(bookingId);
       const token = localStorage.getItem("accessToken");
       if (token) setAuthToken(token);
-      const response = await api.put(
+      const response = await api.post(
         `testorder/api/bookings/${bookingId}/check-in`
       );
       const data = response.data || {};

@@ -407,13 +407,13 @@ const BlogAPI = {
       if (token) setAuthToken(token);
       // Try with auth first, fallback to public if 401
       try {
-        const response = await api.get(`blog/api/comments/post/${postId}`);
+        const response = await api.get(`blog/api/blog-posts/${postId}/comments`);
         return response.data;
       } catch (authError) {
         if (authError.response?.status === 401) {
           // Try public access for viewing comments
           const response = await publicApi.get(
-            `blog/api/comments/post/${postId}`
+            `blog/api/blog-posts/${postId}/comments`
           );
           return response.data;
         }
